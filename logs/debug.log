@@ -1,0 +1,27 @@
+=== Inicio de sesión: 2025-11-09 17:24:59 ===
+[09-Nov-2025 17:24:59 America/Bogota] === Nueva solicitud de inicio de sesión ===
+[09-Nov-2025 17:24:59 America/Bogota] Intento de inicio de sesión - Usuario: danna.agudelo
+Intentando autenticar usuario: danna.agudelo
+Consulta ejecutada. Número de filas: 1
+[09-Nov-2025 17:24:59 America/Bogota] Datos del usuario: Array
+(
+    [cod_usuario] => 4
+    [id_tipo_documento] => 1
+    [numero_documento] => 1082498535
+    [nombres] => Danna
+    [apellidos] => Agudelo
+    [telefono] => 3126429827
+    [correo] => danna@gmail.com
+    [direccion] => 
+    [usuario] => danna.agudelo
+    [clave] => 123456
+    [id_rol] => 2
+    [estado] => ACTIVO
+    [rol] => Docente
+)
+
+[09-Nov-2025 17:24:59 America/Bogota] Tipo de id_rol: integer
+[09-Nov-2025 17:24:59 America/Bogota] Valor de id_rol: 2
+[09-Nov-2025 17:24:59 America/Bogota] Role ID después de conversión: 2
+[09-Nov-2025 17:24:59 America/Bogota] Redirigiendo a: ../../views/docente/index.php
+[09-Nov-2025 17:24:59 America/Bogota] Ejecutando redirección a: ../../views/docente/index.php
