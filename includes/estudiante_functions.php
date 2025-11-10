@@ -172,3 +172,63 @@ function obtenerCursos($conexion)
         throw $e;
     }
 }
+
+function obtenerIdEstudiante($conexion, $id_usuario)
+{
+    try {
+
+        $sql = "SELECT cod_estudiante FROM estudiante WHERE id_usuario = :id_usuario";
+        $stmt = $conexion->prepare($sql);
+        $stmt->bindParam(':id_usuario', $id_usuario, PDO::PARAM_INT);
+        $stmt->execute();
+
+        $resultado = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if ($resultado) {
+            return $resultado['cod_estudiante'];
+        } else {
+            return null;
+        }
+    } catch (Exception $e) {
+        error_log("Error al obtener ID del estudiante: " . $e->getMessage());
+        return null;
+    }
+}
+
+function obtenerCursosEstudiante($conexion, $id_estudiante)
+{
+    try {
+        $sql = "SELECT 
+                    m.cod_matricula,
+                    m.id_estudiante,
+                    m.id_curso,
+                    m.fecha_matricula,
+                    m.estado,
+                    c.nombre_curso,
+                    c.ano_lectivo,
+                    CONCAT(ud.nombres, ' ', ud.apellidos) as director_grupo,
+                    d.especialidad
+                FROM matricula m
+                INNER JOIN curso c ON m.id_curso = c.cod_curso
+                INNER JOIN docente d ON c.id_director_grupo = d.cod_docente
+                INNER JOIN usuario ud ON d.id_usuario = ud.cod_usuario
+                WHERE m.id_estudiante = :id_estudiante
+                AND m.estado = 'ACTIVA'
+                ORDER BY m.fecha_matricula DESC, c.nombre_curso ASC";
+
+        $stmt = $conexion->prepare($sql);
+        $stmt->bindParam(':id_estudiante', $id_estudiante, PDO::PARAM_INT);
+        $stmt->execute();
+
+        $resultados = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        if (empty($resultados)) {
+            error_log("No se encontraron matrículas activas para el estudiante ID: " . $id_estudiante);
+        }
+
+        return $resultados;
+    } catch (Exception $e) {
+        error_log("Error al obtener cursos del estudiante: " . $e->getMessage());
+        throw $e;
+    }
+}

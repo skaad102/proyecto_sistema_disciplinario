@@ -25,3 +25,246 @@ Consulta ejecutada. Número de filas: 1
 [09-Nov-2025 17:24:59 America/Bogota] Role ID después de conversión: 2
 [09-Nov-2025 17:24:59 America/Bogota] Redirigiendo a: ../../views/docente/index.php
 [09-Nov-2025 17:24:59 America/Bogota] Ejecutando redirección a: ../../views/docente/index.php
+=== Inicio de sesión: 2025-11-10 06:50:24 ===
+[10-Nov-2025 06:50:24 America/Bogota] === Nueva solicitud de inicio de sesión ===
+[10-Nov-2025 06:50:24 America/Bogota] Intento de inicio de sesión - Usuario: danna.agudelo
+Intentando autenticar usuario: danna.agudelo
+Consulta ejecutada. Número de filas: 1
+[10-Nov-2025 06:50:24 America/Bogota] Datos del usuario: Array
+(
+    [cod_usuario] => 4
+    [id_tipo_documento] => 1
+    [numero_documento] => 1082498535
+    [nombres] => Danna
+    [apellidos] => Agudelo
+    [telefono] => 3126429827
+    [correo] => danna@gmail.com
+    [direccion] => 
+    [usuario] => danna.agudelo
+    [clave] => 123456
+    [id_rol] => 2
+    [estado] => ACTIVO
+    [rol] => Docente
+)
+
+[10-Nov-2025 06:50:24 America/Bogota] Tipo de id_rol: integer
+[10-Nov-2025 06:50:24 America/Bogota] Valor de id_rol: 2
+[10-Nov-2025 06:50:24 America/Bogota] Role ID después de conversión: 2
+[10-Nov-2025 06:50:24 America/Bogota] Redirigiendo a: ../../views/docente/index.php
+[10-Nov-2025 06:50:24 America/Bogota] Ejecutando redirección a: ../../views/docente/index.php
+=== Inicio de sesión: 2025-11-10 06:50:57 ===
+[10-Nov-2025 06:50:57 America/Bogota] === Nueva solicitud de inicio de sesión ===
+[10-Nov-2025 06:50:57 America/Bogota] Intento de inicio de sesión - Usuario: vsanchez
+Intentando autenticar usuario: vsanchez
+Consulta ejecutada. Número de filas: 1
+[10-Nov-2025 06:50:57 America/Bogota] Datos del usuario: Array
+(
+    [cod_usuario] => 22
+    [id_tipo_documento] => 3
+    [numero_documento] => 1032345678
+    [nombres] => Valeria
+    [apellidos] => Sánchez Ríos
+    [telefono] => 3234567890
+    [correo] => vsanchez@email.com
+    [direccion] => Calle 23 #90-12
+    [usuario] => vsanchez
+    [clave] => vsanchez123
+    [id_rol] => 3
+    [estado] => ACTIVO
+    [rol] => Estudiante
+)
+
+[10-Nov-2025 06:50:57 America/Bogota] Tipo de id_rol: integer
+[10-Nov-2025 06:50:57 America/Bogota] Valor de id_rol: 3
+[10-Nov-2025 06:50:57 America/Bogota] Role ID después de conversión: 3
+[10-Nov-2025 06:50:57 America/Bogota] Ejecutando redirección a: ../../views/estudiante/index.php
+=== Inicio de sesión: 2025-11-10 07:20:10 ===
+[10-Nov-2025 07:20:10 America/Bogota] === Nueva solicitud de inicio de sesión ===
+[10-Nov-2025 07:20:10 America/Bogota] Intento de inicio de sesión - Usuario: vsanchez
+Intentando autenticar usuario: vsanchez
+Consulta ejecutada. Número de filas: 1
+[10-Nov-2025 07:20:10 America/Bogota] Datos del usuario: Array
+(
+    [cod_usuario] => 22
+    [id_tipo_documento] => 3
+    [numero_documento] => 1032345678
+    [nombres] => Valeria
+    [apellidos] => Sánchez Ríos
+    [telefono] => 3234567890
+    [correo] => vsanchez@email.com
+    [direccion] => Calle 23 #90-12
+    [usuario] => vsanchez
+    [clave] => vsanchez123
+    [id_rol] => 3
+    [estado] => ACTIVO
+    [rol] => Estudiante
+)
+
+[10-Nov-2025 07:20:10 America/Bogota] Tipo de id_rol: integer
+[10-Nov-2025 07:20:10 America/Bogota] Valor de id_rol: 3
+[10-Nov-2025 07:20:10 America/Bogota] Role ID después de conversión: 3
+[10-Nov-2025 07:20:10 America/Bogota] Ejecutando redirección a: ../../views/estudiante/index.php
+=== Inicio de sesión: 2025-11-10 07:44:28 ===
+[10-Nov-2025 07:44:28 America/Bogota] === Nueva solicitud de inicio de sesión ===
+[10-Nov-2025 07:44:28 America/Bogota] Intento de inicio de sesión - Usuario: imendoza
+Intentando autenticar usuario: imendoza
+Consulta ejecutada. Número de filas: 1
+[10-Nov-2025 07:44:28 America/Bogota] Datos del usuario: Array
+(
+    [cod_usuario] => 20
+    [id_tipo_documento] => 1
+    [numero_documento] => 1030123456
+    [nombres] => Isabella
+    [apellidos] => Mendoza Castro
+    [telefono] => 3212345678
+    [correo] => imendoza@email.com
+    [direccion] => Carrera 90 #45-67
+    [usuario] => imendoza
+    [clave] => imendoza123
+    [id_rol] => 3
+    [estado] => ACTIVO
+    [rol] => Estudiante
+)
+
+[10-Nov-2025 07:44:28 America/Bogota] Tipo de id_rol: integer
+[10-Nov-2025 07:44:28 America/Bogota] Valor de id_rol: 3
+[10-Nov-2025 07:44:28 America/Bogota] Role ID después de conversión: 3
+[10-Nov-2025 07:44:28 America/Bogota] Ejecutando redirección a: ../../views/estudiante/index.php
+=== Inicio de sesión: 2025-11-10 08:19:15 ===
+[10-Nov-2025 08:19:15 America/Bogota] === Nueva solicitud de inicio de sesión ===
+[10-Nov-2025 08:19:15 America/Bogota] Intento de inicio de sesión - Usuario: danna.agudelo
+Intentando autenticar usuario: danna.agudelo
+Consulta ejecutada. Número de filas: 1
+[10-Nov-2025 08:19:15 America/Bogota] Datos del usuario: Array
+(
+    [cod_usuario] => 4
+    [id_tipo_documento] => 1
+    [numero_documento] => 1082498535
+    [nombres] => Danna
+    [apellidos] => Agudelo
+    [telefono] => 3126429827
+    [correo] => danna@gmail.com
+    [direccion] => 
+    [usuario] => danna.agudelo
+    [clave] => 123456
+    [id_rol] => 2
+    [estado] => ACTIVO
+    [rol] => Docente
+)
+
+[10-Nov-2025 08:19:15 America/Bogota] Tipo de id_rol: integer
+[10-Nov-2025 08:19:15 America/Bogota] Valor de id_rol: 2
+[10-Nov-2025 08:19:15 America/Bogota] Role ID después de conversión: 2
+[10-Nov-2025 08:19:15 America/Bogota] Redirigiendo a: ../../views/docente/index.php
+[10-Nov-2025 08:19:15 America/Bogota] Ejecutando redirección a: ../../views/docente/index.php
+=== Inicio de sesión: 2025-11-10 08:20:31 ===
+[10-Nov-2025 08:20:31 America/Bogota] === Nueva solicitud de inicio de sesión ===
+[10-Nov-2025 08:20:31 America/Bogota] Intento de inicio de sesión - Usuario: imendoza
+Intentando autenticar usuario: imendoza
+Consulta ejecutada. Número de filas: 1
+[10-Nov-2025 08:20:31 America/Bogota] Datos del usuario: Array
+(
+    [cod_usuario] => 20
+    [id_tipo_documento] => 1
+    [numero_documento] => 1030123456
+    [nombres] => Isabella
+    [apellidos] => Mendoza Castro
+    [telefono] => 3212345678
+    [correo] => imendoza@email.com
+    [direccion] => Carrera 90 #45-67
+    [usuario] => imendoza
+    [clave] => imendoza123
+    [id_rol] => 3
+    [estado] => ACTIVO
+    [rol] => Estudiante
+)
+
+[10-Nov-2025 08:20:31 America/Bogota] Tipo de id_rol: integer
+[10-Nov-2025 08:20:31 America/Bogota] Valor de id_rol: 3
+[10-Nov-2025 08:20:31 America/Bogota] Role ID después de conversión: 3
+[10-Nov-2025 08:20:31 America/Bogota] Ejecutando redirección a: ../../views/estudiante/index.php
+=== Inicio de sesión: 2025-11-10 08:21:49 ===
+[10-Nov-2025 08:21:49 America/Bogota] === Nueva solicitud de inicio de sesión ===
+[10-Nov-2025 08:21:49 America/Bogota] Intento de inicio de sesión - Usuario: imendoza
+Intentando autenticar usuario: imendoza
+Consulta ejecutada. Número de filas: 1
+[10-Nov-2025 08:21:49 America/Bogota] Datos del usuario: Array
+(
+    [cod_usuario] => 20
+    [id_tipo_documento] => 1
+    [numero_documento] => 1030123456
+    [nombres] => Isabella
+    [apellidos] => Mendoza Castro
+    [telefono] => 3212345678
+    [correo] => imendoza@email.com
+    [direccion] => Carrera 90 #45-67
+    [usuario] => imendoza
+    [clave] => imendoza123
+    [id_rol] => 3
+    [estado] => ACTIVO
+    [rol] => Estudiante
+)
+
+[10-Nov-2025 08:21:49 America/Bogota] Tipo de id_rol: integer
+[10-Nov-2025 08:21:49 America/Bogota] Valor de id_rol: 3
+[10-Nov-2025 08:21:49 America/Bogota] Role ID después de conversión: 3
+[10-Nov-2025 08:21:49 America/Bogota] Ejecutando redirección a: ../../views/estudiante/index.php
+=== Inicio de sesión: 2025-11-10 08:22:57 ===
+[10-Nov-2025 08:22:57 America/Bogota] === Nueva solicitud de inicio de sesión ===
+[10-Nov-2025 08:22:57 America/Bogota] Intento de inicio de sesión - Usuario: danna.agudelo
+Intentando autenticar usuario: danna.agudelo
+Consulta ejecutada. Número de filas: 0
+[10-Nov-2025 08:22:57 America/Bogota] Inicio de sesión fallido - Usuario: danna.agudelo
+=== Inicio de sesión: 2025-11-10 08:23:01 ===
+[10-Nov-2025 08:23:01 America/Bogota] === Nueva solicitud de inicio de sesión ===
+[10-Nov-2025 08:23:01 America/Bogota] Intento de inicio de sesión - Usuario: danna.agudelo
+Intentando autenticar usuario: danna.agudelo
+Consulta ejecutada. Número de filas: 1
+[10-Nov-2025 08:23:01 America/Bogota] Datos del usuario: Array
+(
+    [cod_usuario] => 4
+    [id_tipo_documento] => 1
+    [numero_documento] => 1082498535
+    [nombres] => Danna
+    [apellidos] => Agudelo
+    [telefono] => 3126429827
+    [correo] => danna@gmail.com
+    [direccion] => 
+    [usuario] => danna.agudelo
+    [clave] => 123456
+    [id_rol] => 2
+    [estado] => ACTIVO
+    [rol] => Docente
+)
+
+[10-Nov-2025 08:23:01 America/Bogota] Tipo de id_rol: integer
+[10-Nov-2025 08:23:01 America/Bogota] Valor de id_rol: 2
+[10-Nov-2025 08:23:01 America/Bogota] Role ID después de conversión: 2
+[10-Nov-2025 08:23:01 America/Bogota] Redirigiendo a: ../../views/docente/index.php
+[10-Nov-2025 08:23:01 America/Bogota] Ejecutando redirección a: ../../views/docente/index.php
+=== Inicio de sesión: 2025-11-10 08:23:31 ===
+[10-Nov-2025 08:23:31 America/Bogota] === Nueva solicitud de inicio de sesión ===
+[10-Nov-2025 08:23:31 America/Bogota] Intento de inicio de sesión - Usuario: imendoza
+Intentando autenticar usuario: imendoza
+Consulta ejecutada. Número de filas: 1
+[10-Nov-2025 08:23:31 America/Bogota] Datos del usuario: Array
+(
+    [cod_usuario] => 20
+    [id_tipo_documento] => 1
+    [numero_documento] => 1030123456
+    [nombres] => Isabella
+    [apellidos] => Mendoza Castro
+    [telefono] => 3212345678
+    [correo] => imendoza@email.com
+    [direccion] => Carrera 90 #45-67
+    [usuario] => imendoza
+    [clave] => imendoza123
+    [id_rol] => 3
+    [estado] => ACTIVO
+    [rol] => Estudiante
+)
+
+[10-Nov-2025 08:23:31 America/Bogota] Tipo de id_rol: integer
+[10-Nov-2025 08:23:31 America/Bogota] Valor de id_rol: 3
+[10-Nov-2025 08:23:31 America/Bogota] Role ID después de conversión: 3
+[10-Nov-2025 08:23:31 America/Bogota] Ejecutando redirección a: ../../views/estudiante/index.php
