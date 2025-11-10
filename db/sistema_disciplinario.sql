@@ -1,199 +1,165 @@
--- Crear nueva base de datos
-CREATE DATABASE IF NOT EXISTS `sistema_disciplinario` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-USE `sistema_disciplinario`;
+-- phpMyAdmin SQL Dump
+-- version 5.2.1
+-- https://www.phpmyadmin.net/
+--
+-- Host: 127.0.0.1
+-- Generation Time: Nov 10, 2025 at 10:33 PM
+-- Server version: 10.4.32-MariaDB
+-- PHP Version: 8.2.12
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
 SET time_zone = "+00:00";
-SET FOREIGN_KEY_CHECKS = 0;
 
--- Tabla rol (sin cambios, es correcta)
-CREATE TABLE `rol` (
-  `cod_rol` int(11) NOT NULL AUTO_INCREMENT,
-  `rol` varchar(255) NOT NULL,
-  PRIMARY KEY (`cod_rol`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
--- Tabla tipo_documento (sin cambios, es correcta)
-CREATE TABLE `tipo_documento` (
-  `cod_tipodocumento` int(11) NOT NULL AUTO_INCREMENT,
-  `tipo_documento` varchar(255) NOT NULL,
-  PRIMARY KEY (`cod_tipodocumento`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
+/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
+/*!40101 SET NAMES utf8mb4 */;
 
--- Tabla usuario (base para docentes y estudiantes)
-CREATE TABLE `usuario` (
-  `cod_usuario` int(11) NOT NULL AUTO_INCREMENT,
-  `id_tipo_documento` int(11) NOT NULL,
-  `numero_documento` varchar(255) NOT NULL,
-  `nombres` varchar(255) NOT NULL,
-  `apellidos` varchar(255) NOT NULL,
-  `telefono` varchar(255) NOT NULL,
-  `correo` varchar(255) NOT NULL,
-  `direccion` varchar(255),
-  `usuario` varchar(255) NOT NULL,
-  `clave` varchar(255) NOT NULL,
-  `id_rol` int(11) NOT NULL,
-  `estado` ENUM('ACTIVO', 'INACTIVO', 'GRADUADO') DEFAULT 'ACTIVO',
-  PRIMARY KEY (`cod_usuario`),
-  UNIQUE KEY `uq_documento` (`id_tipo_documento`, `numero_documento`),
-  UNIQUE KEY `uq_usuario` (`usuario`),
-  UNIQUE KEY `uq_correo` (`correo`),
-  CONSTRAINT `fk_usuario_tipo_documento` FOREIGN KEY (`id_tipo_documento`) REFERENCES `tipo_documento` (`cod_tipodocumento`),
-  CONSTRAINT `fk_usuario_rol` FOREIGN KEY (`id_rol`) REFERENCES `rol` (`cod_rol`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+--
+-- Database: `sistema_disciplinario`
+--
 
--- Tabla asignatura (mejorada)
-CREATE TABLE `asignatura` (
-  `cod_asignatura` int(11) NOT NULL AUTO_INCREMENT,
-  `nombre_asignatura` varchar(255) NOT NULL,
-  `descripcion` text,
-  PRIMARY KEY (`cod_asignatura`),
-  UNIQUE KEY `uq_nombre_asignatura` (`nombre_asignatura`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+-- --------------------------------------------------------
 
--- Tabla grado (mejorada)
-CREATE TABLE `grado` (
-  `cod_grado` int(11) NOT NULL AUTO_INCREMENT,
-  `nombre_grado` varchar(255) NOT NULL,
-  `nivel` ENUM('PRIMARIA', 'SECUNDARIA', 'MEDIA') NOT NULL,
-  PRIMARY KEY (`cod_grado`),
-  UNIQUE KEY `uq_nombre_grado` (`nombre_grado`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+--
+-- Table structure for table `asignacion_docente`
+--
 
--- Tabla docente (optimizada)
-CREATE TABLE `docente` (
-  `cod_docente` int(11) NOT NULL AUTO_INCREMENT,
-  `id_usuario` int(11) NOT NULL,
-  `especialidad` text,
-  PRIMARY KEY (`cod_docente`),
-  UNIQUE KEY `uq_docente_usuario` (`id_usuario`),
-  CONSTRAINT `fk_docente_usuario` FOREIGN KEY (`id_usuario`) REFERENCES `usuario` (`cod_usuario`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
--- Tabla curso (mejorada)
-CREATE TABLE `curso` (
-  `cod_curso` int(11) NOT NULL AUTO_INCREMENT,
-  `nombre_curso` varchar(255) NOT NULL,
-  `id_grado` int(11) NOT NULL,
-  `id_director_grupo` int(11),
-  `ano_lectivo` int(11) NOT NULL,
-  `estado` ENUM('ACTIVO', 'INACTIVO') DEFAULT 'ACTIVO',
-  PRIMARY KEY (`cod_curso`),
-  UNIQUE KEY `uq_curso_ano` (`nombre_curso`, `ano_lectivo`),
-  CONSTRAINT `fk_curso_grado` FOREIGN KEY (`id_grado`) REFERENCES `grado` (`cod_grado`),
-  CONSTRAINT `fk_curso_director` FOREIGN KEY (`id_director_grupo`) REFERENCES `docente` (`cod_docente`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
--- Tabla asignacion_docente (nueva tabla para manejar docentes por curso y asignatura)
 CREATE TABLE `asignacion_docente` (
-  `cod_asignacion` int(11) NOT NULL AUTO_INCREMENT,
+  `cod_asignacion` int(11) NOT NULL,
   `id_docente` int(11) NOT NULL,
   `id_curso` int(11) NOT NULL,
   `id_asignatura` int(11) NOT NULL,
+  `ano_lectivo` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `asignacion_docente`
+--
+
+INSERT INTO `asignacion_docente` (`cod_asignacion`, `id_docente`, `id_curso`, `id_asignatura`, `ano_lectivo`) VALUES
+(1, 3, 2, 1, 2025);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `asignatura`
+--
+
+CREATE TABLE `asignatura` (
+  `cod_asignatura` int(11) NOT NULL,
+  `nombre_asignatura` varchar(255) NOT NULL,
+  `descripcion` text DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `asignatura`
+--
+
+INSERT INTO `asignatura` (`cod_asignatura`, `nombre_asignatura`, `descripcion`) VALUES
+(1, 'Inglés', 'Asignatura de lengua extranjera - Inglés');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `curso`
+--
+
+CREATE TABLE `curso` (
+  `cod_curso` int(11) NOT NULL,
+  `nombre_curso` varchar(255) NOT NULL,
+  `id_grado` int(11) NOT NULL,
+  `id_director_grupo` int(11) DEFAULT NULL,
   `ano_lectivo` int(11) NOT NULL,
-  PRIMARY KEY (`cod_asignacion`),
-  UNIQUE KEY `uq_asignacion` (`id_docente`, `id_curso`, `id_asignatura`, `ano_lectivo`),
-  CONSTRAINT `fk_asignacion_docente` FOREIGN KEY (`id_docente`) REFERENCES `docente` (`cod_docente`),
-  CONSTRAINT `fk_asignacion_curso` FOREIGN KEY (`id_curso`) REFERENCES `curso` (`cod_curso`),
-  CONSTRAINT `fk_asignacion_asignatura` FOREIGN KEY (`id_asignatura`) REFERENCES `asignatura` (`cod_asignatura`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+  `estado` enum('ACTIVO','INACTIVO') DEFAULT 'ACTIVO'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- Tabla estudiante (optimizada)
-CREATE TABLE `estudiante` (
-  `cod_estudiante` int(11) NOT NULL AUTO_INCREMENT,
+--
+-- Dumping data for table `curso`
+--
+
+INSERT INTO `curso` (`cod_curso`, `nombre_curso`, `id_grado`, `id_director_grupo`, `ano_lectivo`, `estado`) VALUES
+(1, '11-1', 1, 3, 2025, 'ACTIVO'),
+(2, '6-3', 1, 3, 2025, 'ACTIVO');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `docente`
+--
+
+CREATE TABLE `docente` (
+  `cod_docente` int(11) NOT NULL,
   `id_usuario` int(11) NOT NULL,
-  `fecha_nacimiento` date NOT NULL,
-  PRIMARY KEY (`cod_estudiante`),
-  UNIQUE KEY `uq_estudiante_usuario` (`id_usuario`),
-  CONSTRAINT `fk_estudiante_usuario` FOREIGN KEY (`id_usuario`) REFERENCES `usuario` (`cod_usuario`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+  `especialidad` text DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- Tabla matricula (nueva tabla para manejar estudiantes por curso)
-CREATE TABLE `matricula` (
-  `cod_matricula` int(11) NOT NULL AUTO_INCREMENT,
-  `id_estudiante` int(11) NOT NULL,
-  `id_curso` int(11) NOT NULL,
-  `fecha_matricula` date NOT NULL,
-  `estado` ENUM('ACTIVA', 'RETIRADO', 'GRADUADO') DEFAULT 'ACTIVA',
-  PRIMARY KEY (`cod_matricula`),
-  UNIQUE KEY `uq_matricula` (`id_estudiante`, `id_curso`),
-  CONSTRAINT `fk_matricula_estudiante` FOREIGN KEY (`id_estudiante`) REFERENCES `estudiante` (`cod_estudiante`),
-  CONSTRAINT `fk_matricula_curso` FOREIGN KEY (`id_curso`) REFERENCES `curso` (`cod_curso`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+--
+-- Dumping data for table `docente`
+--
 
--- Tabla tipo_falta (mejorada)
-CREATE TABLE `tipo_falta` (
-  `cod_tipofalta` int(11) NOT NULL AUTO_INCREMENT,
-  `nombre_tipo` varchar(255) NOT NULL,
-  `descripcion_tipo` text NOT NULL,
-  `gravedad` ENUM('LEVE', 'GRAVE', 'MUY_GRAVE') NOT NULL,
-  PRIMARY KEY (`cod_tipofalta`),
-  UNIQUE KEY `uq_nombre_tipo` (`nombre_tipo`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+INSERT INTO `docente` (`cod_docente`, `id_usuario`, `especialidad`) VALUES
+(3, 4, 'Inglés');
 
--- Tabla falta (mejorada)
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `estudiante`
+--
+
+CREATE TABLE `estudiante` (
+  `cod_estudiante` int(11) NOT NULL,
+  `id_usuario` int(11) NOT NULL,
+  `fecha_nacimiento` date NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `estudiante`
+--
+
+INSERT INTO `estudiante` (`cod_estudiante`, `id_usuario`, `fecha_nacimiento`) VALUES
+(2, 9, '1998-02-10'),
+(13, 13, '2025-11-09'),
+(30, 20, '2025-11-04');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `falta`
+--
+
 CREATE TABLE `falta` (
-  `cod_falta` int(11) NOT NULL AUTO_INCREMENT,
+  `cod_falta` int(11) NOT NULL,
   `id_tipofalta` int(11) NOT NULL,
   `descripcion` varchar(255) NOT NULL,
-  `sancion_sugerida` text,
-  PRIMARY KEY (`cod_falta`),
-  CONSTRAINT `fk_falta_tipo` FOREIGN KEY (`id_tipofalta`) REFERENCES `tipo_falta` (`cod_tipofalta`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+  `sancion_sugerida` text DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- Tabla registro_falta (mejorada)
-CREATE TABLE `registro_falta` (
-  `cod_registro` int(11) NOT NULL AUTO_INCREMENT,
-  `fecha_registro` date NOT NULL,
-  `hora_registro` time NOT NULL,
-  `id_estudiante` int(11) NOT NULL,
-  `id_docente` int(11) NOT NULL,
-  `id_curso` int(11) NOT NULL,
-  `id_falta` int(11) NOT NULL,
-  `descripcion_falta` text NOT NULL,
-  `descargos_estudiante` text,
-  `correctivos_disciplinarios` text,
-  `compromisos` text,
-  `observaciones` text,
-  `estado` ENUM('REPORTADA', 'EN_PROCESO', 'SANCIONADA', 'ARCHIVADA') DEFAULT 'REPORTADA',
-  PRIMARY KEY (`cod_registro`),
-  CONSTRAINT `fk_registro_estudiante` FOREIGN KEY (`id_estudiante`) REFERENCES `estudiante` (`cod_estudiante`),
-  CONSTRAINT `fk_registro_docente` FOREIGN KEY (`id_docente`) REFERENCES `docente` (`cod_docente`),
-  CONSTRAINT `fk_registro_curso` FOREIGN KEY (`id_curso`) REFERENCES `curso` (`cod_curso`),
-  CONSTRAINT `fk_registro_falta` FOREIGN KEY (`id_falta`) REFERENCES `falta` (`cod_falta`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+--
+-- Dumping data for table `falta`
+--
 
--- Tabla seguimiento (mejorada)
-CREATE TABLE `seguimiento` (
-  `cod_seguimiento` int(11) NOT NULL AUTO_INCREMENT,
-  `id_registro` int(11) NOT NULL,
-  `fecha_seguimiento` datetime NOT NULL,
-  `realizado_por` int(11) NOT NULL,
-  `observaciones` text NOT NULL,
-  `resultado` ENUM('POSITIVO', 'NEGATIVO', 'EN_PROCESO') NOT NULL,
-  PRIMARY KEY (`cod_seguimiento`),
-  CONSTRAINT `fk_seguimiento_registro` FOREIGN KEY (`id_registro`) REFERENCES `registro_falta` (`cod_registro`),
-  CONSTRAINT `fk_seguimiento_usuario` FOREIGN KEY (`realizado_por`) REFERENCES `usuario` (`cod_usuario`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+INSERT INTO `falta` (`cod_falta`, `id_tipofalta`, `descripcion`, `sancion_sugerida`) VALUES
+(1, 2, 'No asiste a clase', 'Cuando ingresa al aula de clase se comporta de manera indebida');
 
--- Restaurar verificación de claves foráneas
--- Insertar datos iniciales
--- Insertar roles
-INSERT INTO `rol` (`cod_rol`, `rol`) VALUES
-(1, 'Directivo'),
-(2, 'Docente'),
-(3, 'Estudiante');
+-- --------------------------------------------------------
 
--- Insertar tipos de documento
-INSERT INTO `tipo_documento` (`cod_tipodocumento`, `tipo_documento`) VALUES
-(1, 'Registro Civil'),
-(2, 'Tarjeta de Identidad'),
-(3, 'Cedula de Ciudadania'),
-(4, 'Pasaporte'),
-(5, 'Permiso Especial');
+--
+-- Table structure for table `grado`
+--
 
--- Insertar grados
+CREATE TABLE `grado` (
+  `cod_grado` int(11) NOT NULL,
+  `nombre_grado` varchar(255) NOT NULL,
+  `nivel` enum('PRIMARIA','SECUNDARIA','MEDIA') NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `grado`
+--
+
 INSERT INTO `grado` (`cod_grado`, `nombre_grado`, `nivel`) VALUES
 (1, 'Primero', 'PRIMARIA'),
 (2, 'Segundo', 'PRIMARIA'),
@@ -201,43 +167,437 @@ INSERT INTO `grado` (`cod_grado`, `nombre_grado`, `nivel`) VALUES
 (4, 'Cuarto', 'PRIMARIA'),
 (5, 'Quinto', 'PRIMARIA');
 
--- Insertar asignaturas
-INSERT INTO `asignatura` (`cod_asignatura`, `nombre_asignatura`, `descripcion`) VALUES
-(1, 'Inglés', 'Asignatura de lengua extranjera - Inglés');
+-- --------------------------------------------------------
 
--- Insertar usuarios iniciales (necesario para docentes y estudiantes)
-INSERT INTO `usuario` (
-    `cod_usuario`, 
-    `id_tipo_documento`, 
-    `numero_documento`, 
-    `nombres`, 
-    `apellidos`, 
-    `telefono`, 
-    `correo`, 
-    `usuario`, 
-    `clave`, 
-    `id_rol`
-) VALUES
-(4, 1, '1082498535', 'Danna', 'Agudelo', '3126429827', 'danna@gmail.com', 'danna.agudelo', '123456', 2);
+--
+-- Table structure for table `matricula`
+--
 
--- Insertar docente
-INSERT INTO `docente` (`cod_docente`, `id_usuario`, `especialidad`) VALUES
-(3, 4, 'Inglés');
+CREATE TABLE `matricula` (
+  `cod_matricula` int(11) NOT NULL,
+  `id_estudiante` int(11) NOT NULL,
+  `id_curso` int(11) NOT NULL,
+  `fecha_matricula` date NOT NULL,
+  `estado` enum('ACTIVA','RETIRADO','GRADUADO') DEFAULT 'ACTIVA'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- Insertar cursos (corregidos con la nueva estructura)
-INSERT INTO `curso` (`cod_curso`, `nombre_curso`, `id_grado`, `id_director_grupo`, `ano_lectivo`) VALUES
-(1, '11-1', 1, 3, 2025),
-(2, '6-3', 1, 3, 2025);
+--
+-- Dumping data for table `matricula`
+--
 
--- Insertar tipos de falta (corregido con estructura adecuada)
+INSERT INTO `matricula` (`cod_matricula`, `id_estudiante`, `id_curso`, `fecha_matricula`, `estado`) VALUES
+(1, 2, 2, '2025-11-09', 'ACTIVA'),
+(2, 13, 2, '2025-11-01', 'ACTIVA'),
+(3, 30, 2, '2025-11-04', 'ACTIVA');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `registro_falta`
+--
+
+CREATE TABLE `registro_falta` (
+  `cod_registro` int(11) NOT NULL,
+  `fecha_registro` date NOT NULL,
+  `hora_registro` time NOT NULL,
+  `id_estudiante` int(11) NOT NULL,
+  `id_docente` int(11) NOT NULL,
+  `id_curso` int(11) NOT NULL,
+  `id_falta` int(11) NOT NULL,
+  `descripcion_falta` text NOT NULL,
+  `descargos_estudiante` text DEFAULT NULL,
+  `correctivos_disciplinarios` text DEFAULT NULL,
+  `compromisos` text DEFAULT NULL,
+  `observaciones` text DEFAULT NULL,
+  `estado` enum('REPORTADA','EN_PROCESO','SANCIONADA','ARCHIVADA') DEFAULT 'REPORTADA'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `rol`
+--
+
+CREATE TABLE `rol` (
+  `cod_rol` int(11) NOT NULL,
+  `rol` varchar(255) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `rol`
+--
+
+INSERT INTO `rol` (`cod_rol`, `rol`) VALUES
+(1, 'Directivo'),
+(2, 'Docente'),
+(3, 'Estudiante');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `seguimiento`
+--
+
+CREATE TABLE `seguimiento` (
+  `cod_seguimiento` int(11) NOT NULL,
+  `id_registro` int(11) NOT NULL,
+  `fecha_seguimiento` datetime NOT NULL,
+  `realizado_por` int(11) NOT NULL,
+  `observaciones` text NOT NULL,
+  `resultado` enum('POSITIVO','NEGATIVO','EN_PROCESO') NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `tipo_documento`
+--
+
+CREATE TABLE `tipo_documento` (
+  `cod_tipodocumento` int(11) NOT NULL,
+  `tipo_documento` varchar(255) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `tipo_documento`
+--
+
+INSERT INTO `tipo_documento` (`cod_tipodocumento`, `tipo_documento`) VALUES
+(1, 'Registro Civil'),
+(2, 'Tarjeta de Identidad'),
+(3, 'Cedula de Ciudadania'),
+(4, 'Pasaporte'),
+(5, 'Permiso Especial');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `tipo_falta`
+--
+
+CREATE TABLE `tipo_falta` (
+  `cod_tipofalta` int(11) NOT NULL,
+  `nombre_tipo` varchar(255) NOT NULL,
+  `descripcion_tipo` text NOT NULL,
+  `gravedad` enum('LEVE','GRAVE','MUY_GRAVE') NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `tipo_falta`
+--
+
 INSERT INTO `tipo_falta` (`cod_tipofalta`, `nombre_tipo`, `descripcion_tipo`, `gravedad`) VALUES
 (1, 'Falta de Asistencia', 'Inasistencia injustificada a clases', 'LEVE'),
 (2, 'Indisciplina', 'Comportamiento inadecuado en clase', 'GRAVE');
 
--- Insertar faltas
-INSERT INTO `falta` (`cod_falta`, `id_tipofalta`, `descripcion`, `sancion_sugerida`) VALUES
-(1, 2, 'No asiste a clase', 'Cuando ingresa al aula de clase se comporta de manera indebida');
+-- --------------------------------------------------------
 
--- Restaurar verificación de claves foráneas y commit
-SET FOREIGN_KEY_CHECKS = 1;
+--
+-- Table structure for table `usuario`
+--
+
+CREATE TABLE `usuario` (
+  `cod_usuario` int(11) NOT NULL,
+  `id_tipo_documento` int(11) NOT NULL,
+  `numero_documento` varchar(255) NOT NULL,
+  `nombres` varchar(255) NOT NULL,
+  `apellidos` varchar(255) NOT NULL,
+  `telefono` varchar(255) NOT NULL,
+  `correo` varchar(255) NOT NULL,
+  `direccion` varchar(255) DEFAULT NULL,
+  `usuario` varchar(255) NOT NULL,
+  `clave` varchar(255) NOT NULL,
+  `id_rol` int(11) NOT NULL,
+  `estado` enum('ACTIVO','INACTIVO','GRADUADO') DEFAULT 'ACTIVO'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `usuario`
+--
+
+INSERT INTO `usuario` (`cod_usuario`, `id_tipo_documento`, `numero_documento`, `nombres`, `apellidos`, `telefono`, `correo`, `direccion`, `usuario`, `clave`, `id_rol`, `estado`) VALUES
+(4, 1, '1082498535', 'Danna', 'Agudelo', '3126429827', 'danna@gmail.com', NULL, 'danna.agudelo', '123456', 2, 'ACTIVO'),
+(9, 3, '10065677', 'danie', 'vele', '31188888', 'correo@coreee', 'calle1215', 'danie.vele', '123123', 3, 'ACTIVO'),
+(12, 3, '1023', 'juean', 'veas', '321215132', 'corere@coreq.com', 'calle11111', 'juean', 'juean', 3, 'ACTIVO'),
+(13, 3, '1023456789', 'Juan Carlos', 'Vélez Ramírez', '3212151321', 'jvelez@email.com', 'Calle 11 #45-67', 'jvelez', 'jvelez123', 3, 'ACTIVO'),
+(14, 1, '1024567890', 'María José', 'Palacios Silva', '3156789012', 'mpalacios@email.com', 'Carrera 23 #12-45', 'mpalacios', 'mpalacios123', 3, 'ACTIVO'),
+(15, 2, '1025678901', 'Daniel', 'Ospina Torres', '3167890123', 'dospina@email.com', 'Avenida 34 #56-78', 'dospina', 'dospina123', 3, 'ACTIVO'),
+(16, 3, '1026789012', 'Laura Valentina', 'Martínez Ruiz', '3178901234', 'lmartinez@email.com', 'Calle 45 #89-12', 'lmartinez', 'lmartinez123', 3, 'ACTIVO'),
+(17, 1, '1027890123', 'Andrés Felipe', 'García López', '3189012345', 'agarcia@email.com', 'Carrera 67 #34-56', 'agarcia', 'agarcia123', 3, 'ACTIVO'),
+(18, 2, '1028901234', 'Sofía', 'Herrera Díaz', '3190123456', 'sherrera@email.com', 'Avenida 78 #90-23', 'sherrera', 'sherrera123', 3, 'ACTIVO'),
+(19, 3, '1029012345', 'Carlos Eduardo', 'Rojas Pérez', '3201234567', 'crojas@email.com', 'Calle 89 #12-34', 'crojas', 'crojas123', 3, 'ACTIVO'),
+(20, 1, '1030123456', 'Isabella', 'Mendoza Castro', '3212345678', 'imendoza@email.com', 'Carrera 90 #45-67', 'imendoza', 'imendoza123', 3, 'ACTIVO'),
+(21, 2, '1031234567', 'Santiago', 'Vargas Molina', '3223456789', 'svargas@email.com', 'Avenida 12 #67-89', 'svargas', 'svargas123', 3, 'ACTIVO'),
+(22, 3, '1032345678', 'Valeria', 'Sánchez Ríos', '3234567890', 'vsanchez@email.com', 'Calle 23 #90-12', 'vsanchez', 'vsanchez123', 3, 'ACTIVO');
+
+--
+-- Indexes for dumped tables
+--
+
+--
+-- Indexes for table `asignacion_docente`
+--
+ALTER TABLE `asignacion_docente`
+  ADD PRIMARY KEY (`cod_asignacion`),
+  ADD UNIQUE KEY `uq_asignacion` (`id_docente`,`id_curso`,`id_asignatura`,`ano_lectivo`),
+  ADD KEY `fk_asignacion_curso` (`id_curso`),
+  ADD KEY `fk_asignacion_asignatura` (`id_asignatura`);
+
+--
+-- Indexes for table `asignatura`
+--
+ALTER TABLE `asignatura`
+  ADD PRIMARY KEY (`cod_asignatura`),
+  ADD UNIQUE KEY `uq_nombre_asignatura` (`nombre_asignatura`);
+
+--
+-- Indexes for table `curso`
+--
+ALTER TABLE `curso`
+  ADD PRIMARY KEY (`cod_curso`),
+  ADD UNIQUE KEY `uq_curso_ano` (`nombre_curso`,`ano_lectivo`),
+  ADD KEY `fk_curso_grado` (`id_grado`),
+  ADD KEY `fk_curso_director` (`id_director_grupo`);
+
+--
+-- Indexes for table `docente`
+--
+ALTER TABLE `docente`
+  ADD PRIMARY KEY (`cod_docente`),
+  ADD UNIQUE KEY `uq_docente_usuario` (`id_usuario`);
+
+--
+-- Indexes for table `estudiante`
+--
+ALTER TABLE `estudiante`
+  ADD PRIMARY KEY (`cod_estudiante`),
+  ADD UNIQUE KEY `uq_estudiante_usuario` (`id_usuario`);
+
+--
+-- Indexes for table `falta`
+--
+ALTER TABLE `falta`
+  ADD PRIMARY KEY (`cod_falta`),
+  ADD KEY `fk_falta_tipo` (`id_tipofalta`);
+
+--
+-- Indexes for table `grado`
+--
+ALTER TABLE `grado`
+  ADD PRIMARY KEY (`cod_grado`),
+  ADD UNIQUE KEY `uq_nombre_grado` (`nombre_grado`);
+
+--
+-- Indexes for table `matricula`
+--
+ALTER TABLE `matricula`
+  ADD PRIMARY KEY (`cod_matricula`),
+  ADD UNIQUE KEY `uq_matricula` (`id_estudiante`,`id_curso`),
+  ADD KEY `fk_matricula_curso` (`id_curso`);
+
+--
+-- Indexes for table `registro_falta`
+--
+ALTER TABLE `registro_falta`
+  ADD PRIMARY KEY (`cod_registro`),
+  ADD KEY `fk_registro_estudiante` (`id_estudiante`),
+  ADD KEY `fk_registro_docente` (`id_docente`),
+  ADD KEY `fk_registro_curso` (`id_curso`),
+  ADD KEY `fk_registro_falta` (`id_falta`);
+
+--
+-- Indexes for table `rol`
+--
+ALTER TABLE `rol`
+  ADD PRIMARY KEY (`cod_rol`);
+
+--
+-- Indexes for table `seguimiento`
+--
+ALTER TABLE `seguimiento`
+  ADD PRIMARY KEY (`cod_seguimiento`),
+  ADD KEY `fk_seguimiento_registro` (`id_registro`),
+  ADD KEY `fk_seguimiento_usuario` (`realizado_por`);
+
+--
+-- Indexes for table `tipo_documento`
+--
+ALTER TABLE `tipo_documento`
+  ADD PRIMARY KEY (`cod_tipodocumento`);
+
+--
+-- Indexes for table `tipo_falta`
+--
+ALTER TABLE `tipo_falta`
+  ADD PRIMARY KEY (`cod_tipofalta`),
+  ADD UNIQUE KEY `uq_nombre_tipo` (`nombre_tipo`);
+
+--
+-- Indexes for table `usuario`
+--
+ALTER TABLE `usuario`
+  ADD PRIMARY KEY (`cod_usuario`),
+  ADD UNIQUE KEY `uq_documento` (`id_tipo_documento`,`numero_documento`),
+  ADD UNIQUE KEY `uq_usuario` (`usuario`),
+  ADD UNIQUE KEY `uq_correo` (`correo`),
+  ADD KEY `fk_usuario_rol` (`id_rol`);
+
+--
+-- AUTO_INCREMENT for dumped tables
+--
+
+--
+-- AUTO_INCREMENT for table `asignacion_docente`
+--
+ALTER TABLE `asignacion_docente`
+  MODIFY `cod_asignacion` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
+-- AUTO_INCREMENT for table `asignatura`
+--
+ALTER TABLE `asignatura`
+  MODIFY `cod_asignatura` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
+-- AUTO_INCREMENT for table `curso`
+--
+ALTER TABLE `curso`
+  MODIFY `cod_curso` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+
+--
+-- AUTO_INCREMENT for table `docente`
+--
+ALTER TABLE `docente`
+  MODIFY `cod_docente` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+
+--
+-- AUTO_INCREMENT for table `estudiante`
+--
+ALTER TABLE `estudiante`
+  MODIFY `cod_estudiante` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=31;
+
+--
+-- AUTO_INCREMENT for table `falta`
+--
+ALTER TABLE `falta`
+  MODIFY `cod_falta` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
+-- AUTO_INCREMENT for table `grado`
+--
+ALTER TABLE `grado`
+  MODIFY `cod_grado` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+
+--
+-- AUTO_INCREMENT for table `matricula`
+--
+ALTER TABLE `matricula`
+  MODIFY `cod_matricula` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+
+--
+-- AUTO_INCREMENT for table `registro_falta`
+--
+ALTER TABLE `registro_falta`
+  MODIFY `cod_registro` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `rol`
+--
+ALTER TABLE `rol`
+  MODIFY `cod_rol` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+
+--
+-- AUTO_INCREMENT for table `seguimiento`
+--
+ALTER TABLE `seguimiento`
+  MODIFY `cod_seguimiento` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `tipo_documento`
+--
+ALTER TABLE `tipo_documento`
+  MODIFY `cod_tipodocumento` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+
+--
+-- AUTO_INCREMENT for table `tipo_falta`
+--
+ALTER TABLE `tipo_falta`
+  MODIFY `cod_tipofalta` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+
+--
+-- AUTO_INCREMENT for table `usuario`
+--
+ALTER TABLE `usuario`
+  MODIFY `cod_usuario` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=23;
+
+--
+-- Constraints for dumped tables
+--
+
+--
+-- Constraints for table `asignacion_docente`
+--
+ALTER TABLE `asignacion_docente`
+  ADD CONSTRAINT `fk_asignacion_asignatura` FOREIGN KEY (`id_asignatura`) REFERENCES `asignatura` (`cod_asignatura`),
+  ADD CONSTRAINT `fk_asignacion_curso` FOREIGN KEY (`id_curso`) REFERENCES `curso` (`cod_curso`),
+  ADD CONSTRAINT `fk_asignacion_docente` FOREIGN KEY (`id_docente`) REFERENCES `docente` (`cod_docente`);
+
+--
+-- Constraints for table `curso`
+--
+ALTER TABLE `curso`
+  ADD CONSTRAINT `fk_curso_director` FOREIGN KEY (`id_director_grupo`) REFERENCES `docente` (`cod_docente`),
+  ADD CONSTRAINT `fk_curso_grado` FOREIGN KEY (`id_grado`) REFERENCES `grado` (`cod_grado`);
+
+--
+-- Constraints for table `docente`
+--
+ALTER TABLE `docente`
+  ADD CONSTRAINT `fk_docente_usuario` FOREIGN KEY (`id_usuario`) REFERENCES `usuario` (`cod_usuario`);
+
+--
+-- Constraints for table `estudiante`
+--
+ALTER TABLE `estudiante`
+  ADD CONSTRAINT `fk_estudiante_usuario` FOREIGN KEY (`id_usuario`) REFERENCES `usuario` (`cod_usuario`);
+
+--
+-- Constraints for table `falta`
+--
+ALTER TABLE `falta`
+  ADD CONSTRAINT `fk_falta_tipo` FOREIGN KEY (`id_tipofalta`) REFERENCES `tipo_falta` (`cod_tipofalta`);
+
+--
+-- Constraints for table `matricula`
+--
+ALTER TABLE `matricula`
+  ADD CONSTRAINT `fk_matricula_curso` FOREIGN KEY (`id_curso`) REFERENCES `curso` (`cod_curso`),
+  ADD CONSTRAINT `fk_matricula_estudiante` FOREIGN KEY (`id_estudiante`) REFERENCES `estudiante` (`cod_estudiante`);
+
+--
+-- Constraints for table `registro_falta`
+--
+ALTER TABLE `registro_falta`
+  ADD CONSTRAINT `fk_registro_curso` FOREIGN KEY (`id_curso`) REFERENCES `curso` (`cod_curso`),
+  ADD CONSTRAINT `fk_registro_docente` FOREIGN KEY (`id_docente`) REFERENCES `docente` (`cod_docente`),
+  ADD CONSTRAINT `fk_registro_estudiante` FOREIGN KEY (`id_estudiante`) REFERENCES `estudiante` (`cod_estudiante`),
+  ADD CONSTRAINT `fk_registro_falta` FOREIGN KEY (`id_falta`) REFERENCES `falta` (`cod_falta`);
+
+--
+-- Constraints for table `seguimiento`
+--
+ALTER TABLE `seguimiento`
+  ADD CONSTRAINT `fk_seguimiento_registro` FOREIGN KEY (`id_registro`) REFERENCES `registro_falta` (`cod_registro`),
+  ADD CONSTRAINT `fk_seguimiento_usuario` FOREIGN KEY (`realizado_por`) REFERENCES `usuario` (`cod_usuario`);
+
+--
+-- Constraints for table `usuario`
+--
+ALTER TABLE `usuario`
+  ADD CONSTRAINT `fk_usuario_rol` FOREIGN KEY (`id_rol`) REFERENCES `rol` (`cod_rol`),
+  ADD CONSTRAINT `fk_usuario_tipo_documento` FOREIGN KEY (`id_tipo_documento`) REFERENCES `tipo_documento` (`cod_tipodocumento`);
 COMMIT;
+
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
