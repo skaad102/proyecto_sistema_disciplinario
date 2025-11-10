@@ -52,6 +52,7 @@ error_log("Sesión en docente/index.php: " . print_r($_SESSION, true));
             <li class="menu-item" onclick="showTable(1)">📝 Registrar Falta</li>
             <li class="menu-item" onclick="showTable(2)">📋 Mis Reportes</li>
             <li class="menu-item" onclick="showTable(3)">👥 Estudiantes</li>
+            <li class="menu-item" onclick="showTable(4)">📚 Mis Asignaturas</li>
         </ul>
     </div>
 
@@ -82,6 +83,10 @@ error_log("Sesión en docente/index.php: " . print_r($_SESSION, true));
 
         <div class="table-section" id="table3">
             <?php include 'estudiantes.php'; ?>
+        </div>
+
+        <div class="table-section" id="table4">
+            <?php include 'mis_asignaturas.php'; ?>
         </div>
     </div>
 
