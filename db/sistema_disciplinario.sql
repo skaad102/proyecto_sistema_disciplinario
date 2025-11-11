@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Nov 10, 2025 at 10:33 PM
+-- Generation Time: Nov 11, 2025 at 05:42 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -24,6 +24,17 @@ SET time_zone = "+00:00";
 --
 -- Database: `sistema_disciplinario`
 --
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `admin`
+--
+
+CREATE TABLE `admin` (
+  `cod_admin` int(11) NOT NULL,
+  `id_usuario` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -63,7 +74,9 @@ CREATE TABLE `asignatura` (
 --
 
 INSERT INTO `asignatura` (`cod_asignatura`, `nombre_asignatura`, `descripcion`) VALUES
-(1, 'Inglés', 'Asignatura de lengua extranjera - Inglés');
+(1, 'Inglés', 'Asignatura de lengua extranjera - Inglés'),
+(3, 'Sistemas', 'Aula 202 caney 2'),
+(8, '', '');
 
 -- --------------------------------------------------------
 
@@ -97,15 +110,17 @@ INSERT INTO `curso` (`cod_curso`, `nombre_curso`, `id_grado`, `id_director_grupo
 CREATE TABLE `docente` (
   `cod_docente` int(11) NOT NULL,
   `id_usuario` int(11) NOT NULL,
-  `especialidad` text DEFAULT NULL
+  `especialidad` text DEFAULT NULL,
+  `estado` enum('ACTIVO','INACTIVO') DEFAULT 'ACTIVO'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `docente`
 --
 
-INSERT INTO `docente` (`cod_docente`, `id_usuario`, `especialidad`) VALUES
-(3, 4, 'Inglés');
+INSERT INTO `docente` (`cod_docente`, `id_usuario`, `especialidad`, `estado`) VALUES
+(3, 4, 'Inglés', 'ACTIVO'),
+(4, 10000000, 'Matematicas', 'ACTIVO');
 
 -- --------------------------------------------------------
 
@@ -126,7 +141,8 @@ CREATE TABLE `estudiante` (
 INSERT INTO `estudiante` (`cod_estudiante`, `id_usuario`, `fecha_nacimiento`) VALUES
 (2, 9, '1998-02-10'),
 (13, 13, '2025-11-09'),
-(30, 20, '2025-11-04');
+(30, 20, '2025-11-04'),
+(31, 24, '2020-05-10');
 
 -- --------------------------------------------------------
 
@@ -332,11 +348,21 @@ INSERT INTO `usuario` (`cod_usuario`, `id_tipo_documento`, `numero_documento`, `
 (19, 3, '1029012345', 'Carlos Eduardo', 'Rojas Pérez', '3201234567', 'crojas@email.com', 'Calle 89 #12-34', 'crojas', 'crojas123', 3, 'ACTIVO'),
 (20, 1, '1030123456', 'Isabella', 'Mendoza Castro', '3212345678', 'imendoza@email.com', 'Carrera 90 #45-67', 'imendoza', 'imendoza123', 3, 'ACTIVO'),
 (21, 2, '1031234567', 'Santiago', 'Vargas Molina', '3223456789', 'svargas@email.com', 'Avenida 12 #67-89', 'svargas', 'svargas123', 3, 'ACTIVO'),
-(22, 3, '1032345678', 'Valeria', 'Sánchez Ríos', '3234567890', 'vsanchez@email.com', 'Calle 23 #90-12', 'vsanchez', 'vsanchez123', 3, 'ACTIVO');
+(22, 3, '1032345678', 'Valeria', 'Sánchez Ríos', '3234567890', 'vsanchez@email.com', 'Calle 23 #90-12', 'vsanchez', 'vsanchez123', 3, 'ACTIVO'),
+(24, 3, '1000101010', 'daniel', 'adame', '31651651', 'core@vorekalsdk.co', 'cale 12r\'opas', 'daniel.agudelo', '123456', 3, 'ACTIVO'),
+(9999999, 3, '99999999', 'super', 'admin', '31000000', 'admin@colegio.conm', 'av siempre viva 123', 'admin', 'admin123', 1, 'ACTIVO'),
+(10000000, 3, '555555', 'juan carlos', 'perez', '3100055808', 'micore@coreo.com', 'caler qwe', 'juan.perez', '123456', 2, 'ACTIVO');
 
 --
 -- Indexes for dumped tables
 --
+
+--
+-- Indexes for table `admin`
+--
+ALTER TABLE `admin`
+  ADD PRIMARY KEY (`cod_admin`),
+  ADD KEY `id_usuario` (`id_usuario`);
 
 --
 -- Indexes for table `asignacion_docente`
@@ -460,7 +486,7 @@ ALTER TABLE `asignacion_docente`
 -- AUTO_INCREMENT for table `asignatura`
 --
 ALTER TABLE `asignatura`
-  MODIFY `cod_asignatura` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `cod_asignatura` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- AUTO_INCREMENT for table `curso`
@@ -472,13 +498,13 @@ ALTER TABLE `curso`
 -- AUTO_INCREMENT for table `docente`
 --
 ALTER TABLE `docente`
-  MODIFY `cod_docente` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `cod_docente` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT for table `estudiante`
 --
 ALTER TABLE `estudiante`
-  MODIFY `cod_estudiante` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=31;
+  MODIFY `cod_estudiante` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=32;
 
 --
 -- AUTO_INCREMENT for table `falta`
@@ -532,11 +558,17 @@ ALTER TABLE `tipo_falta`
 -- AUTO_INCREMENT for table `usuario`
 --
 ALTER TABLE `usuario`
-  MODIFY `cod_usuario` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=23;
+  MODIFY `cod_usuario` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10000001;
 
 --
 -- Constraints for dumped tables
 --
+
+--
+-- Constraints for table `admin`
+--
+ALTER TABLE `admin`
+  ADD CONSTRAINT `admin_ibfk_1` FOREIGN KEY (`id_usuario`) REFERENCES `usuario` (`cod_usuario`);
 
 --
 -- Constraints for table `asignacion_docente`
