@@ -268,3 +268,361 @@ Consulta ejecutada. Número de filas: 1
 [10-Nov-2025 08:23:31 America/Bogota] Valor de id_rol: 3
 [10-Nov-2025 08:23:31 America/Bogota] Role ID después de conversión: 3
 [10-Nov-2025 08:23:31 America/Bogota] Ejecutando redirección a: ../../views/estudiante/index.php
+=== Inicio de sesión: 2025-11-10 17:19:28 ===
+[10-Nov-2025 17:19:28 America/Bogota] === Nueva solicitud de inicio de sesión ===
+[10-Nov-2025 17:19:28 America/Bogota] Intento de inicio de sesión - Usuario: danna.agudelo
+Intentando autenticar usuario: danna.agudelo
+Consulta ejecutada. Número de filas: 1
+[10-Nov-2025 17:19:28 America/Bogota] Datos del usuario: Array
+(
+    [cod_usuario] => 4
+    [id_tipo_documento] => 1
+    [numero_documento] => 1082498535
+    [nombres] => Danna
+    [apellidos] => Agudelo
+    [telefono] => 3126429827
+    [correo] => danna@gmail.com
+    [direccion] => 
+    [usuario] => danna.agudelo
+    [clave] => 123456
+    [id_rol] => 2
+    [estado] => ACTIVO
+    [rol] => Docente
+)
+
+[10-Nov-2025 17:19:28 America/Bogota] Tipo de id_rol: integer
+[10-Nov-2025 17:19:28 America/Bogota] Valor de id_rol: 2
+[10-Nov-2025 17:19:28 America/Bogota] Role ID después de conversión: 2
+[10-Nov-2025 17:19:28 America/Bogota] Redirigiendo a: ../../views/docente/index.php
+[10-Nov-2025 17:19:28 America/Bogota] Ejecutando redirección a: ../../views/docente/index.php
+=== Inicio de sesión: 2025-11-10 20:42:48 ===
+[10-Nov-2025 20:42:48 America/Bogota] === Nueva solicitud de inicio de sesión ===
+[10-Nov-2025 20:42:48 America/Bogota] Intento de inicio de sesión - Usuario: danna.agudelo
+Intentando autenticar usuario: danna.agudelo
+Consulta ejecutada. Número de filas: 1
+[10-Nov-2025 20:42:48 America/Bogota] Datos del usuario: Array
+(
+    [cod_usuario] => 4
+    [id_tipo_documento] => 1
+    [numero_documento] => 1082498535
+    [nombres] => Danna
+    [apellidos] => Agudelo
+    [telefono] => 3126429827
+    [correo] => danna@gmail.com
+    [direccion] => 
+    [usuario] => danna.agudelo
+    [clave] => 123456
+    [id_rol] => 2
+    [estado] => ACTIVO
+    [rol] => Docente
+)
+
+[10-Nov-2025 20:42:48 America/Bogota] Tipo de id_rol: integer
+[10-Nov-2025 20:42:48 America/Bogota] Valor de id_rol: 2
+[10-Nov-2025 20:42:48 America/Bogota] Role ID después de conversión: 2
+[10-Nov-2025 20:42:48 America/Bogota] Redirigiendo a: ../../views/docente/index.php
+[10-Nov-2025 20:42:48 America/Bogota] Ejecutando redirección a: ../../views/docente/index.php
+=== Inicio de sesión: 2025-11-10 20:45:32 ===
+[10-Nov-2025 20:45:32 America/Bogota] === Nueva solicitud de inicio de sesión ===
+[10-Nov-2025 20:45:32 America/Bogota] Intento de inicio de sesión - Usuario: danna.agudelo
+Intentando autenticar usuario: danna.agudelo
+Consulta ejecutada. Número de filas: 1
+[10-Nov-2025 20:45:32 America/Bogota] Datos del usuario: Array
+(
+    [cod_usuario] => 4
+    [id_tipo_documento] => 1
+    [numero_documento] => 1082498535
+    [nombres] => Danna
+    [apellidos] => Agudelo
+    [telefono] => 3126429827
+    [correo] => danna@gmail.com
+    [direccion] => 
+    [usuario] => danna.agudelo
+    [clave] => 123456
+    [id_rol] => 2
+    [estado] => ACTIVO
+    [rol] => Docente
+)
+
+[10-Nov-2025 20:45:32 America/Bogota] Tipo de id_rol: integer
+[10-Nov-2025 20:45:32 America/Bogota] Valor de id_rol: 2
+[10-Nov-2025 20:45:32 America/Bogota] Role ID después de conversión: 2
+[10-Nov-2025 20:45:32 America/Bogota] Redirigiendo a: ../../views/docente/index.php
+[10-Nov-2025 20:45:32 America/Bogota] Ejecutando redirección a: ../../views/docente/index.php
+=== Inicio de sesión: 2025-11-10 21:13:48 ===
+[10-Nov-2025 21:13:48 America/Bogota] === Nueva solicitud de inicio de sesión ===
+[10-Nov-2025 21:13:48 America/Bogota] Intento de inicio de sesión - Usuario: admin
+Intentando autenticar usuario: admin
+Consulta ejecutada. Número de filas: 1
+[10-Nov-2025 21:13:48 America/Bogota] Datos del usuario: Array
+(
+    [cod_usuario] => 9999999
+    [id_tipo_documento] => 3
+    [numero_documento] => 99999999
+    [nombres] => super
+    [apellidos] => admin
+    [telefono] => 31000000
+    [correo] => admin@colegio.conm
+    [direccion] => av siempre viva 123
+    [usuario] => admin
+    [clave] => admin123
+    [id_rol] => 1
+    [estado] => ACTIVO
+    [rol] => Directivo
+)
+
+[10-Nov-2025 21:13:48 America/Bogota] Tipo de id_rol: integer
+[10-Nov-2025 21:13:48 America/Bogota] Valor de id_rol: 1
+[10-Nov-2025 21:13:48 America/Bogota] Role ID después de conversión: 1
+[10-Nov-2025 21:13:48 America/Bogota] Ejecutando redirección a: ../../views/dashboard.php
+=== Inicio de sesión: 2025-11-10 21:16:04 ===
+[10-Nov-2025 21:16:04 America/Bogota] === Nueva solicitud de inicio de sesión ===
+[10-Nov-2025 21:16:04 America/Bogota] Intento de inicio de sesión - Usuario: admin
+Intentando autenticar usuario: admin
+Consulta ejecutada. Número de filas: 1
+[10-Nov-2025 21:16:04 America/Bogota] Datos del usuario: Array
+(
+    [cod_usuario] => 9999999
+    [id_tipo_documento] => 3
+    [numero_documento] => 99999999
+    [nombres] => super
+    [apellidos] => admin
+    [telefono] => 31000000
+    [correo] => admin@colegio.conm
+    [direccion] => av siempre viva 123
+    [usuario] => admin
+    [clave] => admin123
+    [id_rol] => 1
+    [estado] => ACTIVO
+    [rol] => Directivo
+)
+
+[10-Nov-2025 21:16:04 America/Bogota] Tipo de id_rol: integer
+[10-Nov-2025 21:16:04 America/Bogota] Valor de id_rol: 1
+[10-Nov-2025 21:16:04 America/Bogota] Role ID después de conversión: 1
+[10-Nov-2025 21:16:04 America/Bogota] Ejecutando redirección a: ../../views/admin/index.php
+=== Inicio de sesión: 2025-11-10 21:16:49 ===
+[10-Nov-2025 21:16:49 America/Bogota] === Nueva solicitud de inicio de sesión ===
+[10-Nov-2025 21:16:49 America/Bogota] Intento de inicio de sesión - Usuario: admin
+Intentando autenticar usuario: admin
+Consulta ejecutada. Número de filas: 1
+[10-Nov-2025 21:16:49 America/Bogota] Datos del usuario: Array
+(
+    [cod_usuario] => 9999999
+    [id_tipo_documento] => 3
+    [numero_documento] => 99999999
+    [nombres] => super
+    [apellidos] => admin
+    [telefono] => 31000000
+    [correo] => admin@colegio.conm
+    [direccion] => av siempre viva 123
+    [usuario] => admin
+    [clave] => admin123
+    [id_rol] => 1
+    [estado] => ACTIVO
+    [rol] => Directivo
+)
+
+[10-Nov-2025 21:16:49 America/Bogota] Tipo de id_rol: integer
+[10-Nov-2025 21:16:49 America/Bogota] Valor de id_rol: 1
+[10-Nov-2025 21:16:49 America/Bogota] Role ID después de conversión: 1
+[10-Nov-2025 21:16:49 America/Bogota] Ejecutando redirección a: ../../views/admin/index.php
+=== Inicio de sesión: 2025-11-10 21:17:24 ===
+[10-Nov-2025 21:17:24 America/Bogota] === Nueva solicitud de inicio de sesión ===
+[10-Nov-2025 21:17:24 America/Bogota] Intento de inicio de sesión - Usuario: admin
+Intentando autenticar usuario: admin
+Consulta ejecutada. Número de filas: 1
+[10-Nov-2025 21:17:24 America/Bogota] Datos del usuario: Array
+(
+    [cod_usuario] => 9999999
+    [id_tipo_documento] => 3
+    [numero_documento] => 99999999
+    [nombres] => super
+    [apellidos] => admin
+    [telefono] => 31000000
+    [correo] => admin@colegio.conm
+    [direccion] => av siempre viva 123
+    [usuario] => admin
+    [clave] => admin123
+    [id_rol] => 1
+    [estado] => ACTIVO
+    [rol] => Directivo
+)
+
+[10-Nov-2025 21:17:24 America/Bogota] Tipo de id_rol: integer
+[10-Nov-2025 21:17:24 America/Bogota] Valor de id_rol: 1
+[10-Nov-2025 21:17:24 America/Bogota] Role ID después de conversión: 1
+[10-Nov-2025 21:17:24 America/Bogota] Ejecutando redirección a: ../../views/admin/index.php
+=== Inicio de sesión: 2025-11-10 21:19:14 ===
+[10-Nov-2025 21:19:14 America/Bogota] === Nueva solicitud de inicio de sesión ===
+[10-Nov-2025 21:19:14 America/Bogota] Intento de inicio de sesión - Usuario: admin
+Intentando autenticar usuario: admin
+Consulta ejecutada. Número de filas: 1
+[10-Nov-2025 21:19:14 America/Bogota] Datos del usuario: Array
+(
+    [cod_usuario] => 9999999
+    [id_tipo_documento] => 3
+    [numero_documento] => 99999999
+    [nombres] => super
+    [apellidos] => admin
+    [telefono] => 31000000
+    [correo] => admin@colegio.conm
+    [direccion] => av siempre viva 123
+    [usuario] => admin
+    [clave] => admin123
+    [id_rol] => 1
+    [estado] => ACTIVO
+    [rol] => Directivo
+)
+
+[10-Nov-2025 21:19:14 America/Bogota] Tipo de id_rol: integer
+[10-Nov-2025 21:19:14 America/Bogota] Valor de id_rol: 1
+[10-Nov-2025 21:19:14 America/Bogota] Role ID después de conversión: 1
+[10-Nov-2025 21:19:14 America/Bogota] Ejecutando redirección a: ../../views/admin/index.php
+=== Inicio de sesión: 2025-11-10 21:20:10 ===
+[10-Nov-2025 21:20:10 America/Bogota] === Nueva solicitud de inicio de sesión ===
+[10-Nov-2025 21:20:10 America/Bogota] Intento de inicio de sesión - Usuario: admin
+Intentando autenticar usuario: admin
+Consulta ejecutada. Número de filas: 1
+[10-Nov-2025 21:20:10 America/Bogota] Datos del usuario: Array
+(
+    [cod_usuario] => 9999999
+    [id_tipo_documento] => 3
+    [numero_documento] => 99999999
+    [nombres] => super
+    [apellidos] => admin
+    [telefono] => 31000000
+    [correo] => admin@colegio.conm
+    [direccion] => av siempre viva 123
+    [usuario] => admin
+    [clave] => admin123
+    [id_rol] => 1
+    [estado] => ACTIVO
+    [rol] => Directivo
+)
+
+[10-Nov-2025 21:20:10 America/Bogota] Tipo de id_rol: integer
+[10-Nov-2025 21:20:10 America/Bogota] Valor de id_rol: 1
+[10-Nov-2025 21:20:10 America/Bogota] Role ID después de conversión: 1
+[10-Nov-2025 21:20:10 America/Bogota] Ejecutando redirección a: ../../views/admin/index.php
+=== Inicio de sesión: 2025-11-10 21:26:50 ===
+[10-Nov-2025 21:26:50 America/Bogota] === Nueva solicitud de inicio de sesión ===
+[10-Nov-2025 21:26:50 America/Bogota] Intento de inicio de sesión - Usuario: danna.agudelo
+Intentando autenticar usuario: danna.agudelo
+Consulta ejecutada. Número de filas: 1
+[10-Nov-2025 21:26:50 America/Bogota] Datos del usuario: Array
+(
+    [cod_usuario] => 4
+    [id_tipo_documento] => 1
+    [numero_documento] => 1082498535
+    [nombres] => Danna
+    [apellidos] => Agudelo
+    [telefono] => 3126429827
+    [correo] => danna@gmail.com
+    [direccion] => 
+    [usuario] => danna.agudelo
+    [clave] => 123456
+    [id_rol] => 2
+    [estado] => ACTIVO
+    [rol] => Docente
+)
+
+[10-Nov-2025 21:26:50 America/Bogota] Usuario: danna.agudelo, Rol: Docente (ID: 2), Redirigiendo a: ../../views/docente/index.php
+=== Inicio de sesión: 2025-11-10 21:26:57 ===
+[10-Nov-2025 21:26:57 America/Bogota] === Nueva solicitud de inicio de sesión ===
+[10-Nov-2025 21:26:57 America/Bogota] Intento de inicio de sesión - Usuario: imendoza
+Intentando autenticar usuario: imendoza
+Consulta ejecutada. Número de filas: 1
+[10-Nov-2025 21:26:57 America/Bogota] Datos del usuario: Array
+(
+    [cod_usuario] => 20
+    [id_tipo_documento] => 1
+    [numero_documento] => 1030123456
+    [nombres] => Isabella
+    [apellidos] => Mendoza Castro
+    [telefono] => 3212345678
+    [correo] => imendoza@email.com
+    [direccion] => Carrera 90 #45-67
+    [usuario] => imendoza
+    [clave] => imendoza123
+    [id_rol] => 3
+    [estado] => ACTIVO
+    [rol] => Estudiante
+)
+
+[10-Nov-2025 21:26:57 America/Bogota] Usuario: imendoza, Rol: Estudiante (ID: 3), Redirigiendo a: ../../views/estudiante/index.php
+=== Inicio de sesión: 2025-11-10 21:27:08 ===
+[10-Nov-2025 21:27:08 America/Bogota] === Nueva solicitud de inicio de sesión ===
+[10-Nov-2025 21:27:09 America/Bogota] Intento de inicio de sesión - Usuario: admin
+Intentando autenticar usuario: admin
+Consulta ejecutada. Número de filas: 0
+[10-Nov-2025 21:27:09 America/Bogota] Inicio de sesión fallido - Usuario: admin
+=== Inicio de sesión: 2025-11-10 21:27:13 ===
+[10-Nov-2025 21:27:13 America/Bogota] === Nueva solicitud de inicio de sesión ===
+[10-Nov-2025 21:27:13 America/Bogota] Intento de inicio de sesión - Usuario: admin
+Intentando autenticar usuario: admin
+Consulta ejecutada. Número de filas: 1
+[10-Nov-2025 21:27:13 America/Bogota] Datos del usuario: Array
+(
+    [cod_usuario] => 9999999
+    [id_tipo_documento] => 3
+    [numero_documento] => 99999999
+    [nombres] => super
+    [apellidos] => admin
+    [telefono] => 31000000
+    [correo] => admin@colegio.conm
+    [direccion] => av siempre viva 123
+    [usuario] => admin
+    [clave] => admin123
+    [id_rol] => 1
+    [estado] => ACTIVO
+    [rol] => Directivo
+)
+
+[10-Nov-2025 21:27:13 America/Bogota] Usuario: admin, Rol: Directivo (ID: 1), Redirigiendo a: ../../views/admin/index.php
+=== Inicio de sesión: 2025-11-10 21:31:11 ===
+[10-Nov-2025 21:31:11 America/Bogota] === Nueva solicitud de inicio de sesión ===
+[10-Nov-2025 21:31:11 America/Bogota] Intento de inicio de sesión - Usuario: admin
+Intentando autenticar usuario: admin
+Consulta ejecutada. Número de filas: 1
+[10-Nov-2025 21:31:11 America/Bogota] Datos del usuario: Array
+(
+    [cod_usuario] => 9999999
+    [id_tipo_documento] => 3
+    [numero_documento] => 99999999
+    [nombres] => super
+    [apellidos] => admin
+    [telefono] => 31000000
+    [correo] => admin@colegio.conm
+    [direccion] => av siempre viva 123
+    [usuario] => admin
+    [clave] => admin123
+    [id_rol] => 1
+    [estado] => ACTIVO
+    [rol] => Directivo
+)
+
+[10-Nov-2025 21:31:11 America/Bogota] Usuario: admin, Rol: Directivo (ID: 1), Redirigiendo a: ../../views/admin/index.php
+=== Inicio de sesión: 2025-11-10 22:26:04 ===
+[10-Nov-2025 22:26:04 America/Bogota] === Nueva solicitud de inicio de sesión ===
+[10-Nov-2025 22:26:04 America/Bogota] Intento de inicio de sesión - Usuario: admin
+Intentando autenticar usuario: admin
+Consulta ejecutada. Número de filas: 1
+[10-Nov-2025 22:26:04 America/Bogota] Datos del usuario: Array
+(
+    [cod_usuario] => 9999999
+    [id_tipo_documento] => 3
+    [numero_documento] => 99999999
+    [nombres] => super
+    [apellidos] => admin
+    [telefono] => 31000000
+    [correo] => admin@colegio.conm
+    [direccion] => av siempre viva 123
+    [usuario] => admin
+    [clave] => admin123
+    [id_rol] => 1
+    [estado] => ACTIVO
+    [rol] => Directivo
+)
+
+[10-Nov-2025 22:26:04 America/Bogota] Usuario: admin, Rol: Directivo (ID: 1), Redirigiendo a: ../../views/admin/index.php

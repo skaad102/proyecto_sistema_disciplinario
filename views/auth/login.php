@@ -56,104 +56,54 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
         if ($user) {
-            // Limpiar sesión anterior completamente
+            // Iniciar sesión limpia
             session_start();
             session_unset();
             session_destroy();
             session_start();
             session_regenerate_id(true);
-            
-            // Debug - Imprimir todos los datos del usuario
+
+            // Registrar datos del usuario en el log
             error_log("Datos del usuario: " . print_r($user, true));
-            
+
+            // Guardar datos en la sesión
             $_SESSION['usuario'] = [
                 'id' => $user['cod_usuario'],
                 'usuario' => $user['usuario'],
                 'nombres' => $user['nombres'],
-                'apellidos' => $user['apellidos'], 
+                'apellidos' => $user['apellidos'],
                 'rol' => $user['rol'],
-                'id_rol' => $user['id_rol']
+                'id_rol' => intval($user['id_rol'])
             ];
 
-            // Determinar la redirección basada en id_rol
-            $redirect_url = '';
-            
-            // Debug - Verificar el tipo de id_rol
-            error_log("Tipo de id_rol: " . gettype($user['id_rol']));
-            error_log("Valor de id_rol: " . $user['id_rol']);
-            
-            // Forzar la conversión a entero
+            // Definir rutas de redirección según el rol
+            $rutas_por_rol = [
+                1 => '../../views/admin/index.php',
+                2 => '../../views/docente/index.php',
+                3 => '../../views/estudiante/index.php'
+            ];
+
             $role_id = intval($user['id_rol']);
-            
-            error_log("Role ID después de conversión: " . $role_id);
-            
-            if ($role_id === 2) {
-                $redirect_url = '../../views/docente/index.php';
-                error_log("Redirigiendo a: " . $redirect_url);
-            } 
-            elseif ($role_id === 1) {
-                $redirect_url = '../../views/dashboard.php';
-            }
-            elseif ($role_id === 3) {
-                $redirect_url = '../../views/estudiante/index.php';
-            }
-            else {
-                error_log("Role ID no reconocido: " . $role_id);
-                session_destroy();
-                header('Location: ../../index.php?error=role');
-                exit();
-            }
-            
-            if (!empty($redirect_url)) {
-                error_log("Ejecutando redirección a: " . $redirect_url);
-                // Forzar que no se use caché
-                header("Cache-Control: no-store, no-cache, must-revalidate, max-age=0");
-                header("Cache-Control: post-check=0, pre-check=0", false);
-                header("Pragma: no-cache");
-                header("Location: " . $redirect_url);
-                exit();
-            }            // Redirigir según el id_rol
-            if ($user['id_rol'] == 2) {
-                header('Location: ../../views/docente/index.php');
-                exit();
-            } elseif ($user['id_rol'] == 1) {
-                header('Location: ../../views/dashboard.php');
-                exit();
-            } elseif ($user['id_rol'] == 3) {
-                header('Location: ../../views/estudiante/index.php');
-                exit();
-            } else {
+
+            // Verificar si el rol existe en las rutas definidas
+            if (!isset($rutas_por_rol[$role_id])) {
+                error_log("Rol no reconocido: ID={$role_id}, Nombre={$user['rol']} para usuario: {$user['usuario']}");
                 session_destroy();
                 header('Location: ../../index.php?error=role');
                 exit();
             }
 
-            // Debug - Mostrar el rol y el id_rol
-            error_log("ID del rol: " . $user['id_rol']);
+            // Obtener la ruta de redirección
+            $redirect_url = $rutas_por_rol[$role_id];
 
-            // Registrar en el log los datos del usuario
-            $log = "=== Datos del usuario ===\n";
-            $log .= "Usuario: " . $user['usuario'] . "\n";
-            $log .= "ID del rol: " . $user['id_rol'] . "\n";
-            $log .= "Rol: " . $user['rol'] . "\n";
-            file_put_contents($logFile, $log, FILE_APPEND);
+            // Log de redirección
+            error_log("Usuario: {$user['usuario']}, Rol: {$user['rol']} (ID: {$role_id}), Redirigiendo a: {$redirect_url}");
 
-            // Redirigir según el rol usando id_rol
-            if ($user['id_rol'] == 1) {
-                file_put_contents($logFile, "Redirigiendo a dashboard\n", FILE_APPEND);
-                header('Location: ../../views/dashboard.php');
-            } elseif ($user['id_rol'] == 2) {
-                file_put_contents($logFile, "Redirigiendo a panel de docente\n", FILE_APPEND);
-                header('Location: ../../views/docente/index.php');
-            } elseif ($user['id_rol'] == 3) {
-                file_put_contents($logFile, "Redirigiendo a panel de estudiante\n", FILE_APPEND);
-                header('Location: ../../views/estudiante/index.php');
-            } else {
-                // Log del rol no reconocido
-                error_log("Rol no reconocido: " . $user['rol'] . " para usuario: " . $user['usuario']);
-                session_destroy();
-                header('Location: ../../index.php?error=role');
-            }
+            // Prevenir caché y redirigir
+            header("Cache-Control: no-store, no-cache, must-revalidate, max-age=0");
+            header("Cache-Control: post-check=0, pre-check=0", false);
+            header("Pragma: no-cache");
+            header("Location: " . $redirect_url);
             exit;
         } else {
             // Verificar si el usuario existe pero está inactivo

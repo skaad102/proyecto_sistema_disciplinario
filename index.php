@@ -1,7 +1,21 @@
 <?php
 session_start();
 if(isset($_SESSION['usuario'])) {
-    header('Location: views/dashboard.php');
+    // Redirigir según el rol del usuario
+    $rutas_por_rol = [
+        1 => 'views/admin/index.php',
+        2 => 'views/docente/index.php',
+        3 => 'views/estudiante/index.php'
+    ];
+    
+    $role_id = isset($_SESSION['usuario']['id_rol']) ? intval($_SESSION['usuario']['id_rol']) : 0;
+    
+    if (isset($rutas_por_rol[$role_id])) {
+        header('Location: ' . $rutas_por_rol[$role_id]);
+    } else {
+        // Si no se puede determinar el rol, cerrar sesión
+        session_destroy();
+    }
     exit;
 }
 ?>
