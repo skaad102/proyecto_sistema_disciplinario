@@ -626,3 +626,26 @@ Consulta ejecutada. Número de filas: 1
 )
 
 [10-Nov-2025 22:26:04 America/Bogota] Usuario: admin, Rol: Directivo (ID: 1), Redirigiendo a: ../../views/admin/index.php
+=== Inicio de sesión: 2025-11-10 23:44:03 ===
+[10-Nov-2025 23:44:03 America/Bogota] === Nueva solicitud de inicio de sesión ===
+[10-Nov-2025 23:44:03 America/Bogota] Intento de inicio de sesión - Usuario: admin
+Intentando autenticar usuario: admin
+Consulta ejecutada. Número de filas: 1
+[10-Nov-2025 23:44:03 America/Bogota] Datos del usuario: Array
+(
+    [cod_usuario] => 9999999
+    [id_tipo_documento] => 3
+    [numero_documento] => 99999999
+    [nombres] => super
+    [apellidos] => admin
+    [telefono] => 31000000
+    [correo] => admin@colegio.conm
+    [direccion] => av siempre viva 123
+    [usuario] => admin
+    [clave] => admin123
+    [id_rol] => 1
+    [estado] => ACTIVO
+    [rol] => Directivo
+)
+
+[10-Nov-2025 23:44:03 America/Bogota] Usuario: admin, Rol: Directivo (ID: 1), Redirigiendo a: ../../views/admin/index.php

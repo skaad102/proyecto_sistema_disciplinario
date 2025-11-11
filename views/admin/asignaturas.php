@@ -221,35 +221,3 @@ try {
         </div>
     </div>
 </div>
-
-<script>
-// Editar asignatura
-document.querySelectorAll('.btn-editar').forEach(btn => {
-    btn.addEventListener('click', function() {
-        const id = this.dataset.id;
-        const nombre = this.dataset.nombre;
-        const descripcion = this.dataset.descripcion;
-        
-        document.getElementById('cod_asignatura_editar').value = id;
-        document.getElementById('nombre_asignatura_editar').value = nombre;
-        document.getElementById('descripcion_editar').value = descripcion;
-        
-        const modal = new bootstrap.Modal(document.getElementById('modalEditar'));
-        modal.show();
-    });
-});
-
-// Eliminar asignatura
-document.querySelectorAll('.btn-eliminar').forEach(btn => {
-    btn.addEventListener('click', function() {
-        const id = this.dataset.id;
-        const nombre = this.dataset.nombre;
-        
-        document.getElementById('cod_asignatura_eliminar').value = id;
-        document.getElementById('nombre_asignatura_eliminar').textContent = nombre;
-        
-        const modal = new bootstrap.Modal(document.getElementById('modalEliminar'));
-        modal.show();
-    });
-});
-</script>

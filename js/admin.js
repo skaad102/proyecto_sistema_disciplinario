@@ -75,6 +75,12 @@ function showTable(tableNumber, skipMenuClose = false) {
 
 // Restaurar la tabla activa al cargar completamente la página
 document.addEventListener("DOMContentLoaded", function () {
+  // Limpiar cualquier backdrop residual de Bootstrap al cargar la página
+  document.querySelectorAll('.modal-backdrop').forEach(backdrop => backdrop.remove());
+  document.body.classList.remove('modal-open');
+  document.body.style.overflow = '';
+  document.body.style.paddingRight = '';
+
   // Asegurarse de que el menú esté cerrado al cargar
   closeMenu();
 
@@ -106,23 +112,102 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   }
 
-  // ===== CÓDIGO DE MODALES DE DOCENTES =====
+  // ===== CÓDIGO DE MODALES DE ASIGNATURAS =====
 
-  // Editar docente
+  // Editar asignatura
   document.querySelectorAll(".btn-editar").forEach((btn) => {
     btn.addEventListener("click", function () {
+      // Verificar si es de asignaturas (tiene data-nombre y data-descripcion)
+      if (this.dataset.nombre && this.dataset.descripcion !== undefined) {
+        const id = this.dataset.id;
+        const nombre = this.dataset.nombre;
+        const descripcion = this.dataset.descripcion;
+
+        document.getElementById("cod_asignatura_editar").value = id;
+        document.getElementById("nombre_asignatura_editar").value = nombre;
+        document.getElementById("descripcion_editar").value = descripcion;
+
+        const modalElement = document.getElementById("modalEditar");
+        let modal = bootstrap.Modal.getInstance(modalElement);
+        if (!modal) {
+          modal = new bootstrap.Modal(modalElement);
+        }
+        modal.show();
+      }
+      // Verificar si es de docentes (tiene data-especialidad y data-nombres)
+      else if (this.dataset.especialidad !== undefined && this.dataset.nombres) {
+        const id = this.dataset.id;
+        const especialidad = this.dataset.especialidad;
+        const nombres = this.dataset.nombres;
+
+        document.getElementById("cod_docente_editar").value = id;
+        document.getElementById("nombres_editar").value = nombres;
+        document.getElementById("especialidad_editar").value = especialidad;
+
+        const modalElement = document.getElementById("modalEditarDocente");
+        let modal = bootstrap.Modal.getInstance(modalElement);
+        if (!modal) {
+          modal = new bootstrap.Modal(modalElement);
+        }
+        modal.show();
+      }
+    });
+  });
+
+  // Eliminar asignatura
+  document.querySelectorAll(".btn-eliminar").forEach((btn) => {
+    btn.addEventListener("click", function () {
       const id = this.dataset.id;
-      const especialidad = this.dataset.especialidad;
-      const nombres = this.dataset.nombres;
+      const nombre = this.dataset.nombre;
 
-      document.getElementById("cod_docente_editar").value = id;
-      document.getElementById("nombres_editar").value = nombres;
-      document.getElementById("especialidad_editar").value = especialidad;
+      document.getElementById("cod_asignatura_eliminar").value = id;
+      document.getElementById("nombre_asignatura_eliminar").textContent = nombre;
 
-      const modal = new bootstrap.Modal(document.getElementById("modalEditar"));
+      const modalElement = document.getElementById("modalEliminar");
+      let modal = bootstrap.Modal.getInstance(modalElement);
+      if (!modal) {
+        modal = new bootstrap.Modal(modalElement);
+      }
       modal.show();
     });
   });
+
+  // Limpiar formularios cuando se cierran los modales de ASIGNATURAS
+  const modalCrearAsignatura = document.getElementById("modalCrear");
+  if (modalCrearAsignatura) {
+    modalCrearAsignatura.addEventListener("hidden.bs.modal", function () {
+      document.activeElement.blur();
+      const form = document.querySelector("#modalCrear form");
+      if (form) form.reset();
+      setTimeout(() => {
+        document.querySelectorAll(".modal-backdrop").forEach((backdrop) => backdrop.remove());
+        if (!document.querySelector(".modal.show")) {
+          document.body.classList.remove("modal-open");
+          document.body.style.overflow = "";
+          document.body.style.paddingRight = "";
+        }
+      }, 100);
+    });
+  }
+
+  const modalEditarAsignatura = document.getElementById("modalEditar");
+  if (modalEditarAsignatura) {
+    modalEditarAsignatura.addEventListener("hidden.bs.modal", function () {
+      document.activeElement.blur();
+      const form = document.querySelector("#modalEditar form");
+      if (form) form.reset();
+      setTimeout(() => {
+        document.querySelectorAll(".modal-backdrop").forEach((backdrop) => backdrop.remove());
+        if (!document.querySelector(".modal.show")) {
+          document.body.classList.remove("modal-open");
+          document.body.style.overflow = "";
+          document.body.style.paddingRight = "";
+        }
+      }, 100);
+    });
+  }
+
+  // ===== CÓDIGO DE MODALES DE DOCENTES =====
 
   // Desactivar docente
   document.querySelectorAll(".btn-desactivar").forEach((btn) => {
@@ -133,9 +218,11 @@ document.addEventListener("DOMContentLoaded", function () {
       document.getElementById("cod_docente_desactivar").value = id;
       document.getElementById("nombres_desactivar").textContent = nombres;
 
-      const modal = new bootstrap.Modal(
-        document.getElementById("modalDesactivar")
-      );
+      const modalElement = document.getElementById("modalDesactivar");
+      let modal = bootstrap.Modal.getInstance(modalElement);
+      if (!modal) {
+        modal = new bootstrap.Modal(modalElement);
+      }
       modal.show();
     });
   });
@@ -149,9 +236,11 @@ document.addEventListener("DOMContentLoaded", function () {
       document.getElementById("cod_docente_activar").value = id;
       document.getElementById("nombres_activar").textContent = nombres;
 
-      const modal = new bootstrap.Modal(
-        document.getElementById("modalActivar")
-      );
+      const modalElement = document.getElementById("modalActivar");
+      let modal = bootstrap.Modal.getInstance(modalElement);
+      if (!modal) {
+        modal = new bootstrap.Modal(modalElement);
+      }
       modal.show();
     });
   });
@@ -189,15 +278,40 @@ document.addEventListener("DOMContentLoaded", function () {
     apellidosInput.addEventListener("blur", generarUsuario);
   }
 
-  // Limpiar formulario cuando se cierra el modal
-  const modalCrearElement = document.getElementById("modalCrear");
-  if (modalCrearElement) {
-    console.log("Debug: Modal de creación de docente encontrado");
-    modalCrearElement.addEventListener("hidden.bs.modal", function () {
-      console.log("Debug: Limpiando formulario de creación de docente");
-      document.querySelector("#modalCrear form").reset();
+  // Limpiar formularios cuando se cierran los modales de DOCENTES
+  const modalCrearDocenteElement = document.getElementById("modalCrearUsuario");
+  if (modalCrearDocenteElement) {
+    modalCrearDocenteElement.addEventListener("hidden.bs.modal", function () {
+      document.activeElement.blur();
+      const form = document.querySelector("#modalCrearUsuario form");
+      if (form) form.reset();
+      setTimeout(() => {
+        document.querySelectorAll(".modal-backdrop").forEach((backdrop) => backdrop.remove());
+        if (!document.querySelector(".modal.show")) {
+          document.body.classList.remove("modal-open");
+          document.body.style.overflow = "";
+          document.body.style.paddingRight = "";
+        }
+      }, 100);
     });
   }
 
-  // ===== FIN CÓDIGO DE MODALES DE DOCENTES =====
+  const modalEditarDocenteElement = document.getElementById("modalEditarDocente");
+  if (modalEditarDocenteElement) {
+    modalEditarDocenteElement.addEventListener("hidden.bs.modal", function () {
+      document.activeElement.blur();
+      const form = document.querySelector("#modalEditarDocente form");
+      if (form) form.reset();
+      setTimeout(() => {
+        document.querySelectorAll(".modal-backdrop").forEach((backdrop) => backdrop.remove());
+        if (!document.querySelector(".modal.show")) {
+          document.body.classList.remove("modal-open");
+          document.body.style.overflow = "";
+          document.body.style.paddingRight = "";
+        }
+      }, 100);
+    });
+  }
+
+  // ===== FIN CÓDIGO DE MODALES =====
 });

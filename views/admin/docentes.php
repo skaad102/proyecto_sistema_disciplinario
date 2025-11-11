@@ -197,7 +197,7 @@ try {
 </div>
 
 <!-- Modal Crear Docente -->
-<div class="modal fade" id="modalCrearUsuario" tabindex="-1" aria-labelledby="modalCrearLabel" aria-hidden="true" style="z-index: 9999;">
+<div class="modal fade" id="modalCrearUsuario" tabindex="-1" aria-labelledby="modalCrearLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header bg-success text-white">
@@ -311,11 +311,11 @@ try {
 </div>
 
 <!-- Modal Editar Docente -->
-<div class="modal fade" id="modalEditar" tabindex="-1" aria-labelledby="modalEditarLabel" aria-hidden="true">
+<div class="modal fade" id="modalEditarDocente" tabindex="-1" aria-labelledby="modalEditarDocenteLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="modalEditarLabel">✏️ Editar Docente</h5>
+                <h5 class="modal-title" id="modalEditarDocenteLabel">✏️ Editar Docente</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <form method="POST" action="">
