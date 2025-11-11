@@ -251,14 +251,13 @@ error_log("Sesión en admin/index.php: " . print_r($_SESSION, true));
             }
         }
     </style>
-    <script src="../../js/admin.js" defer></script>
     <!-- Custom CSS -->
     <link rel="stylesheet" href="../../css/admin.css">
     <!-- jQuery first, then Bootstrap Bundle with Popper -->
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="../../js/bootstrap.bundle.min.js"></script>
     <!-- Custom JavaScript -->
-    <script src="../../js/docente.js" defer></script>
+    <script src="../../js/admin.js" defer></script>
 </head>
 
 <body>
@@ -306,7 +305,7 @@ error_log("Sesión en admin/index.php: " . print_r($_SESSION, true));
         </div>
 
         <div class="table-section" id="table2">
-            <?php include 'estudiantes.php'; ?>
+            <?php include 'asignaturasww.php'; ?>
         </div>
 
         <div class="table-section" id="table3">
@@ -318,6 +317,22 @@ error_log("Sesión en admin/index.php: " . print_r($_SESSION, true));
             <?php include 'docentes.php'; ?>
         </div>
     </div>
+
+    <!-- Variables PHP para JavaScript -->
+    <script>
+        // Variable para detectar si es una nueva sesión
+        var isNewSession = <?php echo !isset($_SESSION['session_started']) ? 'true' : 'false'; ?>;
+
+        // Detectar si se hizo un POST (submit de formulario)
+        var isFormSubmit = <?php echo ($_SERVER['REQUEST_METHOD'] === 'POST') ? 'true' : 'false'; ?>;
+
+        <?php
+        // Marcar que la sesión ya está iniciada
+        if (!isset($_SESSION['session_started'])) {
+            $_SESSION['session_started'] = true;
+        }
+        ?>
+    </script>
 
 </body>
 

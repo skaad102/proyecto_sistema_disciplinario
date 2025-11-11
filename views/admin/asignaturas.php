@@ -3,11 +3,7 @@
 require_once '../../config/database.php';
 require_once '../../includes/admin_functions.php';
 
-// Verificar la sesión
-if (!isset($_SESSION['usuario']) || strtolower($_SESSION['usuario']['rol']) !== 'directivo') {
-    header('Location: ../../index.php');
-    exit();
-}
+// NO verificar sesión aquí - ya se verifica en index.php
 $database = new Database();
 $conexion = $database->connect();
 $mensaje = '';

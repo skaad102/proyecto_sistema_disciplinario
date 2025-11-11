@@ -95,6 +95,36 @@ function obtenerTodasAsignaturas($conexion)
 }
 
 // CRUD docente
+
+function obtenerTiposDocumento($conexion)
+{
+    try {
+        $sql = "SELECT cod_tipodocumento, tipo_documento FROM tipo_documento ORDER BY tipo_documento";
+        $stmt = $conexion->prepare($sql);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    } catch (Exception $e) {
+        error_log("Error al obtener tipos de documento: " . $e->getMessage());
+        throw $e;
+    }
+}
+
+function crearUsuarioDocente($conexion, $datosUsuario)
+{
+    $sql = "INSERT INTO usuario (id_tipo_documento, numero_documento, nombres, apellidos, telefono, correo, direccion, usuario, clave, id_rol, estado) 
+            VALUES (:id_tipo_documento, :numero_documento, :nombres, :apellidos, :telefono, :correo, :direccion, :usuario, :clave, 2, 'ACTIVO')";
+
+    $stmt = $conexion->prepare($sql);
+    foreach ($datosUsuario as $param => $value) {
+        $stmt->bindValue($param, $value);
+    }
+
+    if ($stmt->execute()) {
+        return $conexion->lastInsertId();
+    }
+    return false;
+}
+
 function insertarDocente($conexion, $datos)
 {
     $sql = "INSERT INTO docente (id_usuario, especialidad) 
@@ -156,10 +186,23 @@ function desactivarDocente($conexion, $cod_docente)
 function obtenerTodosDocentes($conexion)
 {
     try {
-        $sql = "SELECT d.cod_docente, d.id_usuario, u.nombres, u.apellidos, u.numero_documento, d.especialidad, d.estado
-                FROM docente d
-                INNER JOIN usuario u ON d.id_usuario = u.cod_usuario
-                ORDER BY u.apellidos, u.nombres";
+        // Verificar si la columna estado existe en la tabla docente
+        $checkColumn = "SHOW COLUMNS FROM docente LIKE 'estado'";
+        $stmtCheck = $conexion->query($checkColumn);
+        $hasEstado = $stmtCheck->rowCount() > 0;
+
+        if ($hasEstado) {
+            $sql = "SELECT d.cod_docente, d.id_usuario, u.nombres, u.apellidos, u.numero_documento, d.especialidad, d.estado
+                    FROM docente d
+                    INNER JOIN usuario u ON d.id_usuario = u.cod_usuario
+                    ORDER BY u.apellidos, u.nombres";
+        } else {
+            // Si no existe la columna estado, usar 'ACTIVO' por defecto
+            $sql = "SELECT d.cod_docente, d.id_usuario, u.nombres, u.apellidos, u.numero_documento, d.especialidad, 'ACTIVO' as estado
+                    FROM docente d
+                    INNER JOIN usuario u ON d.id_usuario = u.cod_usuario
+                    ORDER BY u.apellidos, u.nombres";
+        }
 
         $stmt = $conexion->prepare($sql);
         $stmt->execute();
@@ -170,25 +213,7 @@ function obtenerTodosDocentes($conexion)
     }
 }
 
-function obtenerUsuariosDisponiblesParaDocente($conexion)
-{
-    try {
-        // Obtener usuarios con rol 'docente' que NO están ya en la tabla docente
-        $sql = "SELECT u.cod_usuario, u.nombres, u.apellidos, u.numero_documento
-                FROM usuario u
-                INNER JOIN rol r ON u.id_rol = r.cod_rol
-                WHERE LOWER(r.nombre_rol) = 'docente'
-                AND u.cod_usuario NOT IN (SELECT id_usuario FROM docente)
-                ORDER BY u.apellidos, u.nombres";
 
-        $stmt = $conexion->prepare($sql);
-        $stmt->execute();
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
-    } catch (Exception $e) {
-        error_log("Error al obtener usuarios disponibles: " . $e->getMessage());
-        throw $e;
-    }
-}
 
 function activarDocente($conexion, $cod_docente)
 {
