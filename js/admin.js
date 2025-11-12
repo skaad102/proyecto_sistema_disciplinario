@@ -446,5 +446,198 @@ document.addEventListener("DOMContentLoaded", function () {
     );
   }
 
+  // ===== CÓDIGO DE MODALES DE CURSOS =====
+
+  // Editar curso
+  document.querySelectorAll(".btn-editar-curso").forEach((btn) => {
+    btn.addEventListener("click", function () {
+      const id = this.dataset.id;
+
+      // Cargar datos completos del curso mediante AJAX
+      fetch(`obtener_curso.php?id=${id}`)
+        .then((response) => response.json())
+        .then((data) => {
+          if (data.error) {
+            alert("Error al cargar datos del curso: " + data.error);
+            return;
+          }
+
+          // Llenar formulario con datos del curso
+          document.getElementById("cod_curso_editar").value = data.cod_curso;
+          document.getElementById("id_grado_editar").value = data.id_grado;
+          document.getElementById("id_director_grupo_editar").value =
+            data.id_director_grupo;
+          document.getElementById("ano_lectivo_editar").value =
+            data.ano_lectivo;
+          document.getElementById("estado_editar").value = data.estado;
+
+          // Mostrar modal
+          const modalElement = document.getElementById("modalEditarCurso");
+          let modal = bootstrap.Modal.getInstance(modalElement);
+          if (!modal) {
+            modal = new bootstrap.Modal(modalElement);
+          }
+          modal.show();
+        })
+        .catch((error) => {
+          console.error("Error:", error);
+          alert("Error al cargar los datos del curso id " + id);
+        });
+    });
+  });
+
+  // Desactivar curso
+  document.querySelectorAll(".btn-desactivar-curso").forEach((btn) => {
+    btn.addEventListener("click", function () {
+      const id = this.dataset.id;
+      const nombre = this.dataset.nombre;
+
+      document.getElementById("cod_curso_desactivar").value = id;
+      document.getElementById("nombre_curso_desactivar").textContent = nombre;
+
+      const modalElement = document.getElementById("modalDesactivarCurso");
+      let modal = bootstrap.Modal.getInstance(modalElement);
+      if (!modal) {
+        modal = new bootstrap.Modal(modalElement);
+      }
+      modal.show();
+    });
+  });
+
+  // Activar curso
+  document.querySelectorAll(".btn-activar-curso").forEach((btn) => {
+    btn.addEventListener("click", function () {
+      const id = this.dataset.id;
+      const nombre = this.dataset.nombre;
+
+      document.getElementById("cod_curso_activar").value = id;
+      document.getElementById("nombre_curso_activar").textContent = nombre;
+
+      const modalElement = document.getElementById("modalActivarCurso");
+      let modal = bootstrap.Modal.getInstance(modalElement);
+      if (!modal) {
+        modal = new bootstrap.Modal(modalElement);
+      }
+      modal.show();
+    });
+  });
+
+  // Función para filtrar docentes en el selector
+  function filtrarDocentes(inputId, selectId) {
+    const input = document.getElementById(inputId);
+    const select = document.getElementById(selectId);
+
+    if (input && select) {
+      input.addEventListener("keyup", function () {
+        const filtro = this.value.toLowerCase();
+        const opciones = select.options;
+
+        for (let i = 0; i < opciones.length; i++) {
+          const opcion = opciones[i];
+          if (i === 0) {
+            // Mantener la opción "Seleccione..."
+            continue;
+          }
+
+          const nombre = opcion.getAttribute("data-nombre") || "";
+          const documento = opcion.getAttribute("data-documento") || "";
+
+          // Buscar en nombre o documento
+          if (
+            nombre.includes(filtro) ||
+            documento.includes(filtro)
+          ) {
+            opcion.style.display = "";
+          } else {
+            opcion.style.display = "none";
+          }
+        }
+      });
+    }
+  }
+
+  // Aplicar filtro a los selectores de director de grupo
+  filtrarDocentes("buscar_director", "id_director_grupo");
+  filtrarDocentes("buscar_director_editar", "id_director_grupo_editar");
+
+  // Buscador para la tabla de cursos
+  const buscarCurso = document.getElementById("buscarCurso");
+  const tablaCursos = document.getElementById("tablaCursos");
+
+  if (buscarCurso && tablaCursos) {
+    buscarCurso.addEventListener("keyup", function () {
+      const filtro = this.value.toLowerCase();
+      const filas = tablaCursos.getElementsByTagName("tbody")[0].getElementsByTagName("tr");
+
+      for (let i = 0; i < filas.length; i++) {
+        const fila = filas[i];
+        const celdas = fila.getElementsByTagName("td");
+        let encontrado = false;
+
+        // Buscar en todas las celdas (grado, director, año)
+        for (let j = 0; j < celdas.length; j++) {
+          const texto = celdas[j].textContent.toLowerCase();
+          if (texto.includes(filtro)) {
+            encontrado = true;
+            break;
+          }
+        }
+
+        fila.style.display = encontrado ? "" : "none";
+      }
+    });
+  }
+
+  // Limpiar formularios cuando se cierran los modales de CURSOS
+  const modalCrearCursoElement = document.getElementById("modalCrearCurso");
+  if (modalCrearCursoElement) {
+    modalCrearCursoElement.addEventListener("hidden.bs.modal", function () {
+      document.activeElement.blur();
+      const form = document.querySelector("#modalCrearCurso form");
+      if (form) form.reset();
+      // Limpiar buscador
+      const buscador = document.getElementById("buscar_director");
+      if (buscador) {
+        buscador.value = "";
+        buscador.dispatchEvent(new Event("keyup")); // Resetear filtro
+      }
+      setTimeout(() => {
+        document
+          .querySelectorAll(".modal-backdrop")
+          .forEach((backdrop) => backdrop.remove());
+        if (!document.querySelector(".modal.show")) {
+          document.body.classList.remove("modal-open");
+          document.body.style.overflow = "";
+          document.body.style.paddingRight = "";
+        }
+      }, 100);
+    });
+  }
+
+  const modalEditarCursoElement = document.getElementById("modalEditarCurso");
+  if (modalEditarCursoElement) {
+    modalEditarCursoElement.addEventListener("hidden.bs.modal", function () {
+      document.activeElement.blur();
+      const form = document.querySelector("#modalEditarCurso form");
+      if (form) form.reset();
+      // Limpiar buscador
+      const buscador = document.getElementById("buscar_director_editar");
+      if (buscador) {
+        buscador.value = "";
+        buscador.dispatchEvent(new Event("keyup")); // Resetear filtro
+      }
+      setTimeout(() => {
+        document
+          .querySelectorAll(".modal-backdrop")
+          .forEach((backdrop) => backdrop.remove());
+        if (!document.querySelector(".modal.show")) {
+          document.body.classList.remove("modal-open");
+          document.body.style.overflow = "";
+          document.body.style.paddingRight = "";
+        }
+      }, 100);
+    });
+  }
+
   // ===== FIN CÓDIGO DE MODALES =====
 });

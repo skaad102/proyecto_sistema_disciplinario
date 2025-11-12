@@ -309,8 +309,7 @@ error_log("Sesión en admin/index.php: " . print_r($_SESSION, true));
         </div>
 
         <div class="table-section" id="table3">
-            <h3>Cursos</h3>
-            <p>Módulo de cursos en construcción...</p>
+            <?php include 'curso.php'; ?>
         </div>
 
         <div class="table-section" id="table4">

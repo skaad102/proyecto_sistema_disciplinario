@@ -194,7 +194,7 @@ function crearUsuarioYDocente($conexion, $datosUsuario, $datosDocente)
                     'success' => false,
                     'mensaje' => 'Ya existe un docente registrado con este tipo y número de documento.'
                 ];
-            } 
+            }
             // Si el usuario existe pero es de otro rol (estudiante o directivo)
             else if ($usuarioExistente['id_rol'] != 2) {
                 return [
@@ -443,7 +443,7 @@ function crearUsuarioYEstudiante($conexion, $datosUsuario, $datosEstudiante)
                     'success' => false,
                     'mensaje' => 'Ya existe un estudiante registrado con este tipo y número de documento.'
                 ];
-            } 
+            }
             // Si el usuario existe pero es de otro rol (docente o directivo)
             else if ($usuarioExistente['id_rol'] != 3) {
                 return [
@@ -699,5 +699,180 @@ function activarEstudiante($conexion, $cod_estudiante)
             'success' => false,
             'mensaje' => 'Error en la base de datos: ' . $e->getMessage()
         ];
+    }
+}
+
+
+// MARK: GRADO
+function obtenerTodosGrados($conexion)
+{
+    try {
+        $sql = "SELECT cod_grado, nombre_grado, nivel
+                FROM grado
+                ORDER BY nombre_grado";
+
+        $stmt = $conexion->prepare($sql);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    } catch (Exception $e) {
+        error_log("Error al obtener todos los grados: " . $e->getMessage());
+        throw $e;
+    }
+}
+function obtenerTodosCursos($conexion)
+{
+    try {
+        $sql = "SELECT c.cod_curso, g.nombre_grado, d.cod_docente, u.nombres, u.apellidos, c.ano_lectivo, c.estado
+                FROM curso c
+                INNER JOIN grado g ON c.id_grado = g.cod_grado
+                INNER JOIN docente d ON c.id_director_grupo = d.cod_docente
+                INNER JOIN usuario u ON d.id_usuario = u.cod_usuario
+                ORDER BY g.nombre_grado, c.ano_lectivo";
+
+        $stmt = $conexion->prepare($sql);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    } catch (Exception $e) {
+        error_log("Error al obtener todos los cursos: " . $e->getMessage());
+        throw $e;
+    }
+}
+
+function crearCurso($conexion, $datos)
+{
+    try {
+        $sql = "INSERT INTO curso (id_grado, id_director_grupo, ano_lectivo, estado) 
+                VALUES (:id_grado, :id_director_grupo, :ano_lectivo, :estado)";
+
+        $stmt = $conexion->prepare($sql);
+        foreach ($datos as $param => $value) {
+            $stmt->bindValue($param, $value);
+        }
+
+        if ($stmt->execute()) {
+            return [
+                'success' => true,
+                'mensaje' => 'Curso creado exitosamente.',
+                'id_curso' => $conexion->lastInsertId()
+            ];
+        }
+        return [
+            'success' => false,
+            'mensaje' => 'Error al crear el curso.'
+        ];
+    } catch (Exception $e) {
+        error_log("Error al crear curso: " . $e->getMessage());
+        return [
+            'success' => false,
+            'mensaje' => 'Error en la base de datos: ' . $e->getMessage()
+        ];
+    }
+}
+
+function actualizarCurso($conexion, $datos, $cod_curso)
+{
+    try {
+        $sql = "UPDATE curso SET 
+                id_grado = :id_grado,
+                id_director_grupo = :id_director_grupo,
+                ano_lectivo = :ano_lectivo,
+                estado = :estado
+                WHERE cod_curso = :cod_curso";
+
+        $stmt = $conexion->prepare($sql);
+        foreach ($datos as $param => $value) {
+            $stmt->bindValue($param, $value);
+        }
+        $stmt->bindParam(':cod_curso', $cod_curso);
+
+        if ($stmt->execute()) {
+            return [
+                'success' => true,
+                'mensaje' => 'Curso actualizado exitosamente.'
+            ];
+        }
+        return [
+            'success' => false,
+            'mensaje' => 'Error al actualizar el curso.'
+        ];
+    } catch (Exception $e) {
+        error_log("Error al actualizar curso: " . $e->getMessage());
+        return [
+            'success' => false,
+            'mensaje' => 'Error en la base de datos: ' . $e->getMessage()
+        ];
+    }
+}
+
+function desactivarCurso($conexion, $cod_curso)
+{
+    try {
+        $sql = "UPDATE curso SET estado = 'INACTIVO' WHERE cod_curso = :cod_curso";
+        $stmt = $conexion->prepare($sql);
+        $stmt->bindParam(':cod_curso', $cod_curso);
+
+        if ($stmt->execute()) {
+            return [
+                'success' => true,
+                'mensaje' => 'Curso desactivado correctamente.'
+            ];
+        }
+        return [
+            'success' => false,
+            'mensaje' => 'Error al desactivar el curso.'
+        ];
+    } catch (Exception $e) {
+        error_log("Error al desactivar curso: " . $e->getMessage());
+        return [
+            'success' => false,
+            'mensaje' => 'Error en la base de datos: ' . $e->getMessage()
+        ];
+    }
+}
+
+function activarCurso($conexion, $cod_curso)
+{
+    try {
+        $sql = "UPDATE curso SET estado = 'ACTIVO' WHERE cod_curso = :cod_curso";
+        $stmt = $conexion->prepare($sql);
+        $stmt->bindParam(':cod_curso', $cod_curso);
+
+        if ($stmt->execute()) {
+            return [
+                'success' => true,
+                'mensaje' => 'Curso activado correctamente.'
+            ];
+        }
+        return [
+            'success' => false,
+            'mensaje' => 'Error al activar el curso.'
+        ];
+    } catch (Exception $e) {
+        error_log("Error al activar curso: " . $e->getMessage());
+        return [
+            'success' => false,
+            'mensaje' => 'Error en la base de datos: ' . $e->getMessage()
+        ];
+    }
+}
+
+function obtenerCursoPorId($conexion, $cod_curso)
+{
+    try {
+        $sql = "SELECT c.cod_curso, c.id_grado, c.id_director_grupo, c.ano_lectivo, c.estado,
+                       g.nombre_grado, u.nombres, u.apellidos
+                FROM curso c
+                INNER JOIN grado g ON c.id_grado = g.cod_grado
+                INNER JOIN docente d ON c.id_director_grupo = d.cod_docente
+                INNER JOIN usuario u ON d.id_usuario = u.cod_usuario
+                WHERE c.cod_curso = :cod_curso";
+
+        $stmt = $conexion->prepare($sql);
+        $stmt->bindParam(':cod_curso', $cod_curso);
+        $stmt->execute();
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    } catch (Exception $e) {
+        error_log("Error al obtener curso por ID: " . $e->getMessage());
+        throw $e;
     }
 }
