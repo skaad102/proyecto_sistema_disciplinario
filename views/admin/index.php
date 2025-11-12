@@ -305,7 +305,7 @@ error_log("Sesión en admin/index.php: " . print_r($_SESSION, true));
         </div>
 
         <div class="table-section" id="table2">
-            <?php include 'asignaturasww.php'; ?>
+            <?php include 'estudiantes.php'; ?>
         </div>
 
         <div class="table-section" id="table3">

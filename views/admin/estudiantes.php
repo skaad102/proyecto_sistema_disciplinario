@@ -1,367 +1,409 @@
 <?php
 // Configuración inicial
 require_once '../../config/database.php';
-require_once '../../includes/estudiante_functions.php';
+require_once '../../includes/admin_functions.php';
 
-// Verificar la sesión
-if (!isset($_SESSION['usuario']) || strtolower($_SESSION['usuario']['rol']) !== 'docente') {
-    header('Location: ../../index.php');
-    exit();
-}
+// NO verificar sesión aquí - ya se verifica en index.php
 $database = new Database();
 $conexion = $database->connect();
 $mensaje = '';
+$tipoMensaje = 'danger';
 
-// Procesar el formulario
+// Procesar acciones POST
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // Recoger datos del formulario
-    $id_tipo_documento = $_POST['id_tipo_documento'] ?? '';
-    $numero_documento = $_POST['numero_documento'] ?? '';
-    $nombres = $_POST['nombres'] ?? '';
-    $apellidos = $_POST['apellidos'] ?? '';
-    $telefono = $_POST['telefono'] ?? '';
-    $correo = $_POST['correo'] ?? '';
-    $direccion = $_POST['direccion'] ?? '';
-    $usuario = $_POST['usuario'] ?? '';
-    $clave = $_POST['clave'] ?? '';
-    $fecha_nacimiento = $_POST['fecha_nacimiento'] ?? '';
-    $id_curso = $_POST['id_curso'] ?? '';
-    $consultaRol = "SELECT cod_rol FROM rol WHERE LOWER(rol) = 'estudiante' LIMIT 1";
-    $stmtRol = $conexion->prepare($consultaRol);
-    $stmtRol->execute();
-    if ($stmtRol->rowCount() > 0) {
-        $id_rol = $stmtRol->fetch(PDO::FETCH_ASSOC)['cod_rol'];
-    } else {
-        error_log("Error: No se encontró el rol de estudiante en la base de datos");
-        die('<div class="alert alert-danger">Error: No se encontró el rol de estudiante</div>');
+    // Verificar que el formulario sea de ESTUDIANTES
+    $modulo = $_POST['modulo'] ?? '';
+    
+    if ($modulo !== 'estudiantes') {
+        // Si no es de estudiantes, no procesar nada aquí
+        goto skip_estudiantes_processing;
     }
+    
+    $accion = $_POST['accion'] ?? '';
 
-    $estado = 'ACTIVO';
-    $fecha_nacimiento = $_POST['fecha_nacimiento'] ?? '';
-
-    $mensaje = '';
-
-    if (isset($_POST['guardar'])) {
-        // Verificar si ya existe el documento
-        if (verificarExisteDocumento($conexion, $id_tipo_documento, $numero_documento)) {
-            $mensaje = '<div class="alert alert-danger">❌ Ya existe un usuario registrado con este tipo y número de documento</div>';
-        } else {
+    if ($accion === 'crear') {
+        try {
             // Preparar datos del usuario
             $datosUsuario = [
-                ':usuario' => $usuario,
-                ':clave' => $clave,
-                ':id_rol' => $id_rol,
-                ':id_tipo_documento' => $id_tipo_documento,
-                ':numero_documento' => $numero_documento,
-                ':nombres' => $nombres,
-                ':apellidos' => $apellidos,
-                ':telefono' => $telefono,
-                ':correo' => $correo,
-                ':direccion' => $direccion
+                ':id_tipo_documento' => $_POST['id_tipo_documento'] ?? 0,
+                ':numero_documento' => $_POST['numero_documento'] ?? '',
+                ':nombres' => $_POST['nombres'] ?? '',
+                ':apellidos' => $_POST['apellidos'] ?? '',
+                ':telefono' => $_POST['telefono'] ?? '',
+                ':correo' => $_POST['correo'] ?? '',
+                ':direccion' => $_POST['direccion'] ?? '',
+                ':usuario' => $_POST['usuario'] ?? '',
+                ':clave' => $_POST['clave'] ?? '123456'
             ];
 
-            // Insertar usuario
-            $cod_usuario = insertarUsuario($conexion, $datosUsuario);
-            if ($cod_usuario) {
-                // Insertar estudiante
-                if (insertarEstudiante($conexion, $cod_usuario, $fecha_nacimiento)) {
-                    $mensaje = '<div class="alert alert-success">✅ Estudiante registrado correctamente</div>';
-                } else {
-                    $mensaje = '<div class="alert alert-danger">❌ Error al registrar estudiante</div>';
-                }
+            // Preparar datos del estudiante
+            $datosEstudiante = [
+                ':fecha_nacimiento' => $_POST['fecha_nacimiento'] ?? ''
+            ];
+
+            // Crear usuario y estudiante con transacción
+            $resultado = crearUsuarioYEstudiante($conexion, $datosUsuario, $datosEstudiante);
+
+            if ($resultado['success']) {
+                $mensaje = $resultado['mensaje'];
+                $tipoMensaje = 'success';
             } else {
-                $mensaje = '<div class="alert alert-danger">❌ Error al registrar usuario</div>';
+                $mensaje = $resultado['mensaje'];
+                $tipoMensaje = 'danger';
             }
+        } catch (Exception $e) {
+            $mensaje = 'Error: ' . $e->getMessage();
+            $tipoMensaje = 'danger';
+            error_log("Error al crear estudiante: " . $e->getMessage());
         }
-    } else if (isset($_POST['editar'])) {
-        $cod_estudiante = $_POST['cod_estudiante'] ?? '';
+    }
 
-        // Verificar si ya existe otro usuario con el mismo tipo y número de documento
-        $checkDocumento = "SELECT COUNT(*) FROM usuario u 
-                          LEFT JOIN estudiante e ON e.id_usuario = u.cod_usuario
-                          WHERE u.id_tipo_documento = :id_tipo_documento 
-                          AND u.numero_documento = :numero_documento 
-                          AND e.cod_estudiante != :cod_estudiante";
-        $stmt = $conexion->prepare($checkDocumento);
-        $stmt->bindParam(':id_tipo_documento', $id_tipo_documento, PDO::PARAM_INT);
-        $stmt->bindParam(':numero_documento', $numero_documento, PDO::PARAM_STR);
-        $stmt->bindParam(':cod_estudiante', $cod_estudiante, PDO::PARAM_INT);
-        $stmt->execute();
+    if ($accion === 'editar') {
+        try {
+            $cod_estudiante = $_POST['cod_estudiante'] ?? 0;
+            
+            // Datos del usuario
+            $datosUsuario = [
+                ':id_tipo_documento' => $_POST['id_tipo_documento'] ?? 0,
+                ':numero_documento' => $_POST['numero_documento'] ?? '',
+                ':nombres' => $_POST['nombres'] ?? '',
+                ':apellidos' => $_POST['apellidos'] ?? '',
+                ':telefono' => $_POST['telefono'] ?? '',
+                ':correo' => $_POST['correo'] ?? '',
+                ':direccion' => $_POST['direccion'] ?? ''
+            ];
 
-        if ($stmt->fetchColumn() > 0) {
-            $mensaje = '<div class="alert alert-danger">❌ Ya existe otro usuario registrado con este tipo y número de documento</div>';
-        } else {
-            try {
-                // Preparar datos del usuario para actualización
-                $datosUsuario = [
-                    ':usuario' => $usuario,
-                    ':id_tipo_documento' => intval($id_tipo_documento),
-                    ':numero_documento' => $numero_documento,
-                    ':nombres' => $nombres,
-                    ':apellidos' => $apellidos,
-                    ':telefono' => $telefono,
-                    ':correo' => $correo,
-                    ':direccion' => $direccion
-                ];
+            // Datos del estudiante
+            $datosEstudiante = [
+                ':fecha_nacimiento' => $_POST['fecha_nacimiento'] ?? ''
+            ];
 
-                // Actualizar usuario usando la función
-                if (actualizarUsuario($conexion, $datosUsuario, $cod_estudiante)) {
-                    // Actualizar estudiante usando la función
-                    if (actualizarEstudiante($conexion, $cod_estudiante, $fecha_nacimiento, intval($id_curso))) {
-                        $mensaje = '<div class="alert alert-success">✅ Estudiante actualizado correctamente</div>';
-                    } else {
-                        $mensaje = '<div class="alert alert-danger">❌ Error al actualizar estudiante</div>';
-                    }
-                } else {
-                    $mensaje = '<div class="alert alert-danger">❌ Error al actualizar usuario</div>';
-                }
-            } catch (Exception $e) {
-                error_log("Error al actualizar estudiante: " . $e->getMessage());
+            $resultado = actualizarEstudiante($conexion, $datosUsuario, $datosEstudiante, $cod_estudiante);
+            if ($resultado) {
+                $mensaje = 'Estudiante actualizado exitosamente.';
+                $tipoMensaje = 'success';
+            } else {
+                $mensaje = 'Error al actualizar el estudiante.';
+                $tipoMensaje = 'danger';
             }
+        } catch (Exception $e) {
+            $mensaje = 'Error: ' . $e->getMessage();
+            $tipoMensaje = 'danger';
+            error_log("Error al editar estudiante: " . $e->getMessage());
         }
-    } else if (isset($_POST['eliminar'])) {
-        $cod_estudiante = $_POST['cod_estudiante'] ?? '';
+    }
 
-        // Usar la función de eliminación
-        $resultado = eliminarEstudiante($conexion, $cod_estudiante);
+    if ($accion === 'desactivar') {
+        $cod_estudiante = $_POST['cod_estudiante'] ?? 0;
+        $resultado = desactivarEstudiante($conexion, $cod_estudiante);
 
         if ($resultado['success']) {
-            $mensaje = '<div class="alert alert-success">✅ ' . $resultado['mensaje'] . '</div>';
+            $mensaje = $resultado['mensaje'];
+            $tipoMensaje = 'success';
         } else {
-            $mensaje = '<div class="alert alert-danger">❌ ' . $resultado['mensaje'] . '</div>';
+            $mensaje = $resultado['mensaje'];
+            $tipoMensaje = 'warning';
+        }
+    }
+
+    if ($accion === 'activar') {
+        $cod_estudiante = $_POST['cod_estudiante'] ?? 0;
+        $resultado = activarEstudiante($conexion, $cod_estudiante);
+
+        if ($resultado['success']) {
+            $mensaje = $resultado['mensaje'];
+            $tipoMensaje = 'success';
+        } else {
+            $mensaje = $resultado['mensaje'];
+            $tipoMensaje = 'warning';
         }
     }
 }
 
-// Consultar estudiantes
-$estudiantes = [];
+skip_estudiantes_processing:
+
 try {
-    // Consulta principal de estudiantes con manejo de errores mejorado
-    $consulta = "SELECT 
-        e.cod_estudiante,
-        e.id_usuario,
-        e.fecha_nacimiento,
-        u.cod_usuario,
-        u.id_tipo_documento,
-        u.numero_documento,
-        u.nombres,
-        u.apellidos,
-        u.telefono,
-        u.correo,
-        u.direccion,
-        u.usuario,
-        td.tipo_documento as nombre_tipo_documento
-    FROM estudiante e
-    INNER JOIN usuario u ON e.id_usuario = u.cod_usuario
-    LEFT JOIN tipo_documento td ON u.id_tipo_documento = td.cod_tipodocumento
-    ORDER BY e.cod_estudiante DESC";
-
-    // Preparar y ejecutar la consulta con manejo de errores
-    $stmt = $conexion->prepare($consulta);
-    if (!$stmt) {
-        throw new Exception("Error al preparar la consulta: " . implode(" ", $conexion->errorInfo()));
-    }
-
-    if (!$stmt->execute()) {
-        throw new Exception("Error al ejecutar la consulta: " . implode(" ", $stmt->errorInfo()));
-    }
-
-    $estudiantes = $stmt->fetchAll(PDO::FETCH_ASSOC);
-    if ($estudiantes === false) {
-        throw new Exception("Error al obtener los resultados: " . implode(" ", $stmt->errorInfo()));
-    }
+    // Obtener la lista de estudiantes
+    $estudiantes = obtenerTodosEstudiantes($conexion);
+    // Obtener tipos de documento para el formulario
+    $tiposDocumento = obtenerTiposDocumento($conexion);
 } catch (Exception $e) {
-    error_log("Error en estudiantes.php: " . $e->getMessage());
-    echo '<div class="alert alert-danger">Error al cargar los estudiantes. Por favor, revise los logs para más detalles.</div>';
-    echo $e->getMessage();
-    $estudiantes = [];
+    error_log("Error al obtener estudiantes en estudiantes.php: " . $e->getMessage());
+    $mensaje = 'Error al cargar los estudiantes. Por favor, inténtelo de nuevo más tarde.';
+    echo 'Debug: Error al obtener estudiantes - ' . $e->getMessage();
 }
+
 ?>
 
-<div class="container mt-4">
-    <?php if (isset($mensaje)) echo $mensaje; ?>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2>🎓 Gestión de Estudiantes</h2>
+                <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#modalCrearEstudiante">
+                    <i class="bi bi-plus-circle"></i> Nuevo Estudiante
+                </button>
+            </div>
 
-    <div class="card shadow-sm">
-        <div class="card-header bg-primary text-white">
-            <h5 class="card-title mb-0">Registro de Estudiantes</h5>
+            <?php if ($mensaje): ?>
+                <div class="alert alert-<?php echo $tipoMensaje; ?> alert-dismissible fade show" role="alert">
+                    <?php echo htmlspecialchars($mensaje); ?>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            <?php endif; ?>
+
+            <?php if (empty($estudiantes)): ?>
+                <div class="alert alert-info">No hay estudiantes registrados.</div>
+            <?php else: ?>
+                <div class="table-responsive">
+                    <table class="table table-striped table-hover">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>Código</th>
+                                <th>Nombres</th>
+                                <th>Apellidos</th>
+                                <th>Documento</th>
+                                <th>Fecha Nacimiento</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php foreach ($estudiantes as $estudiante): ?>
+                                <tr>
+                                    <td><?php echo htmlspecialchars($estudiante['cod_estudiante']); ?></td>
+                                    <td><?php echo htmlspecialchars($estudiante['nombres']); ?></td>
+                                    <td><?php echo htmlspecialchars($estudiante['apellidos']); ?></td>
+                                    <td><?php echo htmlspecialchars($estudiante['numero_documento']); ?></td>
+                                    <td><?php echo htmlspecialchars($estudiante['fecha_nacimiento'] ?? 'N/A'); ?></td>
+                                    <td>
+                                        <button class="btn btn-sm btn-primary btn-editar-estudiante"
+                                            data-id="<?php echo $estudiante['cod_estudiante']; ?>"
+                                            data-fecha="<?php echo htmlspecialchars($estudiante['fecha_nacimiento'] ?? ''); ?>"
+                                            data-nombres="<?php echo htmlspecialchars($estudiante['nombres'] . ' ' . $estudiante['apellidos']); ?>"
+                                            title="Editar">
+                                            <i class="bi bi-pencil"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                            <?php endforeach; ?>
+                        </tbody>
+                    </table>
+                </div>
+            <?php endif; ?>
         </div>
-        <div class="card-body">
-            <form method="POST" class="needs-validation" novalidate>
-                <div class="row">
-                    <div class="col-md-6 mb-3">
-                        <label for="cod_estudiante" class="form-label">Código estudiante:</label>
-                        <input type="text" class="form-control" name="cod_estudiante" id="cod_estudiante" required>
+    </div>
+</div>
+
+<!-- Modal Crear Estudiante -->
+<div class="modal fade" id="modalCrearEstudiante" tabindex="-1" aria-labelledby="modalCrearEstudianteLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-success text-white">
+                <h5 class="modal-title" id="modalCrearEstudianteLabel">🎓 Crear Nuevo Usuario Estudiante</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form method="POST" action="">
+                <div class="modal-body">
+                    <input type="hidden" name="modulo" value="estudiantes">
+                    <input type="hidden" name="accion" value="crear">
+
+                    <h6 class="border-bottom pb-2 mb-3">📄 Información Personal</h6>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="id_tipo_documento_estudiante" class="form-label">Tipo de Documento *</label>
+                            <select class="form-select" id="id_tipo_documento_estudiante" name="id_tipo_documento" required>
+                                <option value="">Seleccione...</option>
+                                <?php if (!empty($tiposDocumento)): ?>
+                                    <?php foreach ($tiposDocumento as $tipo): ?>
+                                        <option value="<?php echo htmlspecialchars($tipo['cod_tipodocumento']); ?>">
+                                            <?php echo htmlspecialchars($tipo['tipo_documento']); ?>
+                                        </option>
+                                    <?php endforeach; ?>
+                                <?php else: ?>
+                                    <option value="">No hay tipos de documento disponibles</option>
+                                <?php endif; ?>
+                            </select>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label for="numero_documento_estudiante" class="form-label">Número de Documento *</label>
+                            <input type="text" class="form-control" id="numero_documento_estudiante" name="numero_documento"
+                                required maxlength="255" placeholder="Ej: 1234567890">
+                        </div>
                     </div>
-                    <div class="col-md-6 mb-3">
-                        <label for="id_tipo_documento" class="form-label">Tipo de documento:</label>
-                        <select class="form-select" name="id_tipo_documento" id="id_tipo_documento" required>
-                            <option value="">Seleccione...</option>
-                            <?php
-                            $tiposDocumento = obtenerTiposDocumento($conexion);
-                            foreach ($tiposDocumento as $tipo) {
-                                echo "<option value='{$tipo['cod_tipodocumento']}'>{$tipo['tipo_documento']}</option>";
-                            }
-                            ?>
-                        </select>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="nombres_estudiante" class="form-label">Nombres *</label>
+                            <input type="text" class="form-control" id="nombres_estudiante" name="nombres"
+                                required maxlength="255" placeholder="Ej: María José">
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label for="apellidos_estudiante" class="form-label">Apellidos *</label>
+                            <input type="text" class="form-control" id="apellidos_estudiante" name="apellidos"
+                                required maxlength="255" placeholder="Ej: García López">
+                        </div>
+                    </div>
+
+                    <h6 class="border-bottom pb-2 mb-3 mt-3">📞 Información de Contacto</h6>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="telefono_estudiante" class="form-label">Teléfono *</label>
+                            <input type="text" class="form-control" id="telefono_estudiante" name="telefono"
+                                required maxlength="255" placeholder="Ej: 3001234567">
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label for="correo_estudiante" class="form-label">Correo Electrónico *</label>
+                            <input type="email" class="form-control" id="correo_estudiante" name="correo"
+                                required maxlength="255" placeholder="Ej: estudiante@ejemplo.com">
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="direccion_estudiante" class="form-label">Dirección</label>
+                        <input type="text" class="form-control" id="direccion_estudiante" name="direccion"
+                            maxlength="255" placeholder="Ej: Calle 123 #45-67">
+                    </div>
+
+                    <h6 class="border-bottom pb-2 mb-3 mt-3">🔐 Credenciales de Acceso</h6>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="usuario_estudiante" class="form-label">Usuario *</label>
+                            <input type="text" class="form-control" id="usuario_estudiante" name="usuario"
+                                required maxlength="255" placeholder="Ej: maria.garcia">
+                            <div class="form-text">Nombre de usuario para iniciar sesión</div>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label for="clave_estudiante" class="form-label">Contraseña</label>
+                            <input type="text" class="form-control" id="clave_estudiante" name="clave"
+                                value="123456" maxlength="255">
+                            <div class="form-text">Por defecto: 123456 (se recomienda cambiarla)</div>
+                        </div>
+                    </div>
+
+                    <h6 class="border-bottom pb-2 mb-3 mt-3">🎓 Información Estudiante</h6>
+
+                    <div class="mb-3">
+                        <label for="fecha_nacimiento_crear" class="form-label">Fecha de Nacimiento *</label>
+                        <input type="date" class="form-control" id="fecha_nacimiento_crear" name="fecha_nacimiento" required>
                     </div>
                 </div>
-
-                <div class="row">
-                    <div class="col-md-6 mb-3">
-                        <label for="numero_documento" class="form-label">Número de Documento:</label>
-                        <input type="text" class="form-control" name="numero_documento" id="numero_documento" required>
-                    </div>
-                    <div class="col-md-6 mb-3">
-                        <label for="nombres" class="form-label">Nombres:</label>
-                        <input type="text" class="form-control" name="nombres" id="nombres" required>
-                    </div>
-                </div>
-
-                <div class="row">
-                    <div class="col-md-6 mb-3">
-                        <label for="apellidos" class="form-label">Apellidos:</label>
-                        <input type="text" class="form-control" name="apellidos" id="apellidos" required>
-                    </div>
-                    <div class="col-md-6 mb-3">
-                        <label for="fecha_nacimiento" class="form-label">Fecha de nacimiento:</label>
-                        <input type="date" class="form-control" name="fecha_nacimiento" id="fecha_nacimiento" required>
-                    </div>
-                </div>
-
-                <div class="row">
-                    <div class="col-md-12 mb-3">
-                        <label for="id_curso" class="form-label">Curso:</label>
-                        <select class="form-select" name="id_curso" id="id_curso" required>
-                            <option value="">Seleccione un curso...</option>
-                            <?php
-                            $cursos = obtenerCursos($conexion);
-                            foreach ($cursos as $curso) {
-                                echo "<option value='{$curso['cod_curso']}'>{$curso['nombre_curso']}</option>";
-                            }
-                            ?>
-                        </select>
-                    </div>
-                </div>
-
-                <div class="row">
-                    <div class="col-md-4 mb-3">
-                        <label for="telefono" class="form-label">Teléfono:</label>
-                        <input type="tel" class="form-control" name="telefono" id="telefono" required>
-                    </div>
-                    <div class="col-md-4 mb-3">
-                        <label for="correo" class="form-label">Correo electrónico:</label>
-                        <input type="email" class="form-control" name="correo" id="correo" required>
-                    </div>
-                    <div class="col-md-4 mb-3">
-                        <label for="direccion" class="form-label">Dirección:</label>
-                        <input type="text" class="form-control" name="direccion" id="direccion" required>
-                    </div>
-                </div>
-
-                <div class="row">
-                    <div class="col-md-6 mb-3">
-                        <label for="usuario" class="form-label">Usuario:</label>
-                        <input type="text" class="form-control" name="usuario" id="usuario" required>
-                    </div>
-                    <div class="col-md-6 mb-3">
-                        <label for="clave" class="form-label">Contraseña:</label>
-                        <input type="password" class="form-control" name="clave" id="clave">
-                        <small class="text-muted">Dejar en blanco para mantener la contraseña actual al editar</small>
-                    </div>
-                </div>
-
-                <div class="d-flex gap-2">
-                    <button type="submit" name="guardar" class="btn btn-primary">
-                        <i class="bi bi-save"></i> Guardar
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        <i class="bi bi-x-circle"></i> Cancelar
                     </button>
-                    <button type="submit" name="editar" class="btn btn-warning">
-                        <i class="bi bi-pencil"></i> Editar
-                    </button>
-                    <button type="submit" name="eliminar" class="btn btn-danger" onclick="return confirm('¿Está seguro de eliminar este estudiante?')">
-                        <i class="bi bi-trash"></i> Eliminar
+                    <button type="submit" class="btn btn-success">
+                        <i class="bi bi-check-circle"></i> Crear Estudiante
                     </button>
                 </div>
             </form>
         </div>
     </div>
+</div>
 
-    <div class="card mt-4 shadow-sm">
-        <div class="card-header bg-primary text-white">
-            <h5 class="card-title mb-0">Lista de Estudiantes</h5>
-        </div>
-        <div class="card-body">
-            <div class="table-responsive">
-                <table class="table table-hover">
-                    <thead>
-                        <tr>
-                            <th>Código</th>
-                            <th>Tipo Doc.</th>
-                            <th>Documento</th>
-                            <th>Nombres</th>
-                            <th>Apellidos</th>
-                            <th>Fecha Nac.</th>
-                            <th>Teléfono</th>
-                            <th>Correo</th>
-                            <th>Dirección</th>
-                            <th>Acciones</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <?php foreach ($estudiantes as $estudiante): ?>
-                            <tr>
-                                <td><?php echo htmlspecialchars($estudiante['cod_estudiante']); ?></td>
-                                <td><?php echo htmlspecialchars($estudiante['nombre_tipo_documento']); ?></td>
-                                <td><?php echo htmlspecialchars($estudiante['numero_documento']); ?></td>
-                                <td><?php echo htmlspecialchars($estudiante['nombres']); ?></td>
-                                <td><?php echo htmlspecialchars($estudiante['apellidos']); ?></td>
-                                <td><?php echo htmlspecialchars($estudiante['fecha_nacimiento']); ?></td>
-                                <td><?php echo htmlspecialchars($estudiante['telefono']); ?></td>
-                                <td><?php echo htmlspecialchars($estudiante['correo']); ?></td>
-                                <td><?php echo htmlspecialchars($estudiante['direccion']); ?></td>
-                                <td>
-                                    <button class="btn btn-sm btn-info" onclick="cargarEstudiante(<?php echo htmlspecialchars(json_encode($estudiante)); ?>)">
-                                        <i class="bi bi-pencil"></i>
-                                    </button>
-                                </td>
-                            </tr>
-                        <?php endforeach; ?>
-                    </tbody>
-                </table>
+<!-- Modal Editar Estudiante -->
+<div class="modal fade" id="modalEditarEstudiante" tabindex="-1" aria-labelledby="modalEditarEstudianteLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title" id="modalEditarEstudianteLabel">✏️ Editar Estudiante</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
+            <form method="POST" action="">
+                <div class="modal-body">
+                    <input type="hidden" name="modulo" value="estudiantes">
+                    <input type="hidden" name="accion" value="editar">
+                    <input type="hidden" name="cod_estudiante" id="cod_estudiante_editar">
+
+                    <h6 class="border-bottom pb-2 mb-3">📄 Información Personal</h6>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="id_tipo_documento_editar_estudiante" class="form-label">Tipo de Documento *</label>
+                            <select class="form-select" id="id_tipo_documento_editar_estudiante" name="id_tipo_documento" required>
+                                <option value="">Seleccione...</option>
+                                <?php if (!empty($tiposDocumento)): ?>
+                                    <?php foreach ($tiposDocumento as $tipo): ?>
+                                        <option value="<?php echo htmlspecialchars($tipo['cod_tipodocumento']); ?>">
+                                            <?php echo htmlspecialchars($tipo['tipo_documento']); ?>
+                                        </option>
+                                    <?php endforeach; ?>
+                                <?php endif; ?>
+                            </select>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label for="numero_documento_editar_estudiante" class="form-label">Número de Documento *</label>
+                            <input type="text" class="form-control" id="numero_documento_editar_estudiante" name="numero_documento"
+                                required maxlength="255">
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="nombres_editar_estudiante" class="form-label">Nombres *</label>
+                            <input type="text" class="form-control" id="nombres_editar_estudiante" name="nombres"
+                                required maxlength="255">
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label for="apellidos_editar_estudiante" class="form-label">Apellidos *</label>
+                            <input type="text" class="form-control" id="apellidos_editar_estudiante" name="apellidos"
+                                required maxlength="255">
+                        </div>
+                    </div>
+
+                    <h6 class="border-bottom pb-2 mb-3 mt-3">📞 Información de Contacto</h6>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="telefono_editar_estudiante" class="form-label">Teléfono *</label>
+                            <input type="text" class="form-control" id="telefono_editar_estudiante" name="telefono"
+                                required maxlength="255">
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label for="correo_editar_estudiante" class="form-label">Correo Electrónico *</label>
+                            <input type="email" class="form-control" id="correo_editar_estudiante" name="correo"
+                                required maxlength="255">
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="direccion_editar_estudiante" class="form-label">Dirección</label>
+                        <input type="text" class="form-control" id="direccion_editar_estudiante" name="direccion" maxlength="255">
+                    </div>
+
+                    <h6 class="border-bottom pb-2 mb-3 mt-3">🔐 Usuario de Acceso</h6>
+
+                    <div class="mb-3">
+                        <label for="usuario_editar_estudiante" class="form-label">Usuario</label>
+                        <input type="text" class="form-control" id="usuario_editar_estudiante" readonly>
+                        <div class="form-text">No se puede cambiar el nombre de usuario.</div>
+                    </div>
+
+                    <h6 class="border-bottom pb-2 mb-3 mt-3">🎓 Información Estudiante</h6>
+
+                    <div class="mb-3">
+                        <label for="fecha_nacimiento_editar" class="form-label">Fecha de Nacimiento *</label>
+                        <input type="date" class="form-control" id="fecha_nacimiento_editar" name="fecha_nacimiento" required>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        <i class="bi bi-x-circle"></i> Cancelar
+                    </button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-check-circle"></i> Actualizar Estudiante
+                    </button>
+                </div>
+            </form>
         </div>
     </div>
 </div>
-
-<script>
-    function cargarEstudiante(estudiante) {
-        document.getElementById('cod_estudiante').value = estudiante.cod_estudiante;
-        document.getElementById('id_tipo_documento').value = estudiante.id_tipo_documento;
-        document.getElementById('numero_documento').value = estudiante.numero_documento;
-        document.getElementById('nombres').value = estudiante.nombres;
-        document.getElementById('apellidos').value = estudiante.apellidos;
-        document.getElementById('fecha_nacimiento').value = estudiante.fecha_nacimiento;
-        document.getElementById('telefono').value = estudiante.telefono;
-        document.getElementById('correo').value = estudiante.correo;
-        document.getElementById('direccion').value = estudiante.direccion;
-        document.getElementById('usuario').value = estudiante.usuario;
-        document.getElementById('id_curso').value = estudiante.id_curso;
-        // No cargamos la clave por seguridad
-        document.getElementById('clave').value = '';
-    }
-
-    // Validación de formularios Bootstrap
-    (function() {
-        'use strict'
-        var forms = document.querySelectorAll('.needs-validation')
-        Array.prototype.slice.call(forms)
-            .forEach(function(form) {
-                form.addEventListener('submit', function(event) {
-                    if (!form.checkValidity()) {
-                        event.preventDefault()
-                        event.stopPropagation()
-                    }
-                    form.classList.add('was-validated')
-                }, false)
-            })
-    })()
-</script>

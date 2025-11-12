@@ -5,12 +5,6 @@ function saveActiveTable(tableNumber) {
 
 // Restaurar la tabla activa INMEDIATAMENTE (antes de que se renderice)
 (function () {
-  // Si es una nueva sesión Y NO es un submit de formulario, mostrar el mensaje de bienvenida
-  if (isNewSession && !isFormSubmit) {
-    localStorage.setItem("activeTableAdmin", "0");
-    return;
-  }
-
   const activeTable = localStorage.getItem("activeTableAdmin");
   // Si no hay tabla guardada, no hacer nada (mostrar el mensaje de bienvenida)
   if (activeTable && activeTable !== "0") {
@@ -76,10 +70,12 @@ function showTable(tableNumber, skipMenuClose = false) {
 // Restaurar la tabla activa al cargar completamente la página
 document.addEventListener("DOMContentLoaded", function () {
   // Limpiar cualquier backdrop residual de Bootstrap al cargar la página
-  document.querySelectorAll('.modal-backdrop').forEach(backdrop => backdrop.remove());
-  document.body.classList.remove('modal-open');
-  document.body.style.overflow = '';
-  document.body.style.paddingRight = '';
+  document
+    .querySelectorAll(".modal-backdrop")
+    .forEach((backdrop) => backdrop.remove());
+  document.body.classList.remove("modal-open");
+  document.body.style.overflow = "";
+  document.body.style.paddingRight = "";
 
   // Asegurarse de que el menú esté cerrado al cargar
   closeMenu();
@@ -98,18 +94,6 @@ document.addEventListener("DOMContentLoaded", function () {
     overlay.addEventListener("click", function (e) {
       toggleMenu();
     });
-  }
-
-  // Si no es nueva sesión O es un submit de formulario, verificar y actualizar el menú activo
-  if (!isNewSession || isFormSubmit) {
-    const activeTable = localStorage.getItem("activeTableAdmin");
-    if (activeTable && activeTable !== "0") {
-      const menuItems = document.querySelectorAll(".menu-item");
-      const itemIndex = parseInt(activeTable) - 1;
-      if (menuItems[itemIndex]) {
-        menuItems[itemIndex].classList.add("active");
-      }
-    }
   }
 
   // ===== CÓDIGO DE MODALES DE ASIGNATURAS =====
@@ -135,7 +119,10 @@ document.addEventListener("DOMContentLoaded", function () {
         modal.show();
       }
       // Verificar si es de docentes (tiene data-especialidad y data-nombres)
-      else if (this.dataset.especialidad !== undefined && this.dataset.nombres) {
+      else if (
+        this.dataset.especialidad !== undefined &&
+        this.dataset.nombres
+      ) {
         const id = this.dataset.id;
         const especialidad = this.dataset.especialidad;
         const nombres = this.dataset.nombres;
@@ -161,7 +148,8 @@ document.addEventListener("DOMContentLoaded", function () {
       const nombre = this.dataset.nombre;
 
       document.getElementById("cod_asignatura_eliminar").value = id;
-      document.getElementById("nombre_asignatura_eliminar").textContent = nombre;
+      document.getElementById("nombre_asignatura_eliminar").textContent =
+        nombre;
 
       const modalElement = document.getElementById("modalEliminar");
       let modal = bootstrap.Modal.getInstance(modalElement);
@@ -180,7 +168,9 @@ document.addEventListener("DOMContentLoaded", function () {
       const form = document.querySelector("#modalCrear form");
       if (form) form.reset();
       setTimeout(() => {
-        document.querySelectorAll(".modal-backdrop").forEach((backdrop) => backdrop.remove());
+        document
+          .querySelectorAll(".modal-backdrop")
+          .forEach((backdrop) => backdrop.remove());
         if (!document.querySelector(".modal.show")) {
           document.body.classList.remove("modal-open");
           document.body.style.overflow = "";
@@ -197,7 +187,9 @@ document.addEventListener("DOMContentLoaded", function () {
       const form = document.querySelector("#modalEditar form");
       if (form) form.reset();
       setTimeout(() => {
-        document.querySelectorAll(".modal-backdrop").forEach((backdrop) => backdrop.remove());
+        document
+          .querySelectorAll(".modal-backdrop")
+          .forEach((backdrop) => backdrop.remove());
         if (!document.querySelector(".modal.show")) {
           document.body.classList.remove("modal-open");
           document.body.style.overflow = "";
@@ -286,7 +278,9 @@ document.addEventListener("DOMContentLoaded", function () {
       const form = document.querySelector("#modalCrearUsuario form");
       if (form) form.reset();
       setTimeout(() => {
-        document.querySelectorAll(".modal-backdrop").forEach((backdrop) => backdrop.remove());
+        document
+          .querySelectorAll(".modal-backdrop")
+          .forEach((backdrop) => backdrop.remove());
         if (!document.querySelector(".modal.show")) {
           document.body.classList.remove("modal-open");
           document.body.style.overflow = "";
@@ -296,14 +290,17 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   }
 
-  const modalEditarDocenteElement = document.getElementById("modalEditarDocente");
+  const modalEditarDocenteElement =
+    document.getElementById("modalEditarDocente");
   if (modalEditarDocenteElement) {
     modalEditarDocenteElement.addEventListener("hidden.bs.modal", function () {
       document.activeElement.blur();
       const form = document.querySelector("#modalEditarDocente form");
       if (form) form.reset();
       setTimeout(() => {
-        document.querySelectorAll(".modal-backdrop").forEach((backdrop) => backdrop.remove());
+        document
+          .querySelectorAll(".modal-backdrop")
+          .forEach((backdrop) => backdrop.remove());
         if (!document.querySelector(".modal.show")) {
           document.body.classList.remove("modal-open");
           document.body.style.overflow = "";
@@ -311,6 +308,142 @@ document.addEventListener("DOMContentLoaded", function () {
         }
       }, 100);
     });
+  }
+
+  // ===== CÓDIGO DE MODALES DE ESTUDIANTES =====
+
+  // Editar estudiante
+  document.querySelectorAll(".btn-editar-estudiante").forEach((btn) => {
+    btn.addEventListener("click", function () {
+      const id = this.dataset.id;
+
+      // Cargar datos completos del estudiante mediante AJAX
+      fetch(`obtener_estudiante.php?id=${id}`)
+        .then((response) => response.json())
+        .then((data) => {
+          if (data.error) {
+            alert("Error al cargar datos del estudiante: " + data.error);
+            return;
+          }
+
+          // Llenar formulario con datos del usuario
+          document.getElementById("cod_estudiante_editar").value =
+            data.cod_estudiante;
+          document.getElementById("id_tipo_documento_editar_estudiante").value =
+            data.id_tipo_documento;
+          document.getElementById("numero_documento_editar_estudiante").value =
+            data.numero_documento;
+          document.getElementById("nombres_editar_estudiante").value =
+            data.nombres;
+          document.getElementById("apellidos_editar_estudiante").value =
+            data.apellidos;
+          document.getElementById("telefono_editar_estudiante").value =
+            data.telefono;
+          document.getElementById("correo_editar_estudiante").value =
+            data.correo;
+          document.getElementById("direccion_editar_estudiante").value =
+            data.direccion || "";
+          document.getElementById("usuario_editar_estudiante").value =
+            data.usuario;
+          document.getElementById("fecha_nacimiento_editar").value =
+            data.fecha_nacimiento || "";
+
+          // Mostrar modal
+          const modalElement = document.getElementById("modalEditarEstudiante");
+          let modal = bootstrap.Modal.getInstance(modalElement);
+          if (!modal) {
+            modal = new bootstrap.Modal(modalElement);
+          }
+          modal.show();
+        })
+        .catch((error) => {
+          console.error("Error:", error);
+          alert("Error al cargar los datos del estudiante id " + id);
+        });
+    });
+  });
+
+  // Auto-generar nombre de usuario basado en nombres y apellidos para ESTUDIANTES
+  const nombresEstudianteInput = document.getElementById("nombres_estudiante");
+  const apellidosEstudianteInput = document.getElementById(
+    "apellidos_estudiante"
+  );
+  const usuarioEstudianteInput = document.getElementById("usuario_estudiante");
+
+  function generarUsuarioEstudiante() {
+    const nombres = nombresEstudianteInput.value.trim();
+    const apellidos = apellidosEstudianteInput.value.trim();
+
+    if (nombres && apellidos) {
+      const primerNombre = nombres.split(" ")[0].toLowerCase();
+      const primerApellido = apellidos.split(" ")[0].toLowerCase();
+      const usuario = primerNombre + "." + primerApellido;
+
+      const usuarioLimpio = usuario
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .replace(/[^a-z.]/g, "");
+
+      usuarioEstudianteInput.value = usuarioLimpio;
+    }
+  }
+
+  if (
+    nombresEstudianteInput &&
+    apellidosEstudianteInput &&
+    usuarioEstudianteInput
+  ) {
+    nombresEstudianteInput.addEventListener("blur", generarUsuarioEstudiante);
+    apellidosEstudianteInput.addEventListener("blur", generarUsuarioEstudiante);
+  }
+
+  // Limpiar formularios cuando se cierran los modales de ESTUDIANTES
+  const modalCrearEstudianteElement = document.getElementById(
+    "modalCrearEstudiante"
+  );
+  if (modalCrearEstudianteElement) {
+    modalCrearEstudianteElement.addEventListener(
+      "hidden.bs.modal",
+      function () {
+        document.activeElement.blur();
+        const form = document.querySelector("#modalCrearEstudiante form");
+        if (form) form.reset();
+        setTimeout(() => {
+          document
+            .querySelectorAll(".modal-backdrop")
+            .forEach((backdrop) => backdrop.remove());
+          if (!document.querySelector(".modal.show")) {
+            document.body.classList.remove("modal-open");
+            document.body.style.overflow = "";
+            document.body.style.paddingRight = "";
+          }
+        }, 100);
+      }
+    );
+  }
+
+  const modalEditarEstudianteElement = document.getElementById(
+    "modalEditarEstudiante"
+  );
+  if (modalEditarEstudianteElement) {
+    modalEditarEstudianteElement.addEventListener(
+      "hidden.bs.modal",
+      function () {
+        document.activeElement.blur();
+        const form = document.querySelector("#modalEditarEstudiante form");
+        if (form) form.reset();
+        setTimeout(() => {
+          document
+            .querySelectorAll(".modal-backdrop")
+            .forEach((backdrop) => backdrop.remove());
+          if (!document.querySelector(".modal.show")) {
+            document.body.classList.remove("modal-open");
+            document.body.style.overflow = "";
+            document.body.style.paddingRight = "";
+          }
+        }, 100);
+      }
+    );
   }
 
   // ===== FIN CÓDIGO DE MODALES =====

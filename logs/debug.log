@@ -649,3 +649,164 @@ Consulta ejecutada. Número de filas: 1
 )
 
 [10-Nov-2025 23:44:03 America/Bogota] Usuario: admin, Rol: Directivo (ID: 1), Redirigiendo a: ../../views/admin/index.php
+=== Inicio de sesión: 2025-11-11 18:41:43 ===
+[11-Nov-2025 18:41:43 America/Bogota] === Nueva solicitud de inicio de sesión ===
+[11-Nov-2025 18:41:43 America/Bogota] Intento de inicio de sesión - Usuario: admin
+Intentando autenticar usuario: admin
+Consulta ejecutada. Número de filas: 1
+[11-Nov-2025 18:41:43 America/Bogota] Datos del usuario: Array
+(
+    [cod_usuario] => 9999999
+    [id_tipo_documento] => 3
+    [numero_documento] => 99999999
+    [nombres] => super
+    [apellidos] => admin
+    [telefono] => 31000000
+    [correo] => admin@colegio.conm
+    [direccion] => av siempre viva 123
+    [usuario] => admin
+    [clave] => admin123
+    [id_rol] => 1
+    [estado] => ACTIVO
+    [rol] => Directivo
+)
+
+[11-Nov-2025 18:41:43 America/Bogota] Usuario: admin, Rol: Directivo (ID: 1), Redirigiendo a: ../../views/admin/index.php
+=== Inicio de sesión: 2025-11-11 18:44:33 ===
+[11-Nov-2025 18:44:33 America/Bogota] === Nueva solicitud de inicio de sesión ===
+[11-Nov-2025 18:44:33 America/Bogota] Intento de inicio de sesión - Usuario: admin
+Intentando autenticar usuario: admin
+Consulta ejecutada. Número de filas: 1
+[11-Nov-2025 18:44:33 America/Bogota] Datos del usuario: Array
+(
+    [cod_usuario] => 9999999
+    [id_tipo_documento] => 3
+    [numero_documento] => 99999999
+    [nombres] => super
+    [apellidos] => admin
+    [telefono] => 31000000
+    [correo] => admin@colegio.conm
+    [direccion] => av siempre viva 123
+    [usuario] => admin
+    [clave] => admin123
+    [id_rol] => 1
+    [estado] => ACTIVO
+    [rol] => Directivo
+)
+
+[11-Nov-2025 18:44:33 America/Bogota] Usuario: admin, Rol: Directivo (ID: 1), Redirigiendo a: ../../views/admin/index.php
+=== Inicio de sesión: 2025-11-11 18:54:01 ===
+[11-Nov-2025 18:54:01 America/Bogota] === Nueva solicitud de inicio de sesión ===
+[11-Nov-2025 18:54:01 America/Bogota] Intento de inicio de sesión - Usuario: admin
+Intentando autenticar usuario: admin
+Consulta ejecutada. Número de filas: 1
+[11-Nov-2025 18:54:01 America/Bogota] Datos del usuario: Array
+(
+    [cod_usuario] => 9999999
+    [id_tipo_documento] => 3
+    [numero_documento] => 99999999
+    [nombres] => super
+    [apellidos] => admin
+    [telefono] => 31000000
+    [correo] => admin@colegio.conm
+    [direccion] => av siempre viva 123
+    [usuario] => admin
+    [clave] => admin123
+    [id_rol] => 1
+    [estado] => ACTIVO
+    [rol] => Directivo
+)
+
+[11-Nov-2025 18:54:01 America/Bogota] Usuario: admin, Rol: Directivo (ID: 1), Redirigiendo a: ../../views/admin/index.php
+=== Inicio de sesión: 2025-11-11 18:55:43 ===
+[11-Nov-2025 18:55:43 America/Bogota] === Nueva solicitud de inicio de sesión ===
+[11-Nov-2025 18:55:43 America/Bogota] Intento de inicio de sesión - Usuario: admin
+Intentando autenticar usuario: admin
+Consulta ejecutada. Número de filas: 1
+[11-Nov-2025 18:55:43 America/Bogota] Datos del usuario: Array
+(
+    [cod_usuario] => 9999999
+    [id_tipo_documento] => 3
+    [numero_documento] => 99999999
+    [nombres] => super
+    [apellidos] => admin
+    [telefono] => 31000000
+    [correo] => admin@colegio.conm
+    [direccion] => av siempre viva 123
+    [usuario] => admin
+    [clave] => admin123
+    [id_rol] => 1
+    [estado] => ACTIVO
+    [rol] => Directivo
+)
+
+[11-Nov-2025 18:55:43 America/Bogota] Usuario: admin, Rol: Directivo (ID: 1), Redirigiendo a: ../../views/admin/index.php
+=== Inicio de sesión: 2025-11-11 19:08:30 ===
+[11-Nov-2025 19:08:30 America/Bogota] === Nueva solicitud de inicio de sesión ===
+[11-Nov-2025 19:08:30 America/Bogota] Intento de inicio de sesión - Usuario: admin
+Intentando autenticar usuario: admin
+Consulta ejecutada. Número de filas: 1
+[11-Nov-2025 19:08:30 America/Bogota] Datos del usuario: Array
+(
+    [cod_usuario] => 9999999
+    [id_tipo_documento] => 3
+    [numero_documento] => 99999999
+    [nombres] => super
+    [apellidos] => admin
+    [telefono] => 31000000
+    [correo] => admin@colegio.conm
+    [direccion] => av siempre viva 123
+    [usuario] => admin
+    [clave] => admin123
+    [id_rol] => 1
+    [estado] => ACTIVO
+    [rol] => Directivo
+)
+
+[11-Nov-2025 19:08:30 America/Bogota] Usuario: admin, Rol: Directivo (ID: 1), Redirigiendo a: ../../views/admin/index.php
+=== Inicio de sesión: 2025-11-11 19:20:25 ===
+[11-Nov-2025 19:20:25 America/Bogota] === Nueva solicitud de inicio de sesión ===
+[11-Nov-2025 19:20:25 America/Bogota] Intento de inicio de sesión - Usuario: admin
+Intentando autenticar usuario: admin
+Consulta ejecutada. Número de filas: 1
+[11-Nov-2025 19:20:25 America/Bogota] Datos del usuario: Array
+(
+    [cod_usuario] => 9999999
+    [id_tipo_documento] => 3
+    [numero_documento] => 99999999
+    [nombres] => super
+    [apellidos] => admin
+    [telefono] => 31000000
+    [correo] => admin@colegio.conm
+    [direccion] => av siempre viva 123
+    [usuario] => admin
+    [clave] => admin123
+    [id_rol] => 1
+    [estado] => ACTIVO
+    [rol] => Directivo
+)
+
+[11-Nov-2025 19:20:25 America/Bogota] Usuario: admin, Rol: Directivo (ID: 1), Redirigiendo a: ../../views/admin/index.php
+=== Inicio de sesión: 2025-11-11 19:37:57 ===
+[11-Nov-2025 19:37:57 America/Bogota] === Nueva solicitud de inicio de sesión ===
+[11-Nov-2025 19:37:57 America/Bogota] Intento de inicio de sesión - Usuario: admin
+Intentando autenticar usuario: admin
+Consulta ejecutada. Número de filas: 1
+[11-Nov-2025 19:37:57 America/Bogota] Datos del usuario: Array
+(
+    [cod_usuario] => 9999999
+    [id_tipo_documento] => 3
+    [numero_documento] => 99999999
+    [nombres] => super
+    [apellidos] => admin
+    [telefono] => 31000000
+    [correo] => admin@colegio.conm
+    [direccion] => av siempre viva 123
+    [usuario] => admin
+    [clave] => admin123
+    [id_rol] => 1
+    [estado] => ACTIVO
+    [rol] => Directivo
+)
+
+[11-Nov-2025 19:37:57 America/Bogota] Usuario: admin, Rol: Directivo (ID: 1), Redirigiendo a: ../../views/admin/index.php

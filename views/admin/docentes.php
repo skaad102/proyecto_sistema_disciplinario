@@ -11,12 +11,19 @@ $tipoMensaje = 'danger';
 
 // Procesar acciones POST
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    // Verificar que el formulario sea de DOCENTES
+    $modulo = $_POST['modulo'] ?? '';
+    
+    if ($modulo !== 'docentes') {
+        // Si no es de docentes, no procesar nada aquí
+        goto skip_docentes_processing;
+    }
+    
     $accion = $_POST['accion'] ?? '';
 
     if ($accion === 'crear') {
         try {
-            echo "Debug: Iniciando creación de docente\n";
-            // Paso 1: Crear el usuario
+            // Preparar datos del usuario
             $datosUsuario = [
                 ':id_tipo_documento' => $_POST['id_tipo_documento'] ?? 0,
                 ':numero_documento' => $_POST['numero_documento'] ?? '',
@@ -26,29 +33,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 ':correo' => $_POST['correo'] ?? '',
                 ':direccion' => $_POST['direccion'] ?? '',
                 ':usuario' => $_POST['usuario'] ?? '',
-                ':clave' => $_POST['clave'] ?? '123456' // Contraseña por defecto
+                ':clave' => $_POST['clave'] ?? '123456'
             ];
 
-            $id_usuario = crearUsuarioDocente($conexion, $datosUsuario);
+            // Preparar datos del docente
+            $datosDocente = [
+                ':especialidad' => $_POST['especialidad'] ?? ''
+            ];
 
-            if ($id_usuario) {
-                // Paso 2: Crear el docente con el id_usuario obtenido
-                $datosDocente = [
-                    ':id_usuario' => $id_usuario,
-                    ':especialidad' => $_POST['especialidad'] ?? ''
-                ];
+            // Crear usuario y docente con transacción
+            $resultado = crearUsuarioYDocente($conexion, $datosUsuario, $datosDocente);
 
-                $resultado = insertarDocente($conexion, $datosDocente);
-
-                if ($resultado) {
-                    $mensaje = 'Usuario y docente creados exitosamente.';
-                    $tipoMensaje = 'success';
-                } else {
-                    $mensaje = 'Usuario creado, pero error al registrar como docente.';
-                    $tipoMensaje = 'warning';
-                }
+            if ($resultado['success']) {
+                $mensaje = $resultado['mensaje'];
+                $tipoMensaje = 'success';
             } else {
-                $mensaje = 'Error al crear el usuario.';
+                $mensaje = $resultado['mensaje'];
                 $tipoMensaje = 'danger';
             }
         } catch (Exception $e) {
@@ -99,6 +99,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
 }
+
+skip_docentes_processing:
 
 try {
     // Obtener la lista de docentes
@@ -206,6 +208,7 @@ try {
             </div>
             <form method="POST" action="">
                 <div class="modal-body">
+                    <input type="hidden" name="modulo" value="docentes">
                     <input type="hidden" name="accion" value="crear">
 
                     <h6 class="border-bottom pb-2 mb-3">📄 Información Personal</h6>
@@ -320,6 +323,7 @@ try {
             </div>
             <form method="POST" action="">
                 <div class="modal-body">
+                    <input type="hidden" name="modulo" value="docentes">
                     <input type="hidden" name="accion" value="editar">
                     <input type="hidden" name="cod_docente" id="cod_docente_editar">
 
@@ -354,6 +358,7 @@ try {
             </div>
             <form method="POST" action="">
                 <div class="modal-body">
+                    <input type="hidden" name="modulo" value="docentes">
                     <input type="hidden" name="accion" value="desactivar">
                     <input type="hidden" name="cod_docente" id="cod_docente_desactivar">
 
@@ -380,6 +385,7 @@ try {
             </div>
             <form method="POST" action="">
                 <div class="modal-body">
+                    <input type="hidden" name="modulo" value="docentes">
                     <input type="hidden" name="accion" value="activar">
                     <input type="hidden" name="cod_docente" id="cod_docente_activar">
 

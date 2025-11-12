@@ -11,36 +11,64 @@ $tipoMensaje = 'danger';
 
 // Procesar acciones POST
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    // Verificar que el formulario sea de ASIGNATURAS
+    $modulo = $_POST['modulo'] ?? '';
+    
+    if ($modulo !== 'asignaturas') {
+        // Si no es de asignaturas, no procesar nada aquí
+        goto skip_asignaturas_processing;
+    }
+    
     $accion = $_POST['accion'] ?? '';
     
     if ($accion === 'crear') {
-        $datos = [
-            ':nombre_asignatura' => $_POST['nombre_asignatura'] ?? '',
-            ':descripcion' => $_POST['descripcion'] ?? ''
-        ];
+        $nombre_asignatura = trim($_POST['nombre_asignatura'] ?? '');
+        $descripcion = trim($_POST['descripcion'] ?? '');
         
-        $resultado = insertarAsignatura($conexion, $datos);
-        if ($resultado) {
-            $mensaje = 'Asignatura creada exitosamente.';
-            $tipoMensaje = 'success';
+        // Validar que el nombre no esté vacío
+        if (empty($nombre_asignatura)) {
+            $mensaje = 'El nombre de la asignatura es obligatorio.';
+            $tipoMensaje = 'danger';
         } else {
-            $mensaje = 'Error al crear la asignatura.';
+            $datos = [
+                ':nombre_asignatura' => $nombre_asignatura,
+                ':descripcion' => $descripcion
+            ];
+            
+            $resultado = insertarAsignatura($conexion, $datos);
+            if ($resultado['success']) {
+                $mensaje = $resultado['mensaje'];
+                $tipoMensaje = 'success';
+            } else {
+                $mensaje = $resultado['mensaje'];
+                $tipoMensaje = 'danger';
+            }
         }
     }
     
     if ($accion === 'editar') {
         $cod_asignatura = $_POST['cod_asignatura'] ?? 0;
-        $datos = [
-            ':nombre_asignatura' => $_POST['nombre_asignatura'] ?? '',
-            ':descripcion' => $_POST['descripcion'] ?? ''
-        ];
+        $nombre_asignatura = trim($_POST['nombre_asignatura'] ?? '');
+        $descripcion = trim($_POST['descripcion'] ?? '');
         
-        $resultado = actualizarAsignatura($conexion, $datos, $cod_asignatura);
-        if ($resultado) {
-            $mensaje = 'Asignatura actualizada exitosamente.';
-            $tipoMensaje = 'success';
+        // Validar que el nombre no esté vacío
+        if (empty($nombre_asignatura)) {
+            $mensaje = 'El nombre de la asignatura es obligatorio.';
+            $tipoMensaje = 'danger';
         } else {
-            $mensaje = 'Error al actualizar la asignatura.';
+            $datos = [
+                ':nombre_asignatura' => $nombre_asignatura,
+                ':descripcion' => $descripcion
+            ];
+            
+            $resultado = actualizarAsignatura($conexion, $datos, $cod_asignatura);
+            if ($resultado['success']) {
+                $mensaje = $resultado['mensaje'];
+                $tipoMensaje = 'success';
+            } else {
+                $mensaje = $resultado['mensaje'];
+                $tipoMensaje = 'danger';
+            }
         }
     }
     
@@ -57,6 +85,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
 }
+
+skip_asignaturas_processing:
 
 try {
     // Obtener la lista de asignaturas
@@ -139,6 +169,7 @@ try {
             </div>
             <form method="POST" action="">
                 <div class="modal-body">
+                    <input type="hidden" name="modulo" value="asignaturas">
                     <input type="hidden" name="accion" value="crear">
                     
                     <div class="mb-3">
@@ -172,6 +203,7 @@ try {
             </div>
             <form method="POST" action="">
                 <div class="modal-body">
+                    <input type="hidden" name="modulo" value="asignaturas">
                     <input type="hidden" name="accion" value="editar">
                     <input type="hidden" name="cod_asignatura" id="cod_asignatura_editar">
                     
@@ -206,6 +238,7 @@ try {
             </div>
             <form method="POST" action="">
                 <div class="modal-body">
+                    <input type="hidden" name="modulo" value="asignaturas">
                     <input type="hidden" name="accion" value="eliminar">
                     <input type="hidden" name="cod_asignatura" id="cod_asignatura_eliminar">
                     
