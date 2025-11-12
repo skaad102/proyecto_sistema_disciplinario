@@ -172,6 +172,12 @@ try {
                                         <?php endif; ?>
                                     </td>
                                     <td>
+                                        <button class="btn btn-sm btn-info btn-ver-estudiantes-curso"
+                                            data-id="<?php echo $curso['cod_curso']; ?>"
+                                            data-nombre="<?php echo htmlspecialchars($curso['nombre_grado'] . ' - ' . $curso['ano_lectivo']); ?>"
+                                            title="Ver Estudiantes">
+                                            <i class="bi bi-people"></i>
+                                        </button>
                                         <button class="btn btn-sm btn-primary btn-editar-curso"
                                             data-id="<?php echo $curso['cod_curso']; ?>"
                                             title="Editar">
@@ -233,16 +239,16 @@ try {
 
                     <div class="mb-3">
                         <label for="id_director_grupo" class="form-label">Director de Grupo *</label>
-                        <input type="text" class="form-control mb-2" id="buscar_director" 
-                               placeholder="🔍 Buscar por nombre o documento...">
+                        <input type="text" class="form-control mb-2" id="buscar_director"
+                            placeholder="🔍 Buscar por nombre o documento...">
                         <select class="form-select" id="id_director_grupo" name="id_director_grupo" required size="5">
                             <option value="">Seleccione...</option>
                             <?php if (!empty($docentes)): ?>
                                 <?php foreach ($docentes as $docente): ?>
                                     <?php if (strtoupper($docente['estado']) === 'ACTIVO'): ?>
                                         <option value="<?php echo htmlspecialchars($docente['cod_docente']); ?>"
-                                                data-nombre="<?php echo htmlspecialchars(strtolower($docente['nombres'] . ' ' . $docente['apellidos'])); ?>"
-                                                data-documento="<?php echo htmlspecialchars($docente['numero_documento']); ?>">
+                                            data-nombre="<?php echo htmlspecialchars(strtolower($docente['nombres'] . ' ' . $docente['apellidos'])); ?>"
+                                            data-documento="<?php echo htmlspecialchars($docente['numero_documento']); ?>">
                                             <?php echo htmlspecialchars($docente['nombres'] . ' ' . $docente['apellidos'] . ' - ' . $docente['numero_documento']); ?>
                                         </option>
                                     <?php endif; ?>
@@ -254,8 +260,8 @@ try {
 
                     <div class="mb-3">
                         <label for="ano_lectivo" class="form-label">Año Lectivo *</label>
-                        <input type="number" class="form-control" id="ano_lectivo" name="ano_lectivo" 
-                               required min="2020" max="2099" value="<?php echo date('Y'); ?>">
+                        <input type="number" class="form-control" id="ano_lectivo" name="ano_lectivo"
+                            required min="2020" max="2099" value="<?php echo date('Y'); ?>">
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -301,15 +307,15 @@ try {
 
                     <div class="mb-3">
                         <label for="id_director_grupo_editar" class="form-label">Director de Grupo *</label>
-                        <input type="text" class="form-control mb-2" id="buscar_director_editar" 
-                               placeholder="🔍 Buscar por nombre o documento...">
+                        <input type="text" class="form-control mb-2" id="buscar_director_editar"
+                            placeholder="🔍 Buscar por nombre o documento...">
                         <select class="form-select" id="id_director_grupo_editar" name="id_director_grupo" required size="5">
                             <option value="">Seleccione...</option>
                             <?php if (!empty($docentes)): ?>
                                 <?php foreach ($docentes as $docente): ?>
                                     <option value="<?php echo htmlspecialchars($docente['cod_docente']); ?>"
-                                            data-nombre="<?php echo htmlspecialchars(strtolower($docente['nombres'] . ' ' . $docente['apellidos'])); ?>"
-                                            data-documento="<?php echo htmlspecialchars($docente['numero_documento']); ?>">
+                                        data-nombre="<?php echo htmlspecialchars(strtolower($docente['nombres'] . ' ' . $docente['apellidos'])); ?>"
+                                        data-documento="<?php echo htmlspecialchars($docente['numero_documento']); ?>">
                                         <?php echo htmlspecialchars($docente['nombres'] . ' ' . $docente['apellidos'] . ' - ' . $docente['numero_documento']); ?>
                                     </option>
                                 <?php endforeach; ?>
@@ -320,8 +326,8 @@ try {
 
                     <div class="mb-3">
                         <label for="ano_lectivo_editar" class="form-label">Año Lectivo *</label>
-                        <input type="number" class="form-control" id="ano_lectivo_editar" name="ano_lectivo" 
-                               required min="2020" max="2099">
+                        <input type="number" class="form-control" id="ano_lectivo_editar" name="ano_lectivo"
+                            required min="2020" max="2099">
                     </div>
 
                     <div class="mb-3">
@@ -391,6 +397,27 @@ try {
                     <button type="submit" class="btn btn-success">Activar</button>
                 </div>
             </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal ver estudiantes -->
+<div class="modal fade" id="modalEstudiantesCurso" tabindex="-1" aria-labelledby="modalEstudiantesCursoLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalEstudiantesCursoLabel">👥 Estudiantes del Curso</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div id="estudiantes_curso_contenido">
+                    <!-- Contenido cargado vía AJAX -->
+                    <p class="text-center">Cargando estudiantes...</p>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+            </div>
         </div>
     </div>
 </div>

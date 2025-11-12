@@ -310,6 +310,7 @@ function desactivarDocente($conexion, $cod_docente)
 function obtenerTodosDocentes($conexion)
 {
     try {
+
         // Verificar si la columna estado existe en la tabla docente
         $checkColumn = "SHOW COLUMNS FROM docente LIKE 'estado'";
         $stmtCheck = $conexion->query($checkColumn);
@@ -331,6 +332,7 @@ function obtenerTodosDocentes($conexion)
         $stmt = $conexion->prepare($sql);
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
+
     } catch (Exception $e) {
         error_log("Error al obtener todos los docentes: " . $e->getMessage());
         throw $e;
@@ -956,5 +958,59 @@ function eliminarAsignacion($conexion, $cod_asignacion)
             'success' => false,
             'mensaje' => 'Error en la base de datos: ' . $e->getMessage()
         ];
+    }
+}
+
+// MARK MATRICULAS
+
+// `cod_matricula``cod_matricula``id_curso``fecha_matricula``estado`
+function obtenerTodasMatriculas($conexion)
+{
+    try {
+        $sql = "SELECT m.cod_matricula, e.cod_estudiante, u.nombres, u.apellidos, 
+                       c.cod_curso, g.nombre_grado, m.fecha_matricula, m.estado
+                FROM matricula m
+                INNER JOIN estudiante e ON m.id_estudiante = e.cod_estudiante
+                INNER JOIN usuario u ON e.id_usuario = u.cod_usuario
+                INNER JOIN curso c ON m.id_curso = c.cod_curso
+                INNER JOIN grado g ON c.id_grado = g.cod_grado
+                ORDER BY u.apellidos, u.nombres, g.nombre_grado, m.fecha_matricula";
+
+        $stmt = $conexion->prepare($sql);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    } catch (Exception $e) {
+        error_log("Error al obtener todas las matrículas: " . $e->getMessage());
+        throw $e;
+    }
+}
+
+function obtenerEstudiantesPorCurso($conexion, $cod_curso)
+{
+    try {
+        $sql = "SELECT e.cod_estudiante, 
+                       u.nombres, 
+                       u.apellidos, 
+                       u.numero_documento,
+                       td.tipo_documento,
+                       u.correo,
+                       u.telefono,
+                       m.fecha_matricula, 
+                       m.estado,
+                       u.estado as estado_usuario
+                FROM matricula m
+                INNER JOIN estudiante e ON m.id_estudiante = e.cod_estudiante
+                INNER JOIN usuario u ON e.id_usuario = u.cod_usuario
+                LEFT JOIN tipo_documento td ON u.id_tipo_documento = td.cod_tipodocumento
+                WHERE m.id_curso = :cod_curso
+                ORDER BY u.apellidos, u.nombres";
+
+        $stmt = $conexion->prepare($sql);
+        $stmt->bindParam(':cod_curso', $cod_curso);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    } catch (Exception $e) {
+        error_log("Error al obtener estudiantes por curso: " . $e->getMessage());
+        throw $e;
     }
 }

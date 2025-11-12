@@ -132,7 +132,6 @@ try {
     $docentes = obtenerTodosDocentes($conexion);
     // Obtener tipos de documento para el formulario
     $tiposDocumento = obtenerTiposDocumento($conexion);
-    $cursos = obtenerTodosCursos($conexion);
 } catch (Exception $e) {
     error_log("Error al obtener docentes en docentes.php: " . $e->getMessage());
     $mensaje = 'Error al cargar los docentes. Por favor, inténtelo de nuevo más tarde.';
@@ -274,7 +273,7 @@ try {
                                             <option value="<?php echo htmlspecialchars($curso['cod_curso']); ?>">
                                                 <?php echo htmlspecialchars($curso['nombre_grado'] . ' - ' . $curso['nombre_curso']); ?>
                                             </option>
-                                        <?php
+                                    <?php
                                         endif;
                                     endforeach;
                                 else:
@@ -319,9 +318,9 @@ try {
 
                     <div class="mb-3">
                         <label for="ano_lectivo_asignar" class="form-label">Año Lectivo *</label>
-                        <input type="number" class="form-control" id="ano_lectivo_asignar" 
-                               name="ano_lectivo" required min="2020" max="2100" 
-                               value="<?php echo date('Y'); ?>" placeholder="Ej: 2025">
+                        <input type="number" class="form-control" id="ano_lectivo_asignar"
+                            name="ano_lectivo" required min="2020" max="2100"
+                            value="<?php echo date('Y'); ?>" placeholder="Ej: 2025">
                         <div class="form-text">Año académico para esta asignación</div>
                     </div>
                 </div>

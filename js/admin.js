@@ -585,6 +585,41 @@ document.addEventListener("DOMContentLoaded", function () {
   filtrarDocentes("buscar_director", "id_director_grupo");
   filtrarDocentes("buscar_director_editar", "id_director_grupo_editar");
 
+  // Ver estudiantes del curso
+  document.querySelectorAll(".btn-ver-estudiantes-curso").forEach((btn) => {
+    btn.addEventListener("click", function () {
+      const id = this.dataset.id;
+      const nombre = this.dataset.nombre;
+
+      // Actualizar título del modal
+      document.getElementById("modalEstudiantesCursoLabel").textContent = 
+        `👥 Estudiantes del Curso: ${nombre}`;
+
+      // Mostrar mensaje de carga
+      const contenido = document.getElementById("estudiantes_curso_contenido");
+      contenido.innerHTML = '<div class="text-center"><div class="spinner-border text-primary" role="status"><span class="visually-hidden">Cargando...</span></div><p class="mt-2">Cargando estudiantes...</p></div>';
+
+      // Cargar HTML completo mediante AJAX
+      fetch(`obtener_estudiantes_curso.php?id=${id}`)
+        .then((response) => response.text())
+        .then((html) => {
+          contenido.innerHTML = html;
+        })
+        .catch((error) => {
+          console.error("Error:", error);
+          contenido.innerHTML = '<div class="alert alert-danger"><i class="bi bi-exclamation-triangle"></i> Error al cargar los estudiantes del curso.</div>';
+        });
+
+      // Mostrar modal
+      const modalElement = document.getElementById("modalEstudiantesCurso");
+      let modal = bootstrap.Modal.getInstance(modalElement);
+      if (!modal) {
+        modal = new bootstrap.Modal(modalElement);
+      }
+      modal.show();
+    });
+  });
+
   // Buscador para la tabla de cursos
   const buscarCurso = document.getElementById("buscarCurso");
   const tablaCursos = document.getElementById("tablaCursos");

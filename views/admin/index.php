@@ -275,10 +275,10 @@ error_log("Sesión en admin/index.php: " . print_r($_SESSION, true));
             <p>Sistema Disciplinario</p>
         </div>
         <ul class="menu-list">
-            <li class="menu-item" onclick="showTable(1)">📋 Asignaturas</li>
+            <li class="menu-item" onclick="showTable(1)">👨‍🏫 Docentes</li>
             <li class="menu-item" onclick="showTable(2)">👥 Estudiantes</li>
-            <li class="menu-item" onclick="showTable(3)">📚 Cursos</li>
-            <li class="menu-item" onclick="showTable(4)">👨‍🏫 Docentes</li>
+            <li class="menu-item" onclick="showTable(3)">📋 Asignaturas</li>
+            <li class="menu-item" onclick="showTable(4)">📚 Cursos</li>
             <li class="menu-item" onclick="showTable(5)">👨‍🏫 Asignar Docente</li>
 
         </ul>
@@ -302,22 +302,19 @@ error_log("Sesión en admin/index.php: " . print_r($_SESSION, true));
         </div>
 
         <div class="table-section" id="table1">
-            <?php include 'asignaturas.php'; ?>
-
+            <?php include 'docentes.php'; ?>
         </div>
-
         <div class="table-section" id="table2">
             <?php include 'estudiantes.php'; ?>
         </div>
 
         <div class="table-section" id="table3">
+            <?php include 'asignaturas.php'; ?>
+
+        </div>
+        <div class="table-section" id="table4">
             <?php include 'curso.php'; ?>
         </div>
-
-        <div class="table-section" id="table4">
-            <?php include 'docentes.php'; ?>
-        </div>
-
         <div class="table-section" id="table5">
             <?php include 'asignar_curso_docente.php'; ?>
         </div>
