@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Nov 11, 2025 at 05:42 AM
+-- Generation Time: Nov 12, 2025 at 04:37 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -55,7 +55,8 @@ CREATE TABLE `asignacion_docente` (
 --
 
 INSERT INTO `asignacion_docente` (`cod_asignacion`, `id_docente`, `id_curso`, `id_asignatura`, `ano_lectivo`) VALUES
-(1, 3, 2, 1, 2025);
+(1, 3, 2, 1, 2025),
+(7, 4, 2, 3, 2025);
 
 -- --------------------------------------------------------
 
@@ -76,7 +77,7 @@ CREATE TABLE `asignatura` (
 INSERT INTO `asignatura` (`cod_asignatura`, `nombre_asignatura`, `descripcion`) VALUES
 (1, 'Inglés', 'Asignatura de lengua extranjera - Inglés'),
 (3, 'Sistemas', 'Aula 202 caney 2'),
-(8, '', '');
+(15, 'Español', 'Español para niños');
 
 -- --------------------------------------------------------
 
@@ -99,7 +100,8 @@ CREATE TABLE `curso` (
 
 INSERT INTO `curso` (`cod_curso`, `nombre_curso`, `id_grado`, `id_director_grupo`, `ano_lectivo`, `estado`) VALUES
 (1, '11-1', 1, 3, 2025, 'ACTIVO'),
-(2, '6-3', 1, 3, 2025, 'ACTIVO');
+(2, '6-3', 1, 3, 2025, 'ACTIVO'),
+(3, '', 5, 3, 2025, 'ACTIVO');
 
 -- --------------------------------------------------------
 
@@ -120,7 +122,8 @@ CREATE TABLE `docente` (
 
 INSERT INTO `docente` (`cod_docente`, `id_usuario`, `especialidad`, `estado`) VALUES
 (3, 4, 'Inglés', 'ACTIVO'),
-(4, 10000000, 'Matematicas', 'ACTIVO');
+(4, 10000000, 'Matematicas', 'ACTIVO'),
+(5, 10000016, 'Matematicas', 'ACTIVO');
 
 -- --------------------------------------------------------
 
@@ -142,7 +145,9 @@ INSERT INTO `estudiante` (`cod_estudiante`, `id_usuario`, `fecha_nacimiento`) VA
 (2, 9, '1998-02-10'),
 (13, 13, '2025-11-09'),
 (30, 20, '2025-11-04'),
-(31, 24, '2020-05-10');
+(31, 24, '1998-05-10'),
+(39, 10000014, '2020-04-12'),
+(41, 10000017, '2022-02-10');
 
 -- --------------------------------------------------------
 
@@ -351,7 +356,18 @@ INSERT INTO `usuario` (`cod_usuario`, `id_tipo_documento`, `numero_documento`, `
 (22, 3, '1032345678', 'Valeria', 'Sánchez Ríos', '3234567890', 'vsanchez@email.com', 'Calle 23 #90-12', 'vsanchez', 'vsanchez123', 3, 'ACTIVO'),
 (24, 3, '1000101010', 'daniel', 'adame', '31651651', 'core@vorekalsdk.co', 'cale 12r\'opas', 'daniel.agudelo', '123456', 3, 'ACTIVO'),
 (9999999, 3, '99999999', 'super', 'admin', '31000000', 'admin@colegio.conm', 'av siempre viva 123', 'admin', 'admin123', 1, 'ACTIVO'),
-(10000000, 3, '555555', 'juan carlos', 'perez', '3100055808', 'micore@coreo.com', 'caler qwe', 'juan.perez', '123456', 2, 'ACTIVO');
+(10000000, 3, '555555', 'juan carlos', 'perez', '3100055808', 'micore@coreo.com', 'caler qwe', 'juan.perez', '123456', 2, 'ACTIVO'),
+(10000001, 3, '45454545', 'Sebstian', 'Vega', '31215188', 'sebas@corer.com', 'calle 2312 23', 'sebstian.vega', '123456', 3, 'ACTIVO'),
+(10000005, 3, '5050505050', 'jaun p', 'perez', '3505050', 'pelawz@correo.com', 'calle 36 050 5 5', 'jaun.perez', '123456', 3, 'ACTIVO'),
+(10000006, 3, '4040404', 'sebaston', 'tobon', '340404040', 'cocente@coreel.com', 'calel 2e ', 'sebaston.tobon', '123456', 3, 'ACTIVO'),
+(10000007, 3, '10101010', 'juan carlo', 'vale', '31022645065', 'jcar@core.com', 'cid ada ', 'juan.vale', '123456', 3, 'ACTIVO'),
+(10000008, 3, '123123123', 'juan vcamil', 'camilin', '3123123123', 'camilin@corer.com', 'calle 45 123123', 'juan.camilin', '123456', 3, 'ACTIVO'),
+(10000009, 3, '456456456', 'sebas', 'gonzales', '32132213515', 'senas@corre.com', 'cara 34 dok', 'sebas.gonzales', '123456', 3, 'ACTIVO'),
+(10000011, 3, '789789', 'juan jose', 'jose', '3505018789', 'docente@creco.co', 'calle 987 78', 'juan.jose', '123456', 3, 'ACTIVO'),
+(10000014, 3, '1006565656', 'maria jose', 'lopez', '2132235135', 'estudiente@cor.c', 'maria ', 'maria.lopez', '123456', 3, 'ACTIVO'),
+(10000015, 3, '90909090', 'carlos ', 'añdaen', '350550', 'acela.q@corcom.co', 'calle 123', 'carlos.andaen', '123456', 3, 'ACTIVO'),
+(10000016, 3, '65636521', 'docente', 'deoce', '365320325', 'docente@corec.com', 'calle a0 ', 'docente.deoce', '123456', 2, 'ACTIVO'),
+(10000017, 3, '10068895', 'jose seito', 'hita', '32155', 'estiajo@cor.com', 'aleta a', 'jose.hita', '123456', 3, 'ACTIVO');
 
 --
 -- Indexes for dumped tables
@@ -480,31 +496,31 @@ ALTER TABLE `usuario`
 -- AUTO_INCREMENT for table `asignacion_docente`
 --
 ALTER TABLE `asignacion_docente`
-  MODIFY `cod_asignacion` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `cod_asignacion` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT for table `asignatura`
 --
 ALTER TABLE `asignatura`
-  MODIFY `cod_asignatura` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `cod_asignatura` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=25;
 
 --
 -- AUTO_INCREMENT for table `curso`
 --
 ALTER TABLE `curso`
-  MODIFY `cod_curso` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `cod_curso` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT for table `docente`
 --
 ALTER TABLE `docente`
-  MODIFY `cod_docente` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `cod_docente` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `estudiante`
 --
 ALTER TABLE `estudiante`
-  MODIFY `cod_estudiante` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=32;
+  MODIFY `cod_estudiante` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=42;
 
 --
 -- AUTO_INCREMENT for table `falta`
@@ -558,7 +574,7 @@ ALTER TABLE `tipo_falta`
 -- AUTO_INCREMENT for table `usuario`
 --
 ALTER TABLE `usuario`
-  MODIFY `cod_usuario` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10000001;
+  MODIFY `cod_usuario` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10000018;
 
 --
 -- Constraints for dumped tables
