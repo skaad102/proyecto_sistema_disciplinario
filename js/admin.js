@@ -310,6 +310,31 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   }
 
+  // Limpiar modal de asignar docente a curso
+  const modalAsignarDocenteElement = document.getElementById("asignarDocenteModal");
+  if (modalAsignarDocenteElement) {
+    modalAsignarDocenteElement.addEventListener("hidden.bs.modal", function () {
+      document.activeElement.blur();
+      const form = document.querySelector("#asignarDocenteModal form");
+      if (form) form.reset();
+      // Resetear año lectivo al valor actual
+      const anoLectivoInput = document.getElementById("ano_lectivo_asignar");
+      if (anoLectivoInput) {
+        anoLectivoInput.value = new Date().getFullYear();
+      }
+      setTimeout(() => {
+        document
+          .querySelectorAll(".modal-backdrop")
+          .forEach((backdrop) => backdrop.remove());
+        if (!document.querySelector(".modal.show")) {
+          document.body.classList.remove("modal-open");
+          document.body.style.overflow = "";
+          document.body.style.paddingRight = "";
+        }
+      }, 100);
+    });
+  }
+
   // ===== CÓDIGO DE MODALES DE ESTUDIANTES =====
 
   // Editar estudiante
@@ -586,6 +611,88 @@ document.addEventListener("DOMContentLoaded", function () {
         fila.style.display = encontrado ? "" : "none";
       }
     });
+  }
+
+  // ===== CÓDIGO DE MODALES DE ASIGNACIONES =====
+
+  // Buscador de docentes en asignaciones
+  filtrarDocentes("buscar_docente_asignar", "id_docente_asignar");
+
+  // Eliminar asignación
+  document.querySelectorAll(".btn-eliminar-asignacion").forEach((btn) => {
+    btn.addEventListener("click", function () {
+      const id = this.dataset.id;
+      const info = this.dataset.info;
+
+      document.getElementById("cod_asignacion_eliminar").value = id;
+      document.getElementById("info_asignacion_eliminar").textContent = info;
+
+      const modalElement = document.getElementById("modalEliminarAsignacion");
+      let modal = bootstrap.Modal.getInstance(modalElement);
+      if (!modal) {
+        modal = new bootstrap.Modal(modalElement);
+      }
+      modal.show();
+    });
+  });
+
+  // Buscador para la tabla de asignaciones
+  const buscarAsignacion = document.getElementById("buscarAsignacion");
+  const tablaAsignaciones = document.getElementById("tablaAsignaciones");
+
+  if (buscarAsignacion && tablaAsignaciones) {
+    buscarAsignacion.addEventListener("keyup", function () {
+      const filtro = this.value.toLowerCase();
+      const filas = tablaAsignaciones.getElementsByTagName("tbody")[0].getElementsByTagName("tr");
+
+      for (let i = 0; i < filas.length; i++) {
+        const fila = filas[i];
+        const celdas = fila.getElementsByTagName("td");
+        let encontrado = false;
+
+        // Buscar en todas las celdas
+        for (let j = 0; j < celdas.length; j++) {
+          const texto = celdas[j].textContent.toLowerCase();
+          if (texto.includes(filtro)) {
+            encontrado = true;
+            break;
+          }
+        }
+
+        fila.style.display = encontrado ? "" : "none";
+      }
+    });
+  }
+
+  // Limpiar formularios cuando se cierran los modales de ASIGNACIONES
+  const modalAsignarAsignaturaElement = document.getElementById(
+    "modalAsignarAsignatura"
+  );
+  if (modalAsignarAsignaturaElement) {
+    modalAsignarAsignaturaElement.addEventListener(
+      "hidden.bs.modal",
+      function () {
+        document.activeElement.blur();
+        const form = document.querySelector("#modalAsignarAsignatura form");
+        if (form) form.reset();
+        // Limpiar buscador
+        const buscador = document.getElementById("buscar_docente_asignar");
+        if (buscador) {
+          buscador.value = "";
+          buscador.dispatchEvent(new Event("keyup")); // Resetear filtro
+        }
+        setTimeout(() => {
+          document
+            .querySelectorAll(".modal-backdrop")
+            .forEach((backdrop) => backdrop.remove());
+          if (!document.querySelector(".modal.show")) {
+            document.body.classList.remove("modal-open");
+            document.body.style.overflow = "";
+            document.body.style.paddingRight = "";
+          }
+        }, 100);
+      }
+    );
   }
 
   // Limpiar formularios cuando se cierran los modales de CURSOS

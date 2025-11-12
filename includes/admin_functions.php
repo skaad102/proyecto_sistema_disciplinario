@@ -722,7 +722,7 @@ function obtenerTodosGrados($conexion)
 function obtenerTodosCursos($conexion)
 {
     try {
-        $sql = "SELECT c.cod_curso, g.nombre_grado, d.cod_docente, u.nombres, u.apellidos, c.ano_lectivo, c.estado
+        $sql = "SELECT c.cod_curso, g.nombre_grado, d.cod_docente, u.nombres, u.apellidos, c.ano_lectivo, c.estado, c.nombre_curso
                 FROM curso c
                 INNER JOIN grado g ON c.id_grado = g.cod_grado
                 INNER JOIN docente d ON c.id_director_grupo = d.cod_docente
@@ -874,5 +874,87 @@ function obtenerCursoPorId($conexion, $cod_curso)
     } catch (Exception $e) {
         error_log("Error al obtener curso por ID: " . $e->getMessage());
         throw $e;
+    }
+}
+
+// MARK: ASIGNATURA
+// `cod_asignacion``id_docente``id_curso``id_asignatura``ano_lectivo`
+
+function onternerTodasAsignaciones($conexion)
+{
+    try {
+        $sql = "SELECT ad.cod_asignacion, d.cod_docente, u.nombres, u.apellidos, 
+                       c.cod_curso, g.nombre_grado, ad.ano_lectivo, a.nombre_asignatura
+                FROM asignacion_docente ad
+                INNER JOIN docente d ON ad.id_docente = d.cod_docente
+                INNER JOIN usuario u ON d.id_usuario = u.cod_usuario
+                INNER JOIN curso c ON ad.id_curso = c.cod_curso
+                INNER JOIN grado g ON c.id_grado = g.cod_grado
+                INNER JOIN asignatura a ON ad.id_asignatura = a.cod_asignatura
+                ORDER BY u.apellidos, u.nombres, g.nombre_grado, a.nombre_asignatura";
+
+        $stmt = $conexion->prepare($sql);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    } catch (Exception $e) {
+        error_log("Error al obtener todas las asignaciones: " . $e->getMessage());
+        throw $e;
+    }
+}
+
+function asignarAsignaturaADocente($conexion, $datos)
+{
+    try {
+        $sql = "INSERT INTO asignacion_docente (id_docente, id_curso, id_asignatura, ano_lectivo) 
+                VALUES (:id_docente, :id_curso, :id_asignatura, :ano_lectivo)";
+
+        $stmt = $conexion->prepare($sql);
+        foreach ($datos as $param => $value) {
+            $stmt->bindValue($param, $value);
+        }
+
+        if ($stmt->execute()) {
+            return [
+                'success' => true,
+                'mensaje' => 'Asignatura asignada al docente exitosamente.',
+                'id_asignacion' => $conexion->lastInsertId()
+            ];
+        }
+        return [
+            'success' => false,
+            'mensaje' => 'Error al asignar la asignatura al docente.'
+        ];
+    } catch (Exception $e) {
+        error_log("Error al asignar asignatura a docente: " . $e->getMessage());
+        return [
+            'success' => false,
+            'mensaje' => 'Error en la base de datos: ' . $e->getMessage()
+        ];
+    }
+}
+
+function eliminarAsignacion($conexion, $cod_asignacion)
+{
+    try {
+        $sql = "DELETE FROM asignacion_docente WHERE cod_asignacion = :cod_asignacion";
+        $stmt = $conexion->prepare($sql);
+        $stmt->bindParam(':cod_asignacion', $cod_asignacion);
+
+        if ($stmt->execute()) {
+            return [
+                'success' => true,
+                'mensaje' => 'Asignación eliminada correctamente.'
+            ];
+        }
+        return [
+            'success' => false,
+            'mensaje' => 'Error al eliminar la asignación.'
+        ];
+    } catch (Exception $e) {
+        error_log("Error al eliminar asignación: " . $e->getMessage());
+        return [
+            'success' => false,
+            'mensaje' => 'Error en la base de datos: ' . $e->getMessage()
+        ];
     }
 }

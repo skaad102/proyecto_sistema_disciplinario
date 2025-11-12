@@ -279,6 +279,8 @@ error_log("Sesión en admin/index.php: " . print_r($_SESSION, true));
             <li class="menu-item" onclick="showTable(2)">👥 Estudiantes</li>
             <li class="menu-item" onclick="showTable(3)">📚 Cursos</li>
             <li class="menu-item" onclick="showTable(4)">👨‍🏫 Docentes</li>
+            <li class="menu-item" onclick="showTable(5)">👨‍🏫 Asignar Docente</li>
+
         </ul>
     </div>
 
@@ -314,6 +316,10 @@ error_log("Sesión en admin/index.php: " . print_r($_SESSION, true));
 
         <div class="table-section" id="table4">
             <?php include 'docentes.php'; ?>
+        </div>
+
+        <div class="table-section" id="table5">
+            <?php include 'asignar_curso_docente.php'; ?>
         </div>
     </div>
 

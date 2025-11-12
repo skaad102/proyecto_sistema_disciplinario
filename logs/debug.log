@@ -833,3 +833,26 @@ Consulta ejecutada. Número de filas: 1
 )
 
 [11-Nov-2025 20:18:35 America/Bogota] Usuario: danna.agudelo, Rol: Docente (ID: 2), Redirigiendo a: ../../views/docente/index.php
+=== Inicio de sesión: 2025-11-11 22:18:44 ===
+[11-Nov-2025 22:18:44 America/Bogota] === Nueva solicitud de inicio de sesión ===
+[11-Nov-2025 22:18:44 America/Bogota] Intento de inicio de sesión - Usuario: danna.agudelo
+Intentando autenticar usuario: danna.agudelo
+Consulta ejecutada. Número de filas: 1
+[11-Nov-2025 22:18:44 America/Bogota] Datos del usuario: Array
+(
+    [cod_usuario] => 4
+    [id_tipo_documento] => 1
+    [numero_documento] => 1082498535
+    [nombres] => Danna
+    [apellidos] => Agudelo
+    [telefono] => 3126429827
+    [correo] => danna@gmail.com
+    [direccion] => 
+    [usuario] => danna.agudelo
+    [clave] => 123456
+    [id_rol] => 2
+    [estado] => ACTIVO
+    [rol] => Docente
+)
+
+[11-Nov-2025 22:18:44 America/Bogota] Usuario: danna.agudelo, Rol: Docente (ID: 2), Redirigiendo a: ../../views/docente/index.php

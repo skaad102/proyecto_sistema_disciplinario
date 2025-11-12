@@ -13,12 +13,12 @@ $tipoMensaje = 'danger';
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Verificar que el formulario sea de DOCENTES
     $modulo = $_POST['modulo'] ?? '';
-    
+
     if ($modulo !== 'docentes') {
         // Si no es de docentes, no procesar nada aquí
         goto skip_docentes_processing;
     }
-    
+
     $accion = $_POST['accion'] ?? '';
 
     if ($accion === 'crear') {
@@ -98,6 +98,31 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $tipoMensaje = 'warning';
         }
     }
+
+    if ($accion === 'asignar') {
+        try {
+            $datos = [
+                ':id_docente' => $_POST['cod_docente'] ?? 0,
+                ':id_curso' => $_POST['cod_curso'] ?? 0,
+                ':id_asignatura' => $_POST['cod_asignatura'] ?? 0,
+                ':ano_lectivo' => $_POST['ano_lectivo'] ?? date('Y')
+            ];
+
+            $resultado = asignarAsignaturaADocente($conexion, $datos);
+
+            if ($resultado['success']) {
+                $mensaje = $resultado['mensaje'];
+                $tipoMensaje = 'success';
+            } else {
+                $mensaje = $resultado['mensaje'];
+                $tipoMensaje = 'danger';
+            }
+        } catch (Exception $e) {
+            $mensaje = 'Error: ' . $e->getMessage();
+            $tipoMensaje = 'danger';
+            error_log("Error al asignar docente: " . $e->getMessage());
+        }
+    }
 }
 
 skip_docentes_processing:
@@ -107,6 +132,7 @@ try {
     $docentes = obtenerTodosDocentes($conexion);
     // Obtener tipos de documento para el formulario
     $tiposDocumento = obtenerTiposDocumento($conexion);
+    $cursos = obtenerTodosCursos($conexion);
 } catch (Exception $e) {
     error_log("Error al obtener docentes en docentes.php: " . $e->getMessage());
     $mensaje = 'Error al cargar los docentes. Por favor, inténtelo de nuevo más tarde.';
@@ -120,9 +146,14 @@ try {
         <div class="col-12">
             <div class="d-flex justify-content-between align-items-center mb-4">
                 <h2>👨‍🏫 Gestión de Docentes</h2>
-                <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#modalCrearUsuario">
-                    <i class="bi bi-plus-circle"></i> Nuevo Docente
-                </button>
+                <div class="btn-group gap-2" role="group">
+                    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#asignarDocenteModal">
+                        <i class="bi bi-book"></i> Asignar a Curso
+                    </button>
+                    <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#modalCrearUsuario">
+                        <i class="bi bi-person-plus"></i> Nuevo Docente
+                    </button>
+                </div>
             </div>
 
             <?php if ($mensaje): ?>
@@ -194,6 +225,115 @@ try {
                     </table>
                 </div>
             <?php endif; ?>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Asignar Docente -->
+<div class="modal fade" id="asignarDocenteModal" tabindex="-1" aria-labelledby="asignarDocenteModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-success text-white">
+                <h5 class="modal-title" id="asignarDocenteModalLabel">👨‍🏫 Asignar Docente a Curso</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form method="POST" action="">
+                <div class="modal-body">
+                    <input type="hidden" name="modulo" value="docentes">
+                    <input type="hidden" name="accion" value="asignar">
+
+                    <div class="mb-3">
+                        <label for="cod_docente_asignar" class="form-label">Docente *</label>
+                        <select class="form-select" id="cod_docente_asignar" name="cod_docente" required>
+                            <option value="">Seleccione un docente...</option>
+                            <?php if (!empty($docentes)): ?>
+                                <?php foreach ($docentes as $docente): ?>
+                                    <?php if (strtoupper($docente['estado']) === 'ACTIVO'): ?>
+                                        <option value="<?php echo htmlspecialchars($docente['cod_docente']); ?>">
+                                            <?php echo htmlspecialchars($docente['nombres'] . ' ' . $docente['apellidos']); ?>
+                                        </option>
+                                    <?php endif; ?>
+                                <?php endforeach; ?>
+                            <?php else: ?>
+                                <option value="">No hay docentes disponibles</option>
+                            <?php endif; ?>
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="cod_curso_asignar" class="form-label">Curso *</label>
+                        <select class="form-select" id="cod_curso_asignar" name="cod_curso" required>
+                            <option value="">Seleccione un curso...</option>
+                            <?php
+                            // Obtener cursos desde la base de datos
+                            try {
+                                if (!empty($cursos)):
+                                    foreach ($cursos as $curso):
+                                        if (strtoupper($curso['estado']) === 'ACTIVO'):
+                            ?>
+                                            <option value="<?php echo htmlspecialchars($curso['cod_curso']); ?>">
+                                                <?php echo htmlspecialchars($curso['nombre_grado'] . ' - ' . $curso['nombre_curso']); ?>
+                                            </option>
+                                        <?php
+                                        endif;
+                                    endforeach;
+                                else:
+                                    ?>
+                                    <option value="">No hay cursos disponibles</option>
+                            <?php
+                                endif;
+                            } catch (Exception $e) {
+                                error_log("Error al obtener cursos en asignar docente modal: " . $e->getMessage());
+                            }
+                            ?>
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="cod_asignatura_asignar" class="form-label">Asignatura *</label>
+                        <select class="form-select" id="cod_asignatura_asignar" name="cod_asignatura" required>
+                            <option value="">Seleccione una asignatura...</option>
+                            <?php
+                            // Obtener asignaturas desde la base de datos
+                            try {
+                                $asignaturas = obtenerTodasAsignaturas($conexion);
+                                if (!empty($asignaturas)):
+                                    foreach ($asignaturas as $asignatura):
+                            ?>
+                                        <option value="<?php echo htmlspecialchars($asignatura['cod_asignatura']); ?>">
+                                            <?php echo htmlspecialchars($asignatura['nombre_asignatura']); ?>
+                                        </option>
+                                    <?php
+                                    endforeach;
+                                else:
+                                    ?>
+                                    <option value="">No hay asignaturas disponibles</option>
+                            <?php
+                                endif;
+                            } catch (Exception $e) {
+                                error_log("Error al obtener asignaturas en asignar docente modal: " . $e->getMessage());
+                            }
+                            ?>
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="ano_lectivo_asignar" class="form-label">Año Lectivo *</label>
+                        <input type="number" class="form-control" id="ano_lectivo_asignar" 
+                               name="ano_lectivo" required min="2020" max="2100" 
+                               value="<?php echo date('Y'); ?>" placeholder="Ej: 2025">
+                        <div class="form-text">Año académico para esta asignación</div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        <i class="bi bi-x-circle"></i> Cancelar
+                    </button>
+                    <button type="submit" class="btn btn-success">
+                        <i class="bi bi-check-circle"></i> Asignar Docente
+                    </button>
+                </div>
+            </form>
         </div>
     </div>
 </div>
