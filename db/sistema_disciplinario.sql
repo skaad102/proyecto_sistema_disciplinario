@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Nov 12, 2025 at 04:37 AM
+-- Generation Time: Nov 13, 2025 at 02:27 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -77,7 +77,8 @@ CREATE TABLE `asignatura` (
 INSERT INTO `asignatura` (`cod_asignatura`, `nombre_asignatura`, `descripcion`) VALUES
 (1, 'Inglés', 'Asignatura de lengua extranjera - Inglés'),
 (3, 'Sistemas', 'Aula 202 caney 2'),
-(15, 'Español', 'Español para niños');
+(15, 'Español', 'Español para niños'),
+(25, 'Español 2', 'nuevo');
 
 -- --------------------------------------------------------
 
@@ -101,7 +102,8 @@ CREATE TABLE `curso` (
 INSERT INTO `curso` (`cod_curso`, `nombre_curso`, `id_grado`, `id_director_grupo`, `ano_lectivo`, `estado`) VALUES
 (1, '11-1', 1, 3, 2025, 'ACTIVO'),
 (2, '6-3', 1, 3, 2025, 'ACTIVO'),
-(3, '', 5, 3, 2025, 'ACTIVO');
+(5, 'Español tarde', 4, 3, 2025, 'ACTIVO'),
+(6, 'Español MAñana', 5, 4, 2025, 'ACTIVO');
 
 -- --------------------------------------------------------
 
@@ -213,7 +215,15 @@ CREATE TABLE `matricula` (
 INSERT INTO `matricula` (`cod_matricula`, `id_estudiante`, `id_curso`, `fecha_matricula`, `estado`) VALUES
 (1, 2, 2, '2025-11-09', 'ACTIVA'),
 (2, 13, 2, '2025-11-01', 'ACTIVA'),
-(3, 30, 2, '2025-11-04', 'ACTIVA');
+(3, 30, 2, '2025-11-04', 'ACTIVA'),
+(4, 41, 2, '2025-11-02', 'ACTIVA'),
+(5, 31, 6, '2025-11-11', 'ACTIVA'),
+(6, 39, 5, '2025-11-10', 'ACTIVA'),
+(7, 30, 6, '2025-11-13', 'ACTIVA'),
+(8, 2, 6, '2025-11-13', 'RETIRADO'),
+(9, 13, 6, '2025-11-13', 'ACTIVA'),
+(18, 41, 6, '2025-11-13', 'ACTIVA'),
+(29, 39, 6, '2025-11-13', 'ACTIVA');
 
 -- --------------------------------------------------------
 
@@ -502,13 +512,13 @@ ALTER TABLE `asignacion_docente`
 -- AUTO_INCREMENT for table `asignatura`
 --
 ALTER TABLE `asignatura`
-  MODIFY `cod_asignatura` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=25;
+  MODIFY `cod_asignatura` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=26;
 
 --
 -- AUTO_INCREMENT for table `curso`
 --
 ALTER TABLE `curso`
-  MODIFY `cod_curso` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `cod_curso` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT for table `docente`
@@ -538,7 +548,7 @@ ALTER TABLE `grado`
 -- AUTO_INCREMENT for table `matricula`
 --
 ALTER TABLE `matricula`
-  MODIFY `cod_matricula` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `cod_matricula` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=31;
 
 --
 -- AUTO_INCREMENT for table `registro_falta`
