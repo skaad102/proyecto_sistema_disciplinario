@@ -132,6 +132,8 @@ try {
     $docentes = obtenerTodosDocentes($conexion);
     // Obtener tipos de documento para el formulario
     $tiposDocumento = obtenerTiposDocumento($conexion);
+    $cursos = obtenerTodosCursos($conexion);
+
 } catch (Exception $e) {
     error_log("Error al obtener docentes en docentes.php: " . $e->getMessage());
     $mensaje = 'Error al cargar los docentes. Por favor, inténtelo de nuevo más tarde.';
