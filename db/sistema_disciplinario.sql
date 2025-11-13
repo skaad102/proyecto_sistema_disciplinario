@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Nov 13, 2025 at 02:27 AM
+-- Generation Time: Nov 13, 2025 at 01:35 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -55,7 +55,11 @@ CREATE TABLE `asignacion_docente` (
 --
 
 INSERT INTO `asignacion_docente` (`cod_asignacion`, `id_docente`, `id_curso`, `id_asignatura`, `ano_lectivo`) VALUES
+(10, 3, 1, 25, 2025),
 (1, 3, 2, 1, 2025),
+(9, 3, 7, 1, 2025),
+(8, 3, 7, 25, 2025),
+(11, 3, 12, 3, 2025),
 (7, 4, 2, 3, 2025);
 
 -- --------------------------------------------------------
@@ -78,7 +82,8 @@ INSERT INTO `asignatura` (`cod_asignatura`, `nombre_asignatura`, `descripcion`) 
 (1, 'Inglés', 'Asignatura de lengua extranjera - Inglés'),
 (3, 'Sistemas', 'Aula 202 caney 2'),
 (15, 'Español', 'Español para niños'),
-(25, 'Español 2', 'nuevo');
+(25, 'Español 2', 'nuevo'),
+(26, 'Ed. Fisica', 'ejercicios');
 
 -- --------------------------------------------------------
 
@@ -103,7 +108,9 @@ INSERT INTO `curso` (`cod_curso`, `nombre_curso`, `id_grado`, `id_director_grupo
 (1, '11-1', 1, 3, 2025, 'ACTIVO'),
 (2, '6-3', 1, 3, 2025, 'ACTIVO'),
 (5, 'Español tarde', 4, 3, 2025, 'ACTIVO'),
-(6, 'Español MAñana', 5, 4, 2025, 'ACTIVO');
+(6, 'Español MAñana', 5, 4, 2025, 'ACTIVO'),
+(7, '', 1, 4, 2025, 'ACTIVO'),
+(12, '5-A', 5, 3, 2025, 'ACTIVO');
 
 -- --------------------------------------------------------
 
@@ -169,7 +176,11 @@ CREATE TABLE `falta` (
 --
 
 INSERT INTO `falta` (`cod_falta`, `id_tipofalta`, `descripcion`, `sancion_sugerida`) VALUES
-(1, 2, 'No asiste a clase', 'Cuando ingresa al aula de clase se comporta de manera indebida');
+(1, 2, 'No asiste a clase', 'Cuando ingresa al aula de clase se comporta de manera indebida'),
+(3, 1, 'No vino a clase', 'NA'),
+(4, 1, 'No vino a clase', 'NA'),
+(5, 1, 'No vino a clase', 'NA'),
+(6, 1, 'No vino a clase', 'NA');
 
 -- --------------------------------------------------------
 
@@ -223,7 +234,15 @@ INSERT INTO `matricula` (`cod_matricula`, `id_estudiante`, `id_curso`, `fecha_ma
 (8, 2, 6, '2025-11-13', 'RETIRADO'),
 (9, 13, 6, '2025-11-13', 'ACTIVA'),
 (18, 41, 6, '2025-11-13', 'ACTIVA'),
-(29, 39, 6, '2025-11-13', 'ACTIVA');
+(29, 39, 6, '2025-11-13', 'ACTIVA'),
+(31, 31, 1, '2025-11-13', 'ACTIVA'),
+(32, 39, 1, '2025-11-13', 'ACTIVA'),
+(33, 30, 1, '2025-11-13', 'ACTIVA'),
+(34, 41, 12, '2025-11-13', 'ACTIVA'),
+(35, 39, 12, '2025-11-13', 'ACTIVA'),
+(36, 2, 12, '2025-11-13', 'ACTIVA'),
+(37, 13, 12, '2025-11-13', 'ACTIVA'),
+(38, 30, 12, '2025-11-13', 'ACTIVA');
 
 -- --------------------------------------------------------
 
@@ -246,6 +265,13 @@ CREATE TABLE `registro_falta` (
   `observaciones` text DEFAULT NULL,
   `estado` enum('REPORTADA','EN_PROCESO','SANCIONADA','ARCHIVADA') DEFAULT 'REPORTADA'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `registro_falta`
+--
+
+INSERT INTO `registro_falta` (`cod_registro`, `fecha_registro`, `hora_registro`, `id_estudiante`, `id_docente`, `id_curso`, `id_falta`, `descripcion_falta`, `descargos_estudiante`, `correctivos_disciplinarios`, `compromisos`, `observaciones`, `estado`) VALUES
+(1, '2025-11-13', '04:10:00', 39, 3, 12, 3, 'No vino a clase', 'NA', 'NA', 'NA', 'NA', 'REPORTADA');
 
 -- --------------------------------------------------------
 
@@ -506,19 +532,19 @@ ALTER TABLE `usuario`
 -- AUTO_INCREMENT for table `asignacion_docente`
 --
 ALTER TABLE `asignacion_docente`
-  MODIFY `cod_asignacion` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `cod_asignacion` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 
 --
 -- AUTO_INCREMENT for table `asignatura`
 --
 ALTER TABLE `asignatura`
-  MODIFY `cod_asignatura` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=26;
+  MODIFY `cod_asignatura` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=27;
 
 --
 -- AUTO_INCREMENT for table `curso`
 --
 ALTER TABLE `curso`
-  MODIFY `cod_curso` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `cod_curso` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
 
 --
 -- AUTO_INCREMENT for table `docente`
@@ -536,7 +562,7 @@ ALTER TABLE `estudiante`
 -- AUTO_INCREMENT for table `falta`
 --
 ALTER TABLE `falta`
-  MODIFY `cod_falta` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `cod_falta` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT for table `grado`
@@ -548,13 +574,13 @@ ALTER TABLE `grado`
 -- AUTO_INCREMENT for table `matricula`
 --
 ALTER TABLE `matricula`
-  MODIFY `cod_matricula` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=31;
+  MODIFY `cod_matricula` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=39;
 
 --
 -- AUTO_INCREMENT for table `registro_falta`
 --
 ALTER TABLE `registro_falta`
-  MODIFY `cod_registro` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `cod_registro` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT for table `rol`
