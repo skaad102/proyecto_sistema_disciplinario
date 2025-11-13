@@ -78,7 +78,7 @@ error_log("Sesión en docente/index.php: " . print_r($_SESSION, true));
         </div>
 
         <div class="table-section" id="table2">
-            <?php include '../mis_reportes.php'; ?>
+            <?php include 'mis_reportes.php'; ?>
         </div>
 
         <div class="table-section" id="table3">

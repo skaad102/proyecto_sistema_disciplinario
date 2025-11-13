@@ -948,3 +948,72 @@ Consulta ejecutada. Número de filas: 1
 )
 
 [12-Nov-2025 20:52:49 America/Bogota] Usuario: admin, Rol: Directivo (ID: 1), Redirigiendo a: ../../views/admin/index.php
+=== Inicio de sesión: 2025-11-13 07:32:28 ===
+[13-Nov-2025 07:32:28 America/Bogota] === Nueva solicitud de inicio de sesión ===
+[13-Nov-2025 07:32:28 America/Bogota] Intento de inicio de sesión - Usuario: admin
+Intentando autenticar usuario: admin
+Consulta ejecutada. Número de filas: 1
+[13-Nov-2025 07:32:28 America/Bogota] Datos del usuario: Array
+(
+    [cod_usuario] => 9999999
+    [id_tipo_documento] => 3
+    [numero_documento] => 99999999
+    [nombres] => super
+    [apellidos] => admin
+    [telefono] => 31000000
+    [correo] => admin@colegio.conm
+    [direccion] => av siempre viva 123
+    [usuario] => admin
+    [clave] => admin123
+    [id_rol] => 1
+    [estado] => ACTIVO
+    [rol] => Directivo
+)
+
+[13-Nov-2025 07:32:28 America/Bogota] Usuario: admin, Rol: Directivo (ID: 1), Redirigiendo a: ../../views/admin/index.php
+=== Inicio de sesión: 2025-11-13 07:32:35 ===
+[13-Nov-2025 07:32:35 America/Bogota] === Nueva solicitud de inicio de sesión ===
+[13-Nov-2025 07:32:35 America/Bogota] Intento de inicio de sesión - Usuario: danna.agudelo
+Intentando autenticar usuario: danna.agudelo
+Consulta ejecutada. Número de filas: 1
+[13-Nov-2025 07:32:35 America/Bogota] Datos del usuario: Array
+(
+    [cod_usuario] => 4
+    [id_tipo_documento] => 1
+    [numero_documento] => 1082498535
+    [nombres] => Danna
+    [apellidos] => Agudelo
+    [telefono] => 3126429827
+    [correo] => danna@gmail.com
+    [direccion] => 
+    [usuario] => danna.agudelo
+    [clave] => 123456
+    [id_rol] => 2
+    [estado] => ACTIVO
+    [rol] => Docente
+)
+
+[13-Nov-2025 07:32:35 America/Bogota] Usuario: danna.agudelo, Rol: Docente (ID: 2), Redirigiendo a: ../../views/docente/index.php
+=== Inicio de sesión: 2025-11-13 07:33:38 ===
+[13-Nov-2025 07:33:38 America/Bogota] === Nueva solicitud de inicio de sesión ===
+[13-Nov-2025 07:33:38 America/Bogota] Intento de inicio de sesión - Usuario: danna.agudelo
+Intentando autenticar usuario: danna.agudelo
+Consulta ejecutada. Número de filas: 1
+[13-Nov-2025 07:33:38 America/Bogota] Datos del usuario: Array
+(
+    [cod_usuario] => 4
+    [id_tipo_documento] => 1
+    [numero_documento] => 1082498535
+    [nombres] => Danna
+    [apellidos] => Agudelo
+    [telefono] => 3126429827
+    [correo] => danna@gmail.com
+    [direccion] => 
+    [usuario] => danna.agudelo
+    [clave] => 123456
+    [id_rol] => 2
+    [estado] => ACTIVO
+    [rol] => Docente
+)
+
+[13-Nov-2025 07:33:38 America/Bogota] Usuario: danna.agudelo, Rol: Docente (ID: 2), Redirigiendo a: ../../views/docente/index.php

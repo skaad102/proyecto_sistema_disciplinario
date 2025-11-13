@@ -123,3 +123,207 @@ function obtenerEstudiantesPorDocente($conexion, $id_docente)
         throw new Exception("Error al obtener la lista de estudiantes");
     }
 }
+
+// MARK: FALTAS
+
+function obtenerTiposFalta($conexion)
+{
+    try {
+        $sql = "SELECT cod_tipofalta, nombre_tipo, descripcion_tipo, gravedad 
+                FROM tipo_falta 
+                ORDER BY gravedad, nombre_tipo";
+        $stmt = $conexion->prepare($sql);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    } catch (Exception $e) {
+        error_log("Error al obtener tipos de falta: " . $e->getMessage());
+        throw $e;
+    }
+}
+
+
+function crearFalta($conexion, $datosFalta)
+{
+    try {
+        // Validar que los campos requeridos no estén vacíos
+        if (empty($datosFalta[':id_tipofalta']) || empty(trim($datosFalta[':descripcion']))) {
+            return [
+                'success' => false,
+                'mensaje' => 'El tipo de falta y la descripción son obligatorios.'
+            ];
+        }
+
+        // Crear la falta
+        $sql = "INSERT INTO falta (id_tipofalta, descripcion, sancion_sugerida) 
+                VALUES (:id_tipofalta, :descripcion, :sancion_sugerida)";
+
+        $stmt = $conexion->prepare($sql);
+        foreach ($datosFalta as $param => $value) {
+            $stmt->bindValue($param, $value);
+        }
+
+        if ($stmt->execute()) {
+            return [
+                'success' => true,
+                'mensaje' => 'Falta creada exitosamente.',
+                'id_falta' => $conexion->lastInsertId()
+            ];
+        }
+        return [
+            'success' => false,
+            'mensaje' => 'Error al crear la falta.'
+        ];
+    } catch (PDOException $e) {
+        // Verificar si es error de clave foránea
+        if ($e->getCode() == 23000) {
+            if (strpos($e->getMessage(), 'Duplicate entry') !== false) {
+                return [
+                    'success' => false,
+                    'mensaje' => 'Ya existe una falta con esa descripción.'
+                ];
+            }
+            return [
+                'success' => false,
+                'mensaje' => 'Error: El tipo de falta seleccionado no existe.'
+            ];
+        }
+        error_log("Error al crear falta: " . $e->getMessage());
+        return [
+            'success' => false,
+            'mensaje' => 'Error en la base de datos: ' . $e->getMessage()
+        ];
+    }
+}
+
+
+
+function registrarFaltaEstudiante($conexion, $datosRegistro)
+{
+    try {
+        // Validar que los campos requeridos no estén vacíos
+        if (
+            empty($datosRegistro[':id_estudiante']) || empty($datosRegistro[':id_docente']) ||
+            empty($datosRegistro[':id_curso']) || empty($datosRegistro[':id_tipofalta']) ||
+            empty(trim($datosRegistro[':descripcion_falta']))
+        ) {
+            return [
+                'success' => false,
+                'mensaje' => 'Faltan datos obligatorios para registrar la falta.'
+            ];
+        }
+
+        // Iniciar transacción
+        $conexion->beginTransaction();
+
+        // 1. Primero crear la falta en la tabla falta
+        $datosFalta = [
+            ':id_tipofalta' => $datosRegistro[':id_tipofalta'],
+            ':descripcion' => $datosRegistro[':descripcion_falta'],
+            ':sancion_sugerida' => $datosRegistro[':correctivos_disciplinarios'] ?? ''
+        ];
+
+        $resultadoFalta = crearFalta($conexion, $datosFalta);
+
+        if (!$resultadoFalta['success']) {
+            $conexion->rollBack();
+            return $resultadoFalta;
+        }
+
+        $id_falta = $resultadoFalta['id_falta'];
+
+        // 2. Crear el registro de falta asociando el id_falta recién creado
+        $sql = "INSERT INTO registro_falta
+                (fecha_registro, hora_registro, id_estudiante, id_docente, id_curso, id_falta, 
+                 descripcion_falta, descargos_estudiante, correctivos_disciplinarios, compromisos, 
+                 observaciones, estado) 
+                VALUES 
+                (:fecha_registro, :hora_registro, :id_estudiante, :id_docente, :id_curso, :id_falta, 
+                 :descripcion_falta, :descargos_estudiante, :correctivos_disciplinarios, :compromisos, 
+                 :observaciones, :estado)";
+
+        $stmt = $conexion->prepare($sql);
+        
+        // Usar el id_falta recién creado
+        $stmt->bindValue(':fecha_registro', $datosRegistro[':fecha_registro']);
+        $stmt->bindValue(':hora_registro', $datosRegistro[':hora_registro']);
+        $stmt->bindValue(':id_estudiante', $datosRegistro[':id_estudiante']);
+        $stmt->bindValue(':id_docente', $datosRegistro[':id_docente']);
+        $stmt->bindValue(':id_curso', $datosRegistro[':id_curso']);
+        $stmt->bindValue(':id_falta', $id_falta, PDO::PARAM_INT);
+        $stmt->bindValue(':descripcion_falta', $datosRegistro[':descripcion_falta']);
+        $stmt->bindValue(':descargos_estudiante', $datosRegistro[':descargos_estudiante'] ?? '');
+        $stmt->bindValue(':correctivos_disciplinarios', $datosRegistro[':correctivos_disciplinarios'] ?? '');
+        $stmt->bindValue(':compromisos', $datosRegistro[':compromisos'] ?? '');
+        $stmt->bindValue(':observaciones', $datosRegistro[':observaciones'] ?? '');
+        $stmt->bindValue(':estado', $datosRegistro[':estado']);
+
+        if ($stmt->execute()) {
+            $conexion->commit();
+            return [
+                'success' => true,
+                'mensaje' => 'Falta registrada exitosamente.',
+                'id_registro' => $conexion->lastInsertId(),
+                'id_falta' => $id_falta
+            ];
+        }
+        
+        $conexion->rollBack();
+        return [
+            'success' => false,
+            'mensaje' => 'Error al registrar la falta en el historial.'
+        ];
+    } catch (PDOException $e) {
+        if ($conexion->inTransaction()) {
+            $conexion->rollBack();
+        }
+        
+        // Verificar si es error de clave foránea
+        if ($e->getCode() == 23000) {
+            return [
+                'success' => false,
+                'mensaje' => 'Error: El estudiante, docente o curso seleccionado no existe.'
+            ];
+        }
+        error_log("Error al registrar falta del estudiante: " . $e->getMessage());
+        return [
+            'success' => false,
+            'mensaje' => 'Error en la base de datos: ' . $e->getMessage()
+        ];
+    }
+}
+
+function obtenerTodasFaltasDocente($conexion, $id_docente)
+{
+    try {
+        $sql = "SELECT rf.cod_registro, 
+                       rf.fecha_registro,
+                       rf.hora_registro,
+                       e.cod_estudiante,
+                       CONCAT(u.nombres, ' ', u.apellidos) as nombre_estudiante,
+                       tf.nombre_tipo,
+                       f.descripcion as descripcion_falta,
+                       rf.estado
+                FROM registro_falta rf
+                INNER JOIN estudiante e ON rf.id_estudiante = e.cod_estudiante
+                INNER JOIN usuario u ON e.id_usuario = u.cod_usuario
+                INNER JOIN falta f ON rf.id_falta = f.cod_falta
+                INNER JOIN tipo_falta tf ON f.id_tipofalta = tf.cod_tipofalta
+                WHERE rf.id_docente = :id_docente
+                ORDER BY rf.fecha_registro DESC, rf.hora_registro DESC";
+
+        $stmt = $conexion->prepare($sql);
+        $stmt->bindParam(':id_docente', $id_docente, PDO::PARAM_INT);
+        $stmt->execute();
+
+        $faltas = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        if (empty($faltas)) {
+            return [];
+        }
+
+        return $faltas;
+    } catch (Exception $e) {
+        error_log("Error al obtener faltas del docente: " . $e->getMessage());
+        throw new Exception("Error al obtener la lista de faltas");
+    }
+}

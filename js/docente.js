@@ -13,7 +13,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const overlay = document.querySelector(".overlay");
 
     if (hamburger && sidebar && overlay) {
-      document.body.classList.toggle('menu-open');
+      document.body.classList.toggle("menu-open");
       hamburger.classList.toggle("active");
       sidebar.classList.toggle("active");
       overlay.classList.toggle("active");
@@ -94,4 +94,63 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // Close menu on initial load
   closeMenu();
+
+  // MARK: Registro de Faltas
+  // Manejar clic en botón "Registrar Falta"
+  const botonesRegistrarFalta = document.querySelectorAll(
+    ".btn-registrar-falta"
+  );
+  if (botonesRegistrarFalta.length > 0) {
+    botonesRegistrarFalta.forEach((btn) => {
+      btn.addEventListener("click", function () {
+        const estudianteId = this.dataset.estudianteId;
+        const estudianteNombre = this.dataset.estudianteNombre;
+        const cursoId = this.dataset.cursoId;
+        const cursoNombre = this.dataset.cursoNombre;
+
+        // Llenar los datos en el modal
+        document.getElementById("falta_id_estudiante").value = estudianteId;
+        document.getElementById("falta_id_curso").value = cursoId;
+        document.getElementById("falta_estudiante_nombre").textContent =
+          estudianteNombre;
+        document.getElementById("falta_curso_nombre").textContent = cursoNombre;
+
+        // Mostrar el modal
+        const modalElement = document.getElementById("modalRegistrarFalta");
+        if (modalElement) {
+          const modal = new bootstrap.Modal(modalElement);
+          modal.show();
+        }
+      });
+    });
+  }
+
+  // Limpiar formulario al cerrar el modal de registro de faltas
+  const modalRegistrarFalta = document.getElementById("modalRegistrarFalta");
+  if (modalRegistrarFalta) {
+    modalRegistrarFalta.addEventListener("hidden.bs.modal", function () {
+      const form = this.querySelector("form");
+      if (form) {
+        form.reset();
+        // Restaurar valores por defecto con fechas actuales
+        const fechaInput = document.getElementById("fecha_registro");
+        const horaInput = document.getElementById("hora_registro");
+
+        if (fechaInput) {
+          const today = new Date();
+          const year = today.getFullYear();
+          const month = String(today.getMonth() + 1).padStart(2, "0");
+          const day = String(today.getDate()).padStart(2, "0");
+          fechaInput.value = `${year}-${month}-${day}`;
+        }
+
+        if (horaInput) {
+          const now = new Date();
+          const hours = String(now.getHours()).padStart(2, "0");
+          const minutes = String(now.getMinutes()).padStart(2, "0");
+          horaInput.value = `${hours}:${minutes}`;
+        }
+      }
+    });
+  }
 });
