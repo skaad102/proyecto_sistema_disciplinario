@@ -125,100 +125,39 @@ try {
                 document.getElementById('estudiantesModalLabel').textContent =
                     `Estudiantes - ${nombreCurso} - ${nombreAsignatura}`;
 
-                // Mostrar el spinner
+                // Mostrar el spinner y limpiar contenido previo
                 document.getElementById('loadingSpinner').style.display = 'block';
                 document.getElementById('estudiantesList').innerHTML = '';
 
                 try {
-                    // Cargar los estudiantes
+                    // Cargar los estudiantes (ahora devuelve HTML)
                     const response = await fetch(`obtener_estudiantes.php?curso=${cursoId}&asignatura=${asignaturaId}`);
                     
                     if (!response.ok) {
                         throw new Error(`Error HTTP: ${response.status}`);
                     }
                     
-                    const data = await response.json();
+                    // Obtener el HTML generado por PHP
+                    const html = await response.text();
                     
                     // Ocultar el spinner
                     document.getElementById('loadingSpinner').style.display = 'none';
+                    
+                    // Insertar el HTML en el contenedor
+                    document.getElementById('estudiantesList').innerHTML = html;
 
-                    if (data.error) {
-                        console.error('Error del servidor:', data.error);
-                        throw new Error(data.error);
-                    }
-
-                    const container = document.getElementById('estudiantesList');
-                    if (data.length === 0) {
-                        container.innerHTML = '<p class="text-center">No hay estudiantes matriculados en este curso.</p>';
-                        return;
-                    }
-
-                    // Crear la tabla de estudiantes
-                    let html = `
-                    <table class="table table-hover">
-                        <thead>
-                            <tr>
-                                <th>N°</th>
-                                <th>Documento</th>
-                                <th>Tipo</th>
-                                <th>Nombre Completo</th>
-                                <th>Estado</th>
-                                <th>Fecha Matrícula</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                `;
-
-                    data.forEach((estudiante, index) => {
-                        html += `
-                        <tr>
-                            <td>${index + 1}</td>
-                            <td>${estudiante.numero_documento}</td>
-                            <td>${estudiante.tipo_documento}</td>
-                            <td>${estudiante.nombre_completo}</td>
-                            <td><span class="badge bg-success">${estudiante.estado}</span></td>
-                            <td>${estudiante.fecha_matricula}</td>
-                        </tr>
-                    `;
-                    });
-
-                    html += `
-                        </tbody>
-                    </table>
-                `;
-
-                    container.innerHTML = html;
                 } catch (error) {
                     console.error('Error en la carga de estudiantes:', error);
                     document.getElementById('loadingSpinner').style.display = 'none';
                     
-                    let mensajeError = 'Error al cargar los estudiantes.';
-                    if (error.message) {
-                        mensajeError += ' Detalle: ' + error.message;
-                    }
-                    
                     document.getElementById('estudiantesList').innerHTML = `
                         <div class="alert alert-danger">
                             <h6 class="alert-heading"><i class="bi bi-exclamation-triangle"></i> Error</h6>
-                            <p class="mb-0">${mensajeError}</p>
+                            <p class="mb-0">Error al cargar los estudiantes. Detalle: ${error.message}</p>
                             <hr>
                             <p class="mb-0">Por favor, intente nuevamente o contacte al administrador.</p>
                         </div>
                     `;
-                    
-                    // Registrar el error en el servidor
-                    fetch('log_error.php', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify({
-                            error: error.message,
-                            contexto: 'Carga de estudiantes en modal',
-                            curso: cursoId,
-                            asignatura: asignaturaId
-                        })
-                    }).catch(logError => console.error('Error al registrar el error:', logError));
                 }
             });
         });

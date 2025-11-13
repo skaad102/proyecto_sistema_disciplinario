@@ -26,6 +26,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $datos = [
                 ':id_grado' => $_POST['id_grado'] ?? 0,
                 ':id_director_grupo' => $_POST['id_director_grupo'] ?? 0,
+                ':nombre_curso' => $_POST['nombre_curso'] ?? '',
                 ':ano_lectivo' => $_POST['ano_lectivo'] ?? date('Y'),
                 ':estado' => 'ACTIVO'
             ];
@@ -52,6 +53,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $datos = [
                 ':id_grado' => $_POST['id_grado'] ?? 0,
                 ':id_director_grupo' => $_POST['id_director_grupo'] ?? 0,
+                ':nombre_curso' => $_POST['nombre_curso'] ?? '',
                 ':ano_lectivo' => $_POST['ano_lectivo'] ?? date('Y'),
                 ':estado' => $_POST['estado'] ?? 'ACTIVO'
             ];
@@ -114,10 +116,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 // Si es un array (multiselect), procesar múltiples
                 if (is_array($estudiantes_ids)) {
                     $resultado = crearMatriculaMultiple(
-                        $conexion, 
-                        $estudiantes_ids, 
-                        $curso_id, 
-                        date('Y-m-d'), 
+                        $conexion,
+                        $estudiantes_ids,
+                        $curso_id,
+                        date('Y-m-d'),
                         'ACTIVA'
                     );
                 } else {
@@ -180,7 +182,7 @@ try {
 
             <?php if ($mensaje): ?>
                 <div class="alert alert-<?php echo $tipoMensaje; ?> alert-dismissible fade show" role="alert">
-                    <?php 
+                    <?php
                     // Permitir HTML en mensajes de matrícula múltiple (contienen <br> y <strong>)
                     if (strpos($mensaje, '<strong>') !== false || strpos($mensaje, '<br>') !== false) {
                         echo $mensaje; // Ya viene con formato HTML seguro desde admin_functions.php
@@ -300,6 +302,13 @@ try {
                     </div>
 
                     <div class="mb-3">
+                        <label for="nombre_curso" class="form-label">Nombre del Curso *</label>
+                        <input type="text" class="form-control" id="nombre_curso" name="nombre_curso"
+                            required maxlength="50" placeholder="Ej: 11-A, 6to B, Primaria 3">
+                        <small class="text-muted">Identificador único del curso</small>
+                    </div>
+
+                    <div class="mb-3">
                         <label for="id_director_grupo" class="form-label">Director de Grupo *</label>
                         <input type="text" class="form-control mb-2" id="buscar_director"
                             placeholder="🔍 Buscar por nombre o documento...">
@@ -365,6 +374,13 @@ try {
                                 <?php endforeach; ?>
                             <?php endif; ?>
                         </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="nombre_curso_editar" class="form-label">Nombre del Curso *</label>
+                        <input type="text" class="form-control" id="nombre_curso_editar" name="nombre_curso"
+                            required maxlength="50" placeholder="Ej: 11-A, 6to B, Primaria 3">
+                        <small class="text-muted">Identificador único del curso</small>
                     </div>
 
                     <div class="mb-3">
@@ -532,7 +548,7 @@ try {
                                 <?php foreach ($cursos as $curso): ?>
                                     <?php if (strtoupper($curso['estado']) === 'ACTIVO'): ?>
                                         <option value="<?php echo htmlspecialchars($curso['cod_curso']); ?>">
-                                            <?php echo htmlspecialchars($curso['nombre_grado'] . ' - ' . $curso['ano_lectivo']); ?>
+                                            <?php echo htmlspecialchars($curso['nombre_curso'] . ' - ' . $curso['ano_lectivo']); ?>
                                         </option>
                                     <?php endif; ?>
                                 <?php endforeach; ?>

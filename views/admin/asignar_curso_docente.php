@@ -187,7 +187,7 @@ try {
                                     <?php foreach ($cursos as $curso): ?>
                                         <?php if (strtoupper($curso['estado']) === 'ACTIVO'): ?>
                                             <option value="<?php echo htmlspecialchars($curso['cod_curso']); ?>">
-                                                <?php echo htmlspecialchars($curso['nombre_grado'] . ' - ' . $curso['ano_lectivo']); ?>
+                                                <?php echo htmlspecialchars($curso['nombre_curso'] . ' - ' . $curso['ano_lectivo']); ?>
                                             </option>
                                         <?php endif; ?>
                                     <?php endforeach; ?>

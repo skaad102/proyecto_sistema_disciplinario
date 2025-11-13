@@ -492,6 +492,7 @@ document.addEventListener("DOMContentLoaded", function () {
           document.getElementById("id_grado_editar").value = data.id_grado;
           document.getElementById("id_director_grupo_editar").value =
             data.id_director_grupo;
+          document.getElementById("nombre_curso_editar").value = data.nombre_curso || '';
           document.getElementById("ano_lectivo_editar").value =
             data.ano_lectivo;
           document.getElementById("estado_editar").value = data.estado;

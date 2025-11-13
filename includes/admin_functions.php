@@ -738,12 +738,11 @@ function obtenerTodosCursos($conexion)
         throw $e;
     }
 }
-
 function crearCurso($conexion, $datos)
 {
     try {
-        $sql = "INSERT INTO curso (id_grado, id_director_grupo, ano_lectivo, estado) 
-                VALUES (:id_grado, :id_director_grupo, :ano_lectivo, :estado)";
+        $sql = "INSERT INTO curso (id_grado, id_director_grupo, nombre_curso, ano_lectivo, estado) 
+                VALUES (:id_grado, :id_director_grupo, :nombre_curso, :ano_lectivo, :estado)";
 
         $stmt = $conexion->prepare($sql);
         foreach ($datos as $param => $value) {
@@ -776,6 +775,7 @@ function actualizarCurso($conexion, $datos, $cod_curso)
         $sql = "UPDATE curso SET 
                 id_grado = :id_grado,
                 id_director_grupo = :id_director_grupo,
+                nombre_curso = :nombre_curso,
                 ano_lectivo = :ano_lectivo,
                 estado = :estado
                 WHERE cod_curso = :cod_curso";
@@ -860,7 +860,7 @@ function activarCurso($conexion, $cod_curso)
 function obtenerCursoPorId($conexion, $cod_curso)
 {
     try {
-        $sql = "SELECT c.cod_curso, c.id_grado, c.id_director_grupo, c.ano_lectivo, c.estado,
+        $sql = "SELECT c.cod_curso, c.id_grado, c.id_director_grupo, c.nombre_curso, c.ano_lectivo, c.estado,
                        g.nombre_grado, u.nombres, u.apellidos
                 FROM curso c
                 INNER JOIN grado g ON c.id_grado = g.cod_grado
