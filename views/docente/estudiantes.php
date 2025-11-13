@@ -13,6 +13,14 @@ $conexion = $database->connect();
 $mensaje = '';
 $tipoMensaje = 'danger';
 
+// Verificar si hay mensaje temporal de redirección
+if (isset($_SESSION['mensaje_temp'])) {
+    $mensaje = $_SESSION['mensaje_temp'];
+    $tipoMensaje = $_SESSION['tipo_mensaje_temp'] ?? 'info';
+    unset($_SESSION['mensaje_temp']);
+    unset($_SESSION['tipo_mensaje_temp']);
+}
+
 // Procesar acciones POST
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $modulo = $_POST['modulo'] ?? '';
@@ -41,8 +49,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $resultado = registrarFaltaEstudiante($conexion, $datosRegistro);
 
                 if ($resultado['success']) {
-                    $mensaje = $resultado['mensaje'];
-                    $tipoMensaje = 'success';
+                    // Guardar mensaje de éxito en sesión y marcar para redirección
+                    $_SESSION['mensaje_temp'] = $resultado['mensaje'];
+                    $_SESSION['tipo_mensaje_temp'] = 'success';
+                    $_SESSION['redirigir_estudiantes'] = true;
                 } else {
                     $mensaje = $resultado['mensaje'];
                     $tipoMensaje = 'danger';
@@ -275,3 +285,12 @@ try {
         </div>
     </div>
 </div>
+
+<?php if (isset($_SESSION['redirigir_estudiantes']) && $_SESSION['redirigir_estudiantes']): ?>
+<script>
+    // Redirigir usando JavaScript para evitar el reenvío del formulario
+    // Esto implementa el patrón PRG (Post-Redirect-Get)
+    <?php unset($_SESSION['redirigir_estudiantes']); ?>
+    window.location.href = window.location.pathname + window.location.search;
+</script>
+<?php endif; ?>

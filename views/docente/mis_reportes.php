@@ -32,7 +32,12 @@ try {
 
     <div class="card shadow-sm">
         <div class="card-header bg-primary text-white">
-            <h5 class="card-title mb-0">Mis Reportes</h5>
+            <div class="d-flex justify-content-between align-items-center">
+                <h5 class="card-title mb-0">Mis Reportes</h5>
+                <button class="btn btn-light btn-sm" onclick="location.reload();" title="Actualizar lista">
+                    <i class="bi bi-arrow-clockwise"></i> Actualizar
+                </button>
+            </div>
         </div>
         <div class="card-body">
             <div class="table-responsive">
