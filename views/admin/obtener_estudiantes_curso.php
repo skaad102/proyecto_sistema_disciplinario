@@ -59,10 +59,16 @@ try {
                         <td><small><?php echo htmlspecialchars($estudiante['correo'] ?? 'N/A'); ?></small></td>
                         <td><?php echo htmlspecialchars($estudiante['telefono'] ?? 'N/A'); ?></td>
                         <td>
-                            <?php if (strtoupper($estudiante['estado']) === 'ACTIVA'): ?>
-                                <span class="badge bg-success">ACTIVO</span>
+                            <?php 
+                            $estado = strtoupper($estudiante['estado']);
+                            if ($estado === 'ACTIVA' || $estado === 'ACTIVO'): ?>
+                                <span class="badge bg-success">✓ ACTIVO</span>
+                            <?php elseif ($estado === 'RETIRADO'): ?>
+                                <span class="badge bg-warning text-dark">↩ RETIRADO</span>
+                            <?php elseif ($estado === 'GRADUADO'): ?>
+                                <span class="badge bg-primary">🎓 GRADUADO</span>
                             <?php else: ?>
-                                <span class="badge bg-secondary">INACTIVO</span>
+                                <span class="badge bg-secondary">● <?php echo htmlspecialchars($estado); ?></span>
                             <?php endif; ?>
                         </td>
                     </tr>

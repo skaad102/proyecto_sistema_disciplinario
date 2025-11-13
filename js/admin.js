@@ -585,6 +585,35 @@ document.addEventListener("DOMContentLoaded", function () {
   filtrarDocentes("buscar_director", "id_director_grupo");
   filtrarDocentes("buscar_director_editar", "id_director_grupo_editar");
 
+  // Filtrar estudiantes en matrícula (mismo patrón que docentes)
+  function filtrarEstudiantes(inputId, selectId) {
+    const input = document.getElementById(inputId);
+    const select = document.getElementById(selectId);
+
+    if (input && select) {
+      input.addEventListener("keyup", function () {
+        const filtro = this.value.toLowerCase();
+        const opciones = select.options;
+
+        for (let i = 0; i < opciones.length; i++) {
+          const opcion = opciones[i];
+          const nombre = opcion.getAttribute("data-nombre") || "";
+          const documento = opcion.getAttribute("data-documento") || "";
+
+          // Buscar en nombre o documento
+          if (nombre.includes(filtro) || documento.includes(filtro)) {
+            opcion.style.display = "";
+          } else {
+            opcion.style.display = "none";
+          }
+        }
+      });
+    }
+  }
+
+  // Aplicar filtro al selector de estudiantes en matrícula
+  filtrarEstudiantes("buscar_estudiante_matricula", "id_estudiante_matricula");
+
   // Ver estudiantes del curso
   document.querySelectorAll(".btn-ver-estudiantes-curso").forEach((btn) => {
     btn.addEventListener("click", function () {
@@ -768,6 +797,42 @@ document.addEventListener("DOMContentLoaded", function () {
         buscador.value = "";
         buscador.dispatchEvent(new Event("keyup")); // Resetear filtro
       }
+      setTimeout(() => {
+        document
+          .querySelectorAll(".modal-backdrop")
+          .forEach((backdrop) => backdrop.remove());
+        if (!document.querySelector(".modal.show")) {
+          document.body.classList.remove("modal-open");
+          document.body.style.overflow = "";
+          document.body.style.paddingRight = "";
+        }
+      }, 100);
+    });
+  }
+
+  // Limpiar modal de crear matrícula
+  const modalCrearMatriculaElement = document.getElementById("modalCrearMatricula");
+  if (modalCrearMatriculaElement) {
+    modalCrearMatriculaElement.addEventListener("hidden.bs.modal", function () {
+      document.activeElement.blur();
+      const form = document.querySelector("#modalCrearMatricula form");
+      if (form) form.reset();
+      
+      // Limpiar buscador y resetear filtro de estudiantes
+      const buscadorEstudiante = document.getElementById("buscar_estudiante_matricula");
+      if (buscadorEstudiante) {
+        buscadorEstudiante.value = "";
+        buscadorEstudiante.dispatchEvent(new Event("keyup")); // Resetear filtro
+      }
+      
+      // Limpiar selecciones múltiples
+      const selectEstudiantes = document.getElementById("id_estudiante_matricula");
+      if (selectEstudiantes) {
+        for (let i = 0; i < selectEstudiantes.options.length; i++) {
+          selectEstudiantes.options[i].selected = false;
+        }
+      }
+      
       setTimeout(() => {
         document
           .querySelectorAll(".modal-backdrop")

@@ -332,7 +332,6 @@ function obtenerTodosDocentes($conexion)
         $stmt = $conexion->prepare($sql);
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
-
     } catch (Exception $e) {
         error_log("Error al obtener todos los docentes: " . $e->getMessage());
         throw $e;
@@ -586,7 +585,7 @@ function actualizarEstudiante($conexion, $datosUsuario, $datosEstudiante, $cod_e
 function obtenerTodosEstudiantes($conexion)
 {
     try {
-        $sql = "SELECT e.cod_estudiante, e.id_usuario, u.nombres, u.apellidos, u.numero_documento, e.fecha_nacimiento
+        $sql = "SELECT e.cod_estudiante, e.id_usuario, u.nombres, u.apellidos, u.numero_documento, e.fecha_nacimiento, u.estado
                 FROM estudiante e
                 INNER JOIN usuario u ON e.id_usuario = u.cod_usuario
                 ORDER BY u.apellidos, u.nombres";
@@ -963,6 +962,7 @@ function eliminarAsignacion($conexion, $cod_asignacion)
 
 // MARK MATRICULAS
 
+
 // `cod_matricula``cod_matricula``id_curso``fecha_matricula``estado`
 function obtenerTodasMatriculas($conexion)
 {
@@ -1012,5 +1012,192 @@ function obtenerEstudiantesPorCurso($conexion, $cod_curso)
     } catch (Exception $e) {
         error_log("Error al obtener estudiantes por curso: " . $e->getMessage());
         throw $e;
+    }
+}
+
+function crearMatriculaMultiple($conexion, $estudiantes_ids, $curso_id, $fecha_matricula, $estado = 'ACTIVA')
+{
+    $exitosas = [];
+    $duplicadas = [];
+    $errores = [];
+    $total_procesados = 0;
+
+    try {
+        // Obtener nombres de estudiantes para los mensajes
+        $placeholders = str_repeat('?,', count($estudiantes_ids) - 1) . '?';
+        $sqlNombres = "SELECT e.cod_estudiante, CONCAT(u.nombres, ' ', u.apellidos) as nombre_completo
+                       FROM estudiante e
+                       INNER JOIN usuario u ON e.id_usuario = u.cod_usuario
+                       WHERE e.cod_estudiante IN ($placeholders)";
+        
+        $stmtNombres = $conexion->prepare($sqlNombres);
+        $stmtNombres->execute($estudiantes_ids);
+        $nombresEstudiantes = $stmtNombres->fetchAll(PDO::FETCH_KEY_PAIR);
+
+        foreach ($estudiantes_ids as $estudiante_id) {
+            $total_procesados++;
+            $nombreEstudiante = $nombresEstudiantes[$estudiante_id] ?? "ID: $estudiante_id";
+
+            try {
+                // Verificar si el estudiante ya está matriculado en el curso
+                $sqlVerificar = "SELECT COUNT(*) as total FROM matricula 
+                                WHERE id_estudiante = :id_estudiante 
+                                AND id_curso = :id_curso 
+                                AND estado = 'ACTIVA'";
+
+                $stmtVerificar = $conexion->prepare($sqlVerificar);
+                $stmtVerificar->bindValue(':id_estudiante', $estudiante_id);
+                $stmtVerificar->bindValue(':id_curso', $curso_id);
+                $stmtVerificar->execute();
+                $resultado = $stmtVerificar->fetch(PDO::FETCH_ASSOC);
+
+                if ($resultado['total'] > 0) {
+                    $duplicadas[] = $nombreEstudiante;
+                    continue; // Continuar con el siguiente estudiante
+                }
+
+                // Crear la matrícula
+                $sql = "INSERT INTO matricula (id_estudiante, id_curso, fecha_matricula, estado) 
+                        VALUES (:id_estudiante, :id_curso, :fecha_matricula, :estado)";
+
+                $stmt = $conexion->prepare($sql);
+                $stmt->bindValue(':id_estudiante', $estudiante_id);
+                $stmt->bindValue(':id_curso', $curso_id);
+                $stmt->bindValue(':fecha_matricula', $fecha_matricula);
+                $stmt->bindValue(':estado', $estado);
+
+                if ($stmt->execute()) {
+                    $exitosas[] = $nombreEstudiante;
+                } else {
+                    $errores[] = $nombreEstudiante;
+                }
+            } catch (PDOException $e) {
+                // Detectar si es error de duplicado (clave única)
+                if ($e->getCode() == 23000 && strpos($e->getMessage(), 'Duplicate entry') !== false) {
+                    $duplicadas[] = $nombreEstudiante;
+                } else {
+                    // Otros errores de base de datos
+                    $errores[] = $nombreEstudiante . " (Error de BD)";
+                    error_log("Error al matricular estudiante $nombreEstudiante: " . $e->getMessage());
+                }
+                continue; // Continuar con el siguiente estudiante
+            }
+        }
+
+        // Construir mensaje detallado y amigable
+        $mensaje = '<div style="text-align: left;">';
+        
+        if (count($exitosas) > 0) {
+            $mensaje .= '<div style="margin-bottom: 10px;">';
+            $mensaje .= '<strong style="color: #198754;">✅ Matriculados exitosamente (' . count($exitosas) . '):</strong><br>';
+            $mensaje .= '<span style="margin-left: 20px;">' . implode(', ', $exitosas) . '</span>';
+            $mensaje .= '</div>';
+        }
+        
+        if (count($duplicadas) > 0) {
+            $mensaje .= '<div style="margin-bottom: 10px;">';
+            $mensaje .= '<strong style="color: #fd7e14;">⚠️ Ya matriculados en este curso (' . count($duplicadas) . '):</strong><br>';
+            $mensaje .= '<span style="margin-left: 20px;">' . implode(', ', $duplicadas) . '</span>';
+            $mensaje .= '</div>';
+        }
+        
+        if (count($errores) > 0) {
+            $mensaje .= '<div style="margin-bottom: 10px;">';
+            $mensaje .= '<strong style="color: #dc3545;">❌ No se pudieron matricular (' . count($errores) . '):</strong><br>';
+            $mensaje .= '<span style="margin-left: 20px;">' . implode(', ', $errores) . '</span>';
+            $mensaje .= '</div>';
+        }
+
+        $mensaje .= '</div>';
+
+        // Resumen final (título principal)
+        if (count($exitosas) > 0 && count($duplicadas) == 0 && count($errores) == 0) {
+            $mensaje = '<div><strong>✅ ¡Todos los estudiantes fueron matriculados exitosamente!</strong></div><hr style="margin: 10px 0;">' . $mensaje;
+        } elseif (count($exitosas) == 0 && count($duplicadas) > 0 && count($errores) == 0) {
+            $mensaje = '<div><strong>⚠️ Todos los estudiantes ya estaban matriculados en este curso.</strong></div><hr style="margin: 10px 0;">' . $mensaje;
+        } elseif (count($exitosas) == 0 && count($errores) > 0) {
+            $mensaje = '<div><strong>❌ No se pudo matricular ningún estudiante.</strong></div><hr style="margin: 10px 0;">' . $mensaje;
+        } else {
+            $mensaje = '<div><strong>📊 Proceso completado - Resumen:</strong></div><hr style="margin: 10px 0;">' . $mensaje;
+        }
+
+        return [
+            'success' => count($exitosas) > 0,
+            'mensaje' => $mensaje,
+            'exitosas' => count($exitosas),
+            'duplicadas' => count($duplicadas),
+            'errores' => count($errores),
+            'total' => $total_procesados
+        ];
+
+    } catch (Exception $e) {
+        error_log("Error general al crear matrículas: " . $e->getMessage());
+        return [
+            'success' => false,
+            'mensaje' => 'Error en la base de datos: ' . $e->getMessage(),
+            'exitosas' => count($exitosas),
+            'duplicadas' => count($duplicadas),
+            'errores' => count($errores),
+            'total' => $total_procesados
+        ];
+    }
+}
+
+// Mantener función original para compatibilidad
+function crearMatricula($conexion, $datos)
+{
+    try {
+        // Verificar si el estudiante ya está matriculado en el curso
+        $sqlVerificar = "SELECT COUNT(*) as total FROM matricula 
+                        WHERE id_estudiante = :id_estudiante 
+                        AND id_curso = :id_curso 
+                        AND estado = 'ACTIVA'";
+
+        $stmtVerificar = $conexion->prepare($sqlVerificar);
+        $stmtVerificar->bindValue(':id_estudiante', $datos[':id_estudiante']);
+        $stmtVerificar->bindValue(':id_curso', $datos[':id_curso']);
+        $stmtVerificar->execute();
+        $resultado = $stmtVerificar->fetch(PDO::FETCH_ASSOC);
+
+        if ($resultado['total'] > 0) {
+            return [
+                'success' => false,
+                'mensaje' => 'El estudiante ya está matriculado en este curso.'
+            ];
+        }
+
+        // Crear la matrícula
+        $sql = "INSERT INTO matricula (id_estudiante, id_curso, fecha_matricula, estado) 
+                VALUES (:id_estudiante, :id_curso, :fecha_matricula, :estado)";
+
+        $stmt = $conexion->prepare($sql);
+        foreach ($datos as $param => $value) {
+            $stmt->bindValue($param, $value);
+        }
+
+        if ($stmt->execute()) {
+            return [
+                'success' => true,
+                'mensaje' => 'Matrícula creada exitosamente.',
+                'id_matricula' => $conexion->lastInsertId()
+            ];
+        }
+        return [
+            'success' => false,
+            'mensaje' => 'Error al crear la matrícula.'
+        ];
+    } catch (PDOException $e) {
+        // Verificar si es error de clave foránea
+        if ($e->getCode() == 23000) {
+            return [
+                'success' => false,
+                'mensaje' => 'Error: El estudiante o curso seleccionado no existe.'
+            ];
+        }
+        error_log("Error al crear matrícula: " . $e->getMessage());
+        return [
+            'success' => false,
+            'mensaje' => 'Error en la base de datos: ' . $e->getMessage()
+        ];
     }
 }

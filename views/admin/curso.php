@@ -97,6 +97,54 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $tipoMensaje = 'warning';
         }
     }
+
+    if ($accion === 'crear_matricula') {
+        try {
+            $estudiantes_ids = $_POST['id_estudiante'] ?? [];
+            $curso_id = $_POST['cod_curso'] ?? 0;
+
+            // Validar que se seleccionó al menos un estudiante
+            if (empty($estudiantes_ids)) {
+                $mensaje = 'Debe seleccionar al menos un estudiante.';
+                $tipoMensaje = 'warning';
+            } elseif (empty($curso_id)) {
+                $mensaje = 'Debe seleccionar un curso.';
+                $tipoMensaje = 'warning';
+            } else {
+                // Si es un array (multiselect), procesar múltiples
+                if (is_array($estudiantes_ids)) {
+                    $resultado = crearMatriculaMultiple(
+                        $conexion, 
+                        $estudiantes_ids, 
+                        $curso_id, 
+                        date('Y-m-d'), 
+                        'ACTIVA'
+                    );
+                } else {
+                    // Si es un solo valor, usar función original
+                    $datos = [
+                        ':id_estudiante' => $estudiantes_ids,
+                        ':id_curso' => $curso_id,
+                        ':fecha_matricula' => date('Y-m-d'),
+                        ':estado' => 'ACTIVA'
+                    ];
+                    $resultado = crearMatricula($conexion, $datos);
+                }
+
+                if ($resultado['success']) {
+                    $mensaje = $resultado['mensaje'];
+                    $tipoMensaje = 'success';
+                } else {
+                    $mensaje = $resultado['mensaje'];
+                    $tipoMensaje = isset($resultado['exitosas']) && $resultado['exitosas'] > 0 ? 'warning' : 'danger';
+                }
+            }
+        } catch (Exception $e) {
+            $mensaje = 'Error: ' . $e->getMessage();
+            $tipoMensaje = 'danger';
+            error_log("Error al crear matrícula: " . $e->getMessage());
+        }
+    }
 }
 
 skip_cursos_processing:
@@ -106,6 +154,7 @@ try {
     $cursos = obtenerTodosCursos($conexion);
     $grados = obtenerTodosGrados($conexion);
     $docentes = obtenerTodosDocentes($conexion);
+    $estudiantes = obtenerTodosEstudiantes($conexion);
 } catch (Exception $e) {
     error_log("Error al obtener datos en curso.php: " . $e->getMessage());
     $mensaje = 'Error al cargar los datos. Por favor, inténtelo de nuevo más tarde.';
@@ -118,14 +167,27 @@ try {
         <div class="col-12">
             <div class="d-flex justify-content-between align-items-center mb-4">
                 <h2>📚 Gestión de Cursos</h2>
-                <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#modalCrearCurso">
-                    <i class="bi bi-plus-circle"></i> Nuevo Curso
-                </button>
+                <div class="btn-group gap-2" role="group">
+
+                    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalCrearMatricula">
+                        <i class="bi bi-book"></i> Crear Matrícula
+                    </button>
+                    <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#modalCrearCurso">
+                        <i class="bi bi-plus-circle"></i> Nuevo Curso
+                    </button>
+                </div>
             </div>
 
             <?php if ($mensaje): ?>
                 <div class="alert alert-<?php echo $tipoMensaje; ?> alert-dismissible fade show" role="alert">
-                    <?php echo htmlspecialchars($mensaje); ?>
+                    <?php 
+                    // Permitir HTML en mensajes de matrícula múltiple (contienen <br> y <strong>)
+                    if (strpos($mensaje, '<strong>') !== false || strpos($mensaje, '<br>') !== false) {
+                        echo $mensaje; // Ya viene con formato HTML seguro desde admin_functions.php
+                    } else {
+                        echo htmlspecialchars($mensaje); // Escapar otros mensajes
+                    }
+                    ?>
                     <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                 </div>
             <?php endif; ?>
@@ -418,6 +480,75 @@ try {
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
             </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Crear Matrícula -->
+<div class="modal fade" id="modalCrearMatricula" tabindex="-1" aria-labelledby="modalCrearMatriculaLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title" id="modalCrearMatriculaLabel">📝 Crear Nueva Matrícula</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form method="POST" action="">
+                <div class="modal-body">
+                    <input type="hidden" name="modulo" value="cursos">
+                    <input type="hidden" name="accion" value="crear_matricula">
+
+                    <div class="mb-3">
+                        <label for="id_estudiante_matricula" class="form-label">Estudiantes * <small class="text-muted">(Mantén Ctrl para seleccionar múltiples)</small></label>
+                        <input type="text" class="form-control mb-2" id="buscar_estudiante_matricula"
+                            placeholder="🔍 Buscar por nombre o documento...">
+                        <select class="form-select" id="id_estudiante_matricula" name="id_estudiante[]" required multiple size="8">
+                            <?php
+                            // Obtener estudiantes activos para la matrícula
+                            if (!empty($estudiantes)):
+                                foreach ($estudiantes as $estudiante):
+                                    if (strtoupper($estudiante['estado']) === 'ACTIVO'):
+                            ?>
+                                        <option value="<?php echo htmlspecialchars($estudiante['cod_estudiante']); ?>"
+                                            data-nombre="<?php echo htmlspecialchars(strtolower($estudiante['nombres'] . ' ' . $estudiante['apellidos'])); ?>"
+                                            data-documento="<?php echo htmlspecialchars($estudiante['numero_documento']); ?>">
+                                            <?php echo htmlspecialchars($estudiante['nombres'] . ' ' . $estudiante['apellidos'] . ' - ' . $estudiante['numero_documento']); ?>
+                                        </option>
+                            <?php
+                                    endif;
+                                endforeach;
+                            endif;
+                            ?>
+                        </select>
+                        <small class="text-muted">
+                            <i class="bi bi-info-circle"></i> Escribe para filtrar. Usa Ctrl+Click para seleccionar múltiples estudiantes.
+                        </small>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="cod_curso_matricula" class="form-label">Curso *</label>
+                        <select class="form-select" id="cod_curso_matricula" name="cod_curso" required>
+                            <option value="">Seleccione...</option>
+                            <?php if (!empty($cursos)): ?>
+                                <?php foreach ($cursos as $curso): ?>
+                                    <?php if (strtoupper($curso['estado']) === 'ACTIVO'): ?>
+                                        <option value="<?php echo htmlspecialchars($curso['cod_curso']); ?>">
+                                            <?php echo htmlspecialchars($curso['nombre_grado'] . ' - ' . $curso['ano_lectivo']); ?>
+                                        </option>
+                                    <?php endif; ?>
+                                <?php endforeach; ?>
+                            <?php endif; ?>
+                        </select>
+                    </div>
+
+                    <div class="alert alert-info">
+                        <i class="bi bi-lightbulb"></i> <strong>Consejo:</strong> Puedes matricular varios estudiantes al mismo curso de una vez seleccionándolos con Ctrl+Click.
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                    <button type="submit" class="btn btn-primary">Guardar Matrícula</button>
+                </div>
+            </form>
         </div>
     </div>
 </div>
