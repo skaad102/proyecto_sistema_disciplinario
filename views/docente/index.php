@@ -24,7 +24,7 @@ error_log("Sesión en docente/index.php: " . print_r($_SESSION, true));
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="../../css/bootstrap.min.css">
     <!-- Bootstrap Icons -->
-    <link rel="stylesheet" href="../../login/Bootstrap/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="../../Bootstrap/bootstrap-icons.min.css">
     <!-- Custom CSS -->
     <link rel="stylesheet" href="../../css/docente.css">
     <!-- jQuery first, then Bootstrap Bundle with Popper -->
