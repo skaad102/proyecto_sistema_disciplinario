@@ -32,6 +32,8 @@ error_log("Sesión en docente/index.php: " . print_r($_SESSION, true));
     <script src="../../js/bootstrap.bundle.min.js"></script>
     <!-- Custom JavaScript -->
     <script src="../../js/docente.js" defer></script>
+    <!-- icono -->
+    <link rel="icon" href="../../assets/img/logo.png" type="image/png">
 </head>
 
 <body>
@@ -69,6 +71,10 @@ error_log("Sesión en docente/index.php: " . print_r($_SESSION, true));
                 <div class="welcome-icon">👨‍🏫</div>
                 <h2>Panel de Docente</h2>
                 <p>Seleccione una opción del menú para comenzar</p>
+            </div>
+            <div class="logo-container" style="text-align: center; margin-top: 2rem;">
+                <img src="../../assets/img/logo.png" alt="Logo institucional" style="width: 400px;">
+
             </div>
         </div>
 

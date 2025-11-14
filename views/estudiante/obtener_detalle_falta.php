@@ -75,8 +75,8 @@ try {
                 $icono = '🔵';
                 break;
             case 'SANCIONADA':
-                $badge_class = 'bg-success';
-                $icono = '🟢';
+                $badge_class = 'bg-danger';
+                $icono = '🔴';
                 break;
             case 'ARCHIVADA':
                 $badge_class = 'bg-secondary';

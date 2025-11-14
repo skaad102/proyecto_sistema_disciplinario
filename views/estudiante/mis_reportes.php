@@ -90,8 +90,8 @@ try {
                                         $icono = '🔵';
                                         break;
                                     case 'SANCIONADA':
-                                        $badge_class = 'bg-success';
-                                        $icono = '🟢';
+                                        $badge_class = 'bg-danger';
+                                        $icono = '🔴';
                                         break;
                                     case 'ARCHIVADA':
                                         $badge_class = 'bg-secondary';
@@ -185,7 +185,7 @@ try {
                         </div>
                         
                         <div class="col-md-3">
-                            <div class="card bg-success text-white">
+                            <div class="card bg-danger text-white">
                                 <div class="card-body">
                                     <h3><?php echo $por_estado['SANCIONADA'] ?? 0; ?></h3>
                                     <small>Sancionadas</small>
