@@ -847,5 +847,193 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   }
 
+  // ===== VER FALTAS DE ESTUDIANTE (ADMIN) =====
+  // Usar delegación de eventos para botones dinámicos
+
+  document.addEventListener('click', function(e) {
+    if (e.target.classList.contains('btn-ver-faltas-estudiante') || 
+        e.target.closest('.btn-ver-faltas-estudiante')) {
+      const btn = e.target.classList.contains('btn-ver-faltas-estudiante') 
+        ? e.target 
+        : e.target.closest('.btn-ver-faltas-estudiante');
+      
+      const idEstudiante = btn.dataset.id;
+      const nombreEstudiante = btn.dataset.nombre;
+      
+      cargarListaFaltasAdmin(idEstudiante, nombreEstudiante);
+    }
+  });
+
+  // ===== BUSCADOR DE FALTAS =====
+
+  const buscadorEstudiantes = document.getElementById('buscadorEstudiantes');
+  const tablaEstudiantes = document.getElementById('tablaEstudiantes');
+  
+  if (buscadorEstudiantes && tablaEstudiantes) {
+    buscadorEstudiantes.addEventListener('input', function() {
+      const filtro = this.value.toLowerCase().trim();
+      const filas = tablaEstudiantes.querySelectorAll('.fila-estudiante');
+      let filasVisibles = 0;
+      
+      filas.forEach(function(fila) {
+        const nombre = fila.getAttribute('data-nombre');
+        const apellido = fila.getAttribute('data-apellido');
+        const documento = fila.getAttribute('data-documento');
+        
+        // Buscar en nombre, apellido o documento
+        if (filtro === '' || 
+            nombre.includes(filtro) || 
+            apellido.includes(filtro) || 
+            documento.includes(filtro)) {
+          fila.style.display = '';
+          filasVisibles++;
+        } else {
+          fila.style.display = 'none';
+        }
+      });
+      
+      // Mostrar mensaje si no hay resultados
+      let mensajeNoResultados = tablaEstudiantes.querySelector('.mensaje-sin-resultados');
+      if (filasVisibles === 0 && filtro !== '') {
+        if (!mensajeNoResultados) {
+          mensajeNoResultados = document.createElement('tr');
+          mensajeNoResultados.className = 'mensaje-sin-resultados';
+          mensajeNoResultados.innerHTML = '<td colspan="3" class="text-center">No se encontraron estudiantes que coincidan con la búsqueda</td>';
+          tablaEstudiantes.appendChild(mensajeNoResultados);
+        }
+        mensajeNoResultados.style.display = '';
+      } else if (mensajeNoResultados) {
+        mensajeNoResultados.style.display = 'none';
+      }
+    });
+  }
+
   // ===== FIN CÓDIGO DE MODALES =====
 });
+
+// ===== FUNCIONES PARA VER FALTAS Y DETALLES (ADMIN) =====
+
+function cargarListaFaltasAdmin(idEstudiante, nombreEstudiante) {
+  console.log('cargarListaFaltasAdmin llamada:', idEstudiante, nombreEstudiante);
+  
+  const modalElement = document.getElementById('modalFaltasEstudiante');
+  const contenido = document.getElementById('contenidoFaltasEstudiante');
+  const titulo = document.getElementById('tituloFaltasEstudiante');
+  
+  console.log('Elementos encontrados:', { modalElement, contenido, titulo });
+  
+  if (!modalElement || !contenido || !titulo) {
+    console.error('No se encontraron los elementos del modal');
+    alert('Error: Modal no encontrado. Verifica que estés en la página de faltas.');
+    return;
+  }
+  
+  titulo.textContent = `📋 Faltas de ${nombreEstudiante}`;
+  contenido.innerHTML = '<div class="text-center py-5"><div class="spinner-border text-primary" role="status"><span class="visually-hidden">Cargando...</span></div><p class="mt-3">Cargando faltas...</p></div>';
+  
+  // Mostrar modal
+  let modal = bootstrap.Modal.getInstance(modalElement);
+  if (!modal) {
+    modal = new bootstrap.Modal(modalElement);
+  }
+  modal.show();
+  
+  // Cargar lista de faltas
+  fetch(`obtener_faltas_estudiante_admin.php?id=${idEstudiante}`)
+    .then(response => response.text())
+    .then(html => {
+      contenido.innerHTML = html;
+      
+      // Agregar listeners a botones "Ver Detalle"
+      contenido.querySelectorAll('.btn-ver-detalle-falta-admin').forEach(btn => {
+        btn.addEventListener('click', function() {
+          const idRegistro = this.dataset.registro;
+          cargarDetalleFaltaAdmin(idRegistro, idEstudiante, nombreEstudiante);
+        });
+      });
+    })
+    .catch(error => {
+      console.error('Error:', error);
+      contenido.innerHTML = '<div class="alert alert-danger"><i class="bi bi-exclamation-triangle"></i> Error al cargar las faltas del estudiante.</div>';
+    });
+}
+
+function cargarDetalleFaltaAdmin(idRegistro, idEstudiante, nombreEstudiante) {
+  const contenido = document.getElementById('contenidoFaltasEstudiante');
+  const titulo = document.getElementById('tituloFaltasEstudiante');
+  
+  titulo.textContent = `🔍 Detalle de Falta - ${nombreEstudiante}`;
+  contenido.innerHTML = '<div class="text-center py-5"><div class="spinner-border text-primary" role="status"><span class="visually-hidden">Cargando...</span></div><p class="mt-3">Cargando detalle...</p></div>';
+  
+  // Cargar detalle de la falta
+  fetch(`obtener_detalle_falta_admin.php?id=${idRegistro}`)
+    .then(response => response.text())
+    .then(html => {
+      contenido.innerHTML = html;
+      
+      // Agregar listener al botón "Volver a Lista"
+      const btnVolver = contenido.querySelector('#btnVolverListaFaltas');
+      if (btnVolver) {
+        btnVolver.addEventListener('click', function() {
+          cargarListaFaltasAdmin(idEstudiante, nombreEstudiante);
+        });
+      }
+      
+      // Agregar listener al formulario de cambio de estado
+      const formEstado = contenido.querySelector('#formEstadoFalta');
+      if (formEstado) {
+        formEstado.addEventListener('submit', function(e) {
+          e.preventDefault();
+          actualizarEstadoFalta(formEstado);
+        });
+      }
+    })
+    .catch(error => {
+      console.error('Error:', error);
+      contenido.innerHTML = '<div class="alert alert-danger"><i class="bi bi-exclamation-triangle"></i> Error al cargar el detalle de la falta.</div>';
+    });
+}
+
+function actualizarEstadoFalta(form) {
+  const mensajeDiv = document.getElementById('mensajeEstado');
+  const submitBtn = form.querySelector('button[type="submit"]');
+  
+  // Deshabilitar botón mientras se procesa
+  submitBtn.disabled = true;
+  mensajeDiv.innerHTML = '<div class="alert alert-info">Actualizando...</div>';
+  
+  fetch('actualizar_estado_falta.php', {
+    method: 'POST',
+    body: new FormData(form)
+  })
+  .then(response => response.json())
+  .then(data => {
+    if (data.success) {
+      mensajeDiv.innerHTML = `<div class="alert alert-success alert-dismissible fade show" role="alert">
+        <i class="bi bi-check-circle"></i> ${data.mensaje}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+      </div>`;
+      
+      // Auto-cerrar después de 3 segundos
+      setTimeout(() => {
+        const alert = mensajeDiv.querySelector('.alert');
+        if (alert) {
+          alert.classList.remove('show');
+          setTimeout(() => mensajeDiv.innerHTML = '', 300);
+        }
+      }, 3000);
+    } else {
+      mensajeDiv.innerHTML = `<div class="alert alert-danger alert-dismissible fade show" role="alert">
+        <i class="bi bi-exclamation-triangle"></i> ${data.mensaje}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+      </div>`;
+    }
+  })
+  .catch(error => {
+    console.error('Error:', error);
+    mensajeDiv.innerHTML = '<div class="alert alert-danger"><i class="bi bi-exclamation-triangle"></i> Error al actualizar el estado.</div>';
+  })
+  .finally(() => {
+    submitBtn.disabled = false;
+  });
+}

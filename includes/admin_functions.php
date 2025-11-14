@@ -1029,7 +1029,7 @@ function crearMatriculaMultiple($conexion, $estudiantes_ids, $curso_id, $fecha_m
                        FROM estudiante e
                        INNER JOIN usuario u ON e.id_usuario = u.cod_usuario
                        WHERE e.cod_estudiante IN ($placeholders)";
-        
+
         $stmtNombres = $conexion->prepare($sqlNombres);
         $stmtNombres->execute($estudiantes_ids);
         $nombresEstudiantes = $stmtNombres->fetchAll(PDO::FETCH_KEY_PAIR);
@@ -1086,21 +1086,21 @@ function crearMatriculaMultiple($conexion, $estudiantes_ids, $curso_id, $fecha_m
 
         // Construir mensaje detallado y amigable
         $mensaje = '<div style="text-align: left;">';
-        
+
         if (count($exitosas) > 0) {
             $mensaje .= '<div style="margin-bottom: 10px;">';
             $mensaje .= '<strong style="color: #198754;">✅ Matriculados exitosamente (' . count($exitosas) . '):</strong><br>';
             $mensaje .= '<span style="margin-left: 20px;">' . implode(', ', $exitosas) . '</span>';
             $mensaje .= '</div>';
         }
-        
+
         if (count($duplicadas) > 0) {
             $mensaje .= '<div style="margin-bottom: 10px;">';
             $mensaje .= '<strong style="color: #fd7e14;">⚠️ Ya matriculados en este curso (' . count($duplicadas) . '):</strong><br>';
             $mensaje .= '<span style="margin-left: 20px;">' . implode(', ', $duplicadas) . '</span>';
             $mensaje .= '</div>';
         }
-        
+
         if (count($errores) > 0) {
             $mensaje .= '<div style="margin-bottom: 10px;">';
             $mensaje .= '<strong style="color: #dc3545;">❌ No se pudieron matricular (' . count($errores) . '):</strong><br>';
@@ -1129,7 +1129,6 @@ function crearMatriculaMultiple($conexion, $estudiantes_ids, $curso_id, $fecha_m
             'errores' => count($errores),
             'total' => $total_procesados
         ];
-
     } catch (Exception $e) {
         error_log("Error general al crear matrículas: " . $e->getMessage());
         return [
@@ -1199,5 +1198,45 @@ function crearMatricula($conexion, $datos)
             'success' => false,
             'mensaje' => 'Error en la base de datos: ' . $e->getMessage()
         ];
+    }
+}
+
+// MARK: FALTAS
+
+function obtenerReportesYDetalleEstudianteID($conexion, $id_estudiante)
+{
+    try {
+        $sql = "SELECT 
+                r.cod_registro,
+                r.fecha_registro,
+                r.hora_registro,
+                r.descripcion_falta,
+                r.descargos_estudiante,
+                r.correctivos_disciplinarios,
+                r.compromisos,
+                r.observaciones,
+                r.estado,
+                tf.nombre_tipo,
+                tf.gravedad
+                FROM registro_falta r
+                INNER JOIN falta f ON r.id_falta = f.cod_falta
+                INNER JOIN tipo_falta tf ON f.id_tipofalta = tf.cod_tipofalta
+                WHERE r.id_estudiante = :id_estudiante
+                ORDER BY r.fecha_registro DESC, r.hora_registro DESC";
+
+        $stmt = $conexion->prepare($sql);
+        $stmt->bindParam(':id_estudiante', $id_estudiante, PDO::PARAM_INT);
+        $stmt->execute();
+
+        $resultados = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        if (empty($resultados)) {
+            error_log("No se encontraron reportes para el estudiante ID: " . $id_estudiante);
+        }
+
+        return $resultados;
+    } catch (Exception $e) {
+        error_log("Error al obtener reportes del estudiante: " . $e->getMessage());
+        throw $e;
     }
 }
