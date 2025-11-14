@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Nov 13, 2025 at 01:35 PM
+-- Generation Time: Nov 14, 2025 at 02:26 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -55,10 +55,8 @@ CREATE TABLE `asignacion_docente` (
 --
 
 INSERT INTO `asignacion_docente` (`cod_asignacion`, `id_docente`, `id_curso`, `id_asignatura`, `ano_lectivo`) VALUES
-(10, 3, 1, 25, 2025),
-(1, 3, 2, 1, 2025),
+(14, 3, 6, 26, 2025),
 (9, 3, 7, 1, 2025),
-(8, 3, 7, 25, 2025),
 (11, 3, 12, 3, 2025),
 (7, 4, 2, 3, 2025);
 
@@ -180,7 +178,23 @@ INSERT INTO `falta` (`cod_falta`, `id_tipofalta`, `descripcion`, `sancion_sugeri
 (3, 1, 'No vino a clase', 'NA'),
 (4, 1, 'No vino a clase', 'NA'),
 (5, 1, 'No vino a clase', 'NA'),
-(6, 1, 'No vino a clase', 'NA');
+(6, 1, 'No vino a clase', 'NA'),
+(7, 1, 'CLAS', 'falt'),
+(8, 1, 'CLAS', 'falt'),
+(9, 2, 'grave', 'grave'),
+(10, 2, 'grave', 'grave'),
+(11, 2, 'grave', 'grave'),
+(12, 2, 'grave', 'grave'),
+(13, 2, 'grave', 'grave'),
+(14, 2, 'grave', 'grave'),
+(15, 2, 'grave', 'grave'),
+(16, 2, 'grave', 'grave'),
+(17, 2, 'grave', 'grave'),
+(18, 2, 'grave', 'grave'),
+(19, 2, 'grave', 'grave'),
+(20, 2, 'grave', 'grave'),
+(21, 1, 'asd', 'asd'),
+(22, 1, 'asdasd', 'asdasd');
 
 -- --------------------------------------------------------
 
@@ -271,7 +285,13 @@ CREATE TABLE `registro_falta` (
 --
 
 INSERT INTO `registro_falta` (`cod_registro`, `fecha_registro`, `hora_registro`, `id_estudiante`, `id_docente`, `id_curso`, `id_falta`, `descripcion_falta`, `descargos_estudiante`, `correctivos_disciplinarios`, `compromisos`, `observaciones`, `estado`) VALUES
-(1, '2025-11-13', '04:10:00', 39, 3, 12, 3, 'No vino a clase', 'NA', 'NA', 'NA', 'NA', 'REPORTADA');
+(1, '2025-11-13', '04:10:00', 39, 3, 12, 3, 'No vino a clase', 'NA', 'NA', 'NA', 'NA', 'SANCIONADA'),
+(5, '2025-11-13', '13:33:00', 41, 3, 12, 7, 'CLAS', 'CALS', 'falt', 'falta', 'falta', 'SANCIONADA'),
+(6, '2025-11-13', '13:33:00', 41, 3, 12, 8, 'CLAS', 'CALS', 'falt', 'falta', 'falta', 'REPORTADA'),
+(7, '2025-11-11', '13:37:00', 13, 3, 12, 9, 'grave', 'grave', 'grave', 'grave', 'grave', 'REPORTADA'),
+(18, '2025-11-11', '13:37:00', 13, 3, 12, 20, 'grave', 'grave', 'grave', 'grave', 'grave', 'REPORTADA'),
+(19, '2025-11-13', '13:49:00', 41, 3, 12, 21, 'asd', 'asd', 'asd', 'Compromiso editado', 'asd', 'EN_PROCESO'),
+(20, '2025-11-13', '18:49:00', 13, 3, 6, 22, 'asdasd', 'asdasd', 'asdasd', 'asdasd', 'asdasd', 'REPORTADA');
 
 -- --------------------------------------------------------
 
@@ -532,7 +552,7 @@ ALTER TABLE `usuario`
 -- AUTO_INCREMENT for table `asignacion_docente`
 --
 ALTER TABLE `asignacion_docente`
-  MODIFY `cod_asignacion` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
+  MODIFY `cod_asignacion` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
 
 --
 -- AUTO_INCREMENT for table `asignatura`
@@ -562,7 +582,7 @@ ALTER TABLE `estudiante`
 -- AUTO_INCREMENT for table `falta`
 --
 ALTER TABLE `falta`
-  MODIFY `cod_falta` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `cod_falta` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=23;
 
 --
 -- AUTO_INCREMENT for table `grado`
@@ -580,7 +600,7 @@ ALTER TABLE `matricula`
 -- AUTO_INCREMENT for table `registro_falta`
 --
 ALTER TABLE `registro_falta`
-  MODIFY `cod_registro` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `cod_registro` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
 
 --
 -- AUTO_INCREMENT for table `rol`
