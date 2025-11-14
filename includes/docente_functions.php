@@ -327,7 +327,7 @@ function obtenerTodasFaltasDocente($conexion, $id_docente)
         throw new Exception("Error al obtener la lista de faltas");
     }
 }
-// `cod_registro``cod_registro``hora_registro``id_estudiante``id_docente``id_curso``id_falta``descripcion_falta``descargos_estudiante``correctivos_disciplinarios``compromisos``observaciones``estado`
+// 
 // MARK: REPORTES
 function obtenerReporteEstudiantePorCurso($conexion, $id_curso, $id_estudiante)
 {

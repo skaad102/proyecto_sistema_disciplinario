@@ -50,6 +50,7 @@ error_log("Sesión en estudiante/index.php: " . print_r($_SESSION, true));
         </div>
         <ul class="menu-list">
             <li class="menu-item" onclick="showTable(1)">📚 Mis Asignaturas</li>
+            <li class="menu-item" onclick="showTable(2)">📚 Mis Reportes</li>
         </ul>
     </div>
 
@@ -72,6 +73,9 @@ error_log("Sesión en estudiante/index.php: " . print_r($_SESSION, true));
 
         <div class="table-section" id="table1">
             <?php include 'mis_asignaturas.php'; ?>
+        </div>
+        <div class="table-section" id="table2">
+            <?php include 'mis_reportes.php'; ?>
         </div>
     </div>
 

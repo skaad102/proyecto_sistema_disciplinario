@@ -1086,3 +1086,72 @@ Consulta ejecutada. Número de filas: 1
 )
 
 [13-Nov-2025 18:55:08 America/Bogota] Usuario: danna.agudelo, Rol: Docente (ID: 2), Redirigiendo a: ../../views/docente/index.php
+=== Inicio de sesión: 2025-11-13 19:39:12 ===
+[13-Nov-2025 19:39:12 America/Bogota] === Nueva solicitud de inicio de sesión ===
+[13-Nov-2025 19:39:12 America/Bogota] Intento de inicio de sesión - Usuario: imendoza
+Intentando autenticar usuario: imendoza
+Consulta ejecutada. Número de filas: 1
+[13-Nov-2025 19:39:12 America/Bogota] Datos del usuario: Array
+(
+    [cod_usuario] => 20
+    [id_tipo_documento] => 1
+    [numero_documento] => 1030123456
+    [nombres] => Isabella
+    [apellidos] => Mendoza Castro
+    [telefono] => 3212345678
+    [correo] => imendoza@email.com
+    [direccion] => Carrera 90 #45-67
+    [usuario] => imendoza
+    [clave] => imendoza123
+    [id_rol] => 3
+    [estado] => ACTIVO
+    [rol] => Estudiante
+)
+
+[13-Nov-2025 19:39:12 America/Bogota] Usuario: imendoza, Rol: Estudiante (ID: 3), Redirigiendo a: ../../views/estudiante/index.php
+=== Inicio de sesión: 2025-11-13 19:59:14 ===
+[13-Nov-2025 19:59:14 America/Bogota] === Nueva solicitud de inicio de sesión ===
+[13-Nov-2025 19:59:14 America/Bogota] Intento de inicio de sesión - Usuario: jose.hita
+Intentando autenticar usuario: jose.hita
+Consulta ejecutada. Número de filas: 1
+[13-Nov-2025 19:59:14 America/Bogota] Datos del usuario: Array
+(
+    [cod_usuario] => 10000017
+    [id_tipo_documento] => 3
+    [numero_documento] => 10068895
+    [nombres] => jose seito
+    [apellidos] => hita
+    [telefono] => 32155
+    [correo] => estiajo@cor.com
+    [direccion] => aleta a
+    [usuario] => jose.hita
+    [clave] => 123456
+    [id_rol] => 3
+    [estado] => ACTIVO
+    [rol] => Estudiante
+)
+
+[13-Nov-2025 19:59:14 America/Bogota] Usuario: jose.hita, Rol: Estudiante (ID: 3), Redirigiendo a: ../../views/estudiante/index.php
+=== Inicio de sesión: 2025-11-13 20:27:31 ===
+[13-Nov-2025 20:27:31 America/Bogota] === Nueva solicitud de inicio de sesión ===
+[13-Nov-2025 20:27:31 America/Bogota] Intento de inicio de sesión - Usuario: admin
+Intentando autenticar usuario: admin
+Consulta ejecutada. Número de filas: 1
+[13-Nov-2025 20:27:31 America/Bogota] Datos del usuario: Array
+(
+    [cod_usuario] => 9999999
+    [id_tipo_documento] => 3
+    [numero_documento] => 99999999
+    [nombres] => super
+    [apellidos] => admin
+    [telefono] => 31000000
+    [correo] => admin@colegio.conm
+    [direccion] => av siempre viva 123
+    [usuario] => admin
+    [clave] => admin123
+    [id_rol] => 1
+    [estado] => ACTIVO
+    [rol] => Directivo
+)
+
+[13-Nov-2025 20:27:31 America/Bogota] Usuario: admin, Rol: Directivo (ID: 1), Redirigiendo a: ../../views/admin/index.php

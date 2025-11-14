@@ -232,3 +232,42 @@ function obtenerCursosEstudiante($conexion, $id_estudiante)
         throw $e;
     }
 }
+
+// MARK: REPORTES
+function obtenerReportesYDetalleEstudianteID($conexion, $id_estudiante)
+{
+    try {
+        $sql = "SELECT 
+                r.cod_registro,
+                r.fecha_registro,
+                r.hora_registro,
+                r.descripcion_falta,
+                r.descargos_estudiante,
+                r.correctivos_disciplinarios,
+                r.compromisos,
+                r.observaciones,
+                r.estado,
+                tf.nombre_tipo,
+                tf.gravedad
+                FROM registro_falta r
+                INNER JOIN falta f ON r.id_falta = f.cod_falta
+                INNER JOIN tipo_falta tf ON f.id_tipofalta = tf.cod_tipofalta
+                WHERE r.id_estudiante = :id_estudiante
+                ORDER BY r.fecha_registro DESC, r.hora_registro DESC";
+
+        $stmt = $conexion->prepare($sql);
+        $stmt->bindParam(':id_estudiante', $id_estudiante, PDO::PARAM_INT);
+        $stmt->execute();
+
+        $resultados = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        if (empty($resultados)) {
+            error_log("No se encontraron reportes para el estudiante ID: " . $id_estudiante);
+        }
+
+        return $resultados;
+    } catch (Exception $e) {
+        error_log("Error al obtener reportes del estudiante: " . $e->getMessage());
+        throw $e;
+    }
+}
