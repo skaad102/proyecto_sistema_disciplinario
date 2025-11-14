@@ -153,4 +153,116 @@ document.addEventListener("DOMContentLoaded", function () {
       }
     });
   }
+
+  // MARK: Ver Faltas del Estudiante
+  // Manejar clic en botón "Ver Faltas"
+  const botonesVerFaltas = document.querySelectorAll(".btn-ver-faltas");
+  if (botonesVerFaltas.length > 0) {
+    botonesVerFaltas.forEach((btn) => {
+      btn.addEventListener("click", function () {
+        const estudianteId = this.dataset.estudianteId;
+        const estudianteNombre = this.dataset.estudianteNombre;
+        const cursoId = this.dataset.cursoId;
+
+        // Actualizar título del modal
+        document.getElementById("ver_faltas_estudiante_nombre").textContent =
+          estudianteNombre;
+
+        // Mostrar spinner de carga
+        const contenidoFaltas = document.getElementById("contenido_faltas");
+        contenidoFaltas.innerHTML = `
+          <div class="text-center">
+            <div class="spinner-border text-primary" role="status">
+              <span class="visually-hidden">Cargando...</span>
+            </div>
+            <p class="mt-2">Cargando historial de faltas...</p>
+          </div>
+        `;
+
+        // Mostrar el modal
+        const modalElement = document.getElementById("modalVerFaltas");
+        if (modalElement) {
+          const modal = new bootstrap.Modal(modalElement);
+          modal.show();
+
+          // Cargar las faltas mediante AJAX
+          fetch(
+            `obtener_faltas_estudiante.php?id_estudiante=${estudianteId}&id_curso=${cursoId}`
+          )
+            .then((response) => {
+              if (!response.ok) {
+                throw new Error("Error en la respuesta del servidor");
+              }
+              return response.text();
+            })
+            .then((html) => {
+              contenidoFaltas.innerHTML = html;
+            })
+            .catch((error) => {
+              console.error("Error al cargar faltas:", error);
+              contenidoFaltas.innerHTML = `
+                <div class="alert alert-danger">
+                  <i class="bi bi-exclamation-triangle"></i>
+                  Error al cargar el historial de faltas. Por favor, intente nuevamente.
+                </div>
+              `;
+            });
+        }
+      });
+    });
+  }
+
+  // MARK: Ver Detalle de Falta
+  // Manejar clic en botón "Ver Detalle"
+  const botonesVerDetalleFalta = document.querySelectorAll(
+    ".btn-ver-detalle-falta"
+  );
+  if (botonesVerDetalleFalta.length > 0) {
+    botonesVerDetalleFalta.forEach((btn) => {
+      btn.addEventListener("click", function () {
+        const registroId = this.dataset.registroId;
+
+        // Mostrar spinner de carga
+        const contenidoDetalle = document.getElementById(
+          "contenido_detalle_falta"
+        );
+        contenidoDetalle.innerHTML = `
+          <div class="text-center">
+            <div class="spinner-border text-primary" role="status">
+              <span class="visually-hidden">Cargando...</span>
+            </div>
+            <p class="mt-2">Cargando detalle de la falta...</p>
+          </div>
+        `;
+
+        // Mostrar el modal
+        const modalElement = document.getElementById("modalDetalleFalta");
+        if (modalElement) {
+          const modal = new bootstrap.Modal(modalElement);
+          modal.show();
+
+          // Cargar el detalle mediante AJAX
+          fetch(`obtener_detalle_falta.php?id_registro=${registroId}`)
+            .then((response) => {
+              if (!response.ok) {
+                throw new Error("Error en la respuesta del servidor");
+              }
+              return response.text();
+            })
+            .then((html) => {
+              contenidoDetalle.innerHTML = html;
+            })
+            .catch((error) => {
+              console.error("Error al cargar detalle:", error);
+              contenidoDetalle.innerHTML = `
+                <div class="alert alert-danger">
+                  <i class="bi bi-exclamation-triangle"></i>
+                  Error al cargar el detalle. Por favor, intente nuevamente.
+                </div>
+              `;
+            });
+        }
+      });
+    });
+  }
 });

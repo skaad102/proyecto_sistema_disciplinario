@@ -49,12 +49,13 @@ try {
                             <th>Tipo Falta</th>
                             <th>Descripción</th>
                             <th>Estado</th>
+                            <th>Acciones</th>
                         </tr>
                     </thead>
                     <tbody>
                         <?php if (empty($mis_reportes)): ?>
                             <tr>
-                                <td colspan="5" class="text-center">No hay reportes disponibles</td>
+                                <td colspan="6" class="text-center">No hay reportes disponibles</td>
                             </tr>
                         <?php else: ?>
                             <?php foreach ($mis_reportes as $reporte): ?>
@@ -68,9 +69,9 @@ try {
                                         <?php
                                         $estado = strtoupper($reporte['estado']);
                                         if ($estado === 'REPORTADA'): ?>
-                                            <span class="badge bg-warning text-dark">🟠 REPORTADA</span
-                                                <?php elseif ($estado === 'EN_PROCESO'): ?>
-                                                <span class="badge bg-info text-dark">🔵 EN PROCESO</span>
+                                            <span class="badge bg-warning text-dark">🟠 REPORTADA</span>
+                                        <?php elseif ($estado === 'EN_PROCESO'): ?>
+                                            <span class="badge bg-info text-dark">🔵 EN PROCESO</span>
                                         <?php elseif ($estado === 'SANCIONADA'): ?>
                                             <span class="badge bg-success">🟢 SANCIONADA</span>
                                         <?php elseif ($estado === 'ARCHIVADA'): ?>
@@ -79,11 +80,47 @@ try {
                                             <span class="badge bg-dark">● <?php echo htmlspecialchars($estado); ?></span>
                                         <?php endif; ?>
                                     </td>
+                                    <td>
+                                        <button class="btn btn-sm btn-primary btn-ver-detalle-falta" 
+                                                data-registro-id="<?php echo $reporte['cod_registro']; ?>"
+                                                title="Ver Detalle Completo">
+                                            <i class="bi bi-eye"></i> Ver Detalle
+                                        </button>
+                                    </td>
                                 </tr>
                             <?php endforeach; ?>
                         <?php endif; ?>
                     </tbody>
                 </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Ver Detalle de Falta -->
+<div class="modal fade" id="modalDetalleFalta" tabindex="-1" aria-labelledby="modalDetalleFaltaLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title" id="modalDetalleFaltaLabel">
+                    <i class="bi bi-file-text"></i> Detalle Completo de la Falta
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div id="contenido_detalle_falta">
+                    <div class="text-center">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="visually-hidden">Cargando...</span>
+                        </div>
+                        <p class="mt-2">Cargando detalle de la falta...</p>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="bi bi-x-circle"></i> Cerrar
+                </button>
             </div>
         </div>
     </div>

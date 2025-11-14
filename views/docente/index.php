@@ -49,10 +49,9 @@ error_log("Sesión en docente/index.php: " . print_r($_SESSION, true));
             <p>Gestión de Disciplina</p>
         </div>
         <ul class="menu-list">
-            <li class="menu-item" onclick="showTable(1)">📝 Registrar Falta</li>
-            <li class="menu-item" onclick="showTable(2)">📋 Mis Reportes</li>
-            <li class="menu-item" onclick="showTable(3)">👥 Estudiantes</li>
-            <li class="menu-item" onclick="showTable(4)">📚 Mis Asignaturas</li>
+            <li class="menu-item" onclick="showTable(1)">📋 Mis Reportes</li>
+            <li class="menu-item" onclick="showTable(2)">👥 Estudiantes</li>
+            <li class="menu-item" onclick="showTable(3)">📚 Mis Asignaturas</li>
         </ul>
     </div>
 
@@ -74,18 +73,14 @@ error_log("Sesión en docente/index.php: " . print_r($_SESSION, true));
         </div>
 
         <div class="table-section" id="table1">
-            <?php include '../registro_falta.php'; ?>
-        </div>
-
-        <div class="table-section" id="table2">
             <?php include 'mis_reportes.php'; ?>
         </div>
 
-        <div class="table-section" id="table3">
+        <div class="table-section" id="table2">
             <?php include 'estudiantes.php'; ?>
         </div>
 
-        <div class="table-section" id="table4">
+        <div class="table-section" id="table3">
             <?php include 'mis_asignaturas.php'; ?>
         </div>
     </div>

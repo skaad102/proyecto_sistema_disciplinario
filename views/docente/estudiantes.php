@@ -157,6 +157,13 @@ try {
                                                             title="Registrar Falta">
                                                         <i class="bi bi-exclamation-triangle"></i> Registrar Falta
                                                     </button>
+                                                    <button class="btn btn-sm btn-info btn-ver-faltas" 
+                                                            data-estudiante-id="<?php echo $estudiante['cod_estudiante']; ?>"
+                                                            data-estudiante-nombre="<?php echo htmlspecialchars($estudiante['nombre_completo']); ?>"
+                                                            data-curso-id="<?php echo $curso_key; ?>"
+                                                            title="Ver Historial de Faltas">
+                                                        <i class="bi bi-file-text"></i> Ver Faltas
+                                                    </button>
                                                 </td>
                                             </tr>
                                         <?php endforeach; ?>
@@ -282,6 +289,35 @@ try {
                     </button>
                 </div>
             </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Ver Faltas del Estudiante -->
+<div class="modal fade" id="modalVerFaltas" tabindex="-1" aria-labelledby="modalVerFaltasLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header bg-info text-white">
+                <h5 class="modal-title" id="modalVerFaltasLabel">
+                    <i class="bi bi-file-text"></i> Historial de Faltas - <span id="ver_faltas_estudiante_nombre"></span>
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div id="contenido_faltas">
+                    <div class="text-center">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="visually-hidden">Cargando...</span>
+                        </div>
+                        <p class="mt-2">Cargando historial de faltas...</p>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="bi bi-x-circle"></i> Cerrar
+                </button>
+            </div>
         </div>
     </div>
 </div>

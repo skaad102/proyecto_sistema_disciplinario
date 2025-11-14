@@ -242,7 +242,7 @@ function registrarFaltaEstudiante($conexion, $datosRegistro)
                  :observaciones, :estado)";
 
         $stmt = $conexion->prepare($sql);
-        
+
         // Usar el id_falta recién creado
         $stmt->bindValue(':fecha_registro', $datosRegistro[':fecha_registro']);
         $stmt->bindValue(':hora_registro', $datosRegistro[':hora_registro']);
@@ -266,7 +266,7 @@ function registrarFaltaEstudiante($conexion, $datosRegistro)
                 'id_falta' => $id_falta
             ];
         }
-        
+
         $conexion->rollBack();
         return [
             'success' => false,
@@ -276,7 +276,7 @@ function registrarFaltaEstudiante($conexion, $datosRegistro)
         if ($conexion->inTransaction()) {
             $conexion->rollBack();
         }
-        
+
         // Verificar si es error de clave foránea
         if ($e->getCode() == 23000) {
             return [
@@ -325,5 +325,81 @@ function obtenerTodasFaltasDocente($conexion, $id_docente)
     } catch (Exception $e) {
         error_log("Error al obtener faltas del docente: " . $e->getMessage());
         throw new Exception("Error al obtener la lista de faltas");
+    }
+}
+// `cod_registro``cod_registro``hora_registro``id_estudiante``id_docente``id_curso``id_falta``descripcion_falta``descargos_estudiante``correctivos_disciplinarios``compromisos``observaciones``estado`
+// MARK: REPORTES
+function obtenerReporteEstudiantePorCurso($conexion, $id_curso, $id_estudiante)
+{
+    try{
+        $sql = "SELECT rf.cod_registro,
+                       rf.fecha_registro,
+                       rf.hora_registro,
+                       tf.nombre_tipo,
+                       f.descripcion as descripcion_falta,
+                       rf.descripcion_falta,
+                       rf.descargos_estudiante,
+                       rf.correctivos_disciplinarios,
+                       rf.compromisos,
+                       rf.observaciones,
+                       rf.estado
+                FROM registro_falta rf
+                INNER JOIN falta f ON rf.id_falta = f.cod_falta
+                INNER JOIN tipo_falta tf ON f.id_tipofalta = tf.cod_tipofalta
+                WHERE rf.id_curso = :id_curso
+                AND rf.id_estudiante = :id_estudiante
+                ORDER BY rf.fecha_registro DESC, rf.hora_registro DESC";
+
+        $stmt = $conexion->prepare($sql);
+        $stmt->bindParam(':id_curso', $id_curso, PDO::PARAM_INT);
+        $stmt->bindParam(':id_estudiante', $id_estudiante, PDO::PARAM_INT);
+        $stmt->execute();
+
+        $reportes = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        if (empty($reportes)) {
+            return [];
+        }
+
+        return $reportes;
+    } catch (Exception $e) {
+        error_log("Error al obtener reportes del estudiante por curso: " . $e->getMessage());
+        throw new Exception("Error al obtener la lista de reportes");
+    }
+}
+
+function obtenerFaltaPorId($conexion, $id_registro)
+{
+    try {
+        $sql = "SELECT rf.cod_registro,
+                       rf.fecha_registro,
+                       rf.hora_registro,
+                       e.cod_estudiante,
+                       CONCAT(u.nombres, ' ', u.apellidos) as nombre_estudiante,
+                       tf.nombre_tipo,
+                       f.descripcion as descripcion_falta,
+                       rf.descripcion_falta,
+                       rf.descargos_estudiante,
+                       rf.correctivos_disciplinarios,
+                       rf.compromisos,
+                       rf.observaciones,
+                       rf.estado
+                FROM registro_falta rf
+                INNER JOIN estudiante e ON rf.id_estudiante = e.cod_estudiante
+                INNER JOIN usuario u ON e.id_usuario = u.cod_usuario
+                INNER JOIN falta f ON rf.id_falta = f.cod_falta
+                INNER JOIN tipo_falta tf ON f.id_tipofalta = tf.cod_tipofalta
+                WHERE rf.cod_registro = :id_registro";
+
+        $stmt = $conexion->prepare($sql);
+        $stmt->bindParam(':id_registro', $id_registro, PDO::PARAM_INT);
+        $stmt->execute();
+
+        $falta = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        return $falta ?: null;
+    } catch (Exception $e) {
+        error_log("Error al obtener falta por ID: " . $e->getMessage());
+        throw new Exception("Error al obtener la falta");
     }
 }
