@@ -24,7 +24,7 @@ error_log("Sesión en admin/index.php: " . print_r($_SESSION, true));
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="../../css/bootstrap.min.css">
     <!-- Bootstrap Icons -->
-    <link rel="stylesheet" href="../../Bootstrap/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="../../assets/Bootstrap/bootstrap-icons.min.css">
     <!-- jQuery first, then Bootstrap Bundle with Popper -->
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="../../js/bootstrap.bundle.min.js"></script>
